@@ -1,0 +1,21 @@
+{% extends "task/layout.html" %}
+
+{% block title %}
+Create new board
+{% endblock %}
+
+{% block main %}
+    <div>
+        <h1>Create new board</h1>
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %}
+        <form id="create-board-form" action="{% url 'boards' %}" method="post">
+            {% csrf_token %}
+            <input id="create-board-name" autofocus type="text" placeholder="Board name" name="name">
+            <input id="create-board-description" type="text" placeholder="Board description" name="description">
+            <input id="create-board-submit" type="submit" value="Create board">
+        </form>
+        <a href="{% url 'index' %}">All boards</a>
+    </div>
+{% endblock %}

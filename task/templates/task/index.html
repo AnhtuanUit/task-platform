@@ -1,10 +1,13 @@
-<!DOCTYPE html>
+{% extends "task/layout.html" %}
 
-<html lang="en">
-    <header>
-        <title>Hello, world!</title>
-    </header>
-    <body>
-        Hello, world!
-    </body>
-</html>
+{% block title %}
+Home
+{% endblock %}
+
+{% block main %}
+    {% comment %} <ul>
+        {% for board in boards %}
+        <li><a href="{% url 'board' board.id %}">{{ board.name }}</a></li>
+        {% endfor %}
+    </ul> {% endcomment %}
+{% endblock %}

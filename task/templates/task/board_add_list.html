@@ -1,0 +1,18 @@
+{% extends "task/layout.html" %}
+{% comment %} {% debug %} {% endcomment %}
+{% block title %}
+Board add list
+{% endblock %}
+{% block main %}
+    <h1>Board add list</h1>
+    <h2>Add list to {{ board.name }}</h2>
+    
+    <form id="add-list-form">
+        <input id ="add-list-board-id" type="hidden" name="id" value="{{ board.id }}">
+        <input id="add-list-name" autofocus name="name" placesholder="Name of the list" type="text">
+        <input type="submit" value="Add list">
+    <form>
+    <div>
+        <a href="{% url 'board' board.id %}">Back to board {{board.name}}</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "task/layout.html" %}
+{% block title %}
+{% endblock %}
+{% block main %}
+<h1>Card</h1>
+<h2>{{ card.description }} <small>in list <span class="text-grey">{{ card.list.name }}</span></small></h2>
+<div>
+    <button>Members >><span>User1</span><span>User2</span></button>
+    <button>Labels A +</button>
+    <button>Notification</button>
+    <button>Due date Aug, 2, 8:54PM</button>
+</div>
+<h4>Description</h4>
+<p>Some description here</p>
+<h4>Attachments</h4>
+<div>
+    <p>Attachments item</p>
+</div>
+<h4>Checklist <button>Delete</button></h4>
+<p>Progress .... 0%</p>
+<p>[] Item1</p>
+<p>[x]Item2</p>
+<button>Add item</button>
+<h3>Activity</h3> 
+<div class="card" style="max-width: 250px;">
+    <div class="card-header">
+        <p>Do Anh Tuan <span>49 second ago</spam></p>
+    </div>
+    <div class="card-body">
+        
+        <p>Helo</p>
+    </div>
+</div>
+
+<div>
+    <a href={% url 'index' %}>Back to index</a>
+</div>
+</div>
+{% endblock %}

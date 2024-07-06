@@ -1,0 +1,14 @@
+{% extends "task/layout.html" %}
+{% block title %}
+Board add member
+{% endblock %}
+{% block main %}
+<h1>Board add member</h1>
+<h2>Add member to board: {{ board.name }}</h2>
+<form id="add-member-form">
+    <input id="add-member-board-id" name="board-id" type="hidden" value="{{ board.id }}">
+    <input id="add-member-email" autofocus type="email" placesholder="Member email" name="email">
+    <input type="submit" value="Add member">
+
+</form>
+{% endblock %}

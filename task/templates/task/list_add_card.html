@@ -1,0 +1,20 @@
+{% extends "task/layout.html" %}
+{% comment %} {% debug %} {% endcomment %}
+{% block title %}
+List add card
+{% endblock %}
+{% block main %}
+    <h1>List add card</h1>
+    <h2>Add card to list: {{ list.name }}</h2>
+    <h3>Board name: {{ list.board.name }}</h3>
+    
+    <form id="add-card-form">
+        <input id ="add-card-list-id" type="hidden" name="id" value="{{ list.id }}">
+        <input id="add-card-description" autofocus name="description" placesholder="Description of the card" type="text">
+        <input type="submit" value="Add card">
+    <form>
+    <div>
+        <a href="{% url 'board' list.board.id %}">Back to:{{ list.board.name }}</a>
+    </div>
+{% endblock %}
+

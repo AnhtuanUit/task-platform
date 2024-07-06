@@ -1,0 +1,77 @@
+{% extends "task/layout.html" %}
+{% debug %}
+{% block title %}
+Board detail
+{% endblock %}
+{% block main %}
+<nav class="navbar navbar-expand-lg bg-secondary"  data-bs-theme="dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'board' board.id %}">{{ board.name }}</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#Filter">Filter</a>
+            </li>
+            <li class="nav-item">
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                      <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+                      <strong>mdo</strong>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                      <li><a class="dropdown-item" href="#">New project...</a></li>
+                      <li><a class="dropdown-item" href="#">Settings</a></li>
+                      <li><a class="dropdown-item" href="#">Profile</a></li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item" href="#">Sign out</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#Share">Share</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+</nav>
+    <div class="container mt-3">
+        <button id="create-placeholder-btn" class="btn btn-sm btn-primary">Create placeholder by hover</button>
+        <button id="close-create-placeholder-btn" class="btn btn-sm btn-primary">Close create placeholder by hover</button>
+        <p>Click to placeholder to done process</p>
+        <button id="create-list-placeholder-btn" class="btn btn-sm btn-primary">Create list placeholder by hover</button>
+        <button id="close-create-list-placeholder-btn" class="btn btn-sm btn-primary">Close create list placeholder by hover</button>
+        <div class="task-lists row row-cols-5 g-3 mt-5">
+            {% for list in lists %}
+                <div class="col" id="list-id-{{ list.id }}" data-list-id="{{ list.id }}" draggable="true" ondragstart="drag(event)">
+                    <div class="card bg-dark task-list" data-list-id="{{ list.id }}" style="height: 100%;">
+                        <div class="card-header text-white">
+                            {{ list.name }} - {{ list.id }} - {{ list.position }}
+                        </div>
+                        <div class="card-body">
+                            {% for card in list.ordered_cards %}
+                            <div class="task-card card bg-info my-2" data-card-id="{{ card.id }}" data-list-id="{{ list.id }}" id="card-id-{{ card.id }}" draggable="true" ondragstart="drag(event)">
+                                <div class="card-body">
+                                    <a href="{% url 'card' card.id %}">{{ card.description }}</a>
+                                    <p>id={{ card.id }} - pos={{ card.position }}</p>
+                                    <p class="position-status">NONE</p>
+                                </div>
+                            </div>   
+                            {% endfor %}
+                        </div>
+                        <div class="card-footer text-body-secondary">
+                            <a href="{% url 'list_add_card_view' list.id %}">Add a card</a>
+                          </div>
+                    </div>
+                </div>
+            {% endfor %}
+          </div>
+    </div>
+    {% comment %} <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"></div> {% endcomment %}
+    {% comment %} <img id="drag1" src="https://www.w3schools.com/html/img_logo.gif" draggable="true" ondragstart="drag(event)" width="336" height="69"> {% endcomment %}
+<div>
+    <a href="{% url 'board_add_list_view' board.id %}">Add more list</a>
+</div>
+{% endblock %}

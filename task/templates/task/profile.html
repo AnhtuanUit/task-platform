@@ -1,0 +1,17 @@
+{% extends "task/layout.html" %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block main %}
+    {% if user.is_authenticated %}
+        <h3>{{ user.username }}</h3>
+        Info
+        <ul>
+            <li>
+                Email: {{ user.email }}
+            </li>
+        </ul>
+    {% endif %}
+{% endblock %}
