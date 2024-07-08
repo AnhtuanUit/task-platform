@@ -4,6 +4,10 @@ function allowDrop(ev) {
 
 function drag(ev) {
     ev.dataTransfer.setData("text", ev.target.id);
+    ev.target.setAttribute("data-dragged", "true");
+
+    // Make dragged blur a bit
+    ev.target.style.opacity = "0.5";
 }
 
 function drop(ev) {
@@ -11,6 +15,7 @@ function drop(ev) {
     var data = ev.dataTransfer.getData("text");
     draggedElement = document.getElementById(data);
     placeholder = ev.target;
+
     // If drag id include "list" or include "card"
     if (data.includes("card")) {
         handleDropCard(placeholder, draggedElement);
@@ -57,19 +62,21 @@ function handleDropCard(placeholder, draggedElement) {
     let prevCard;
     let resulPrevCard;
 
-    const taskListElement = placeholder.closest(".task-list");
+    const taskListElement = placeholder.closest(".card-body");
 
     // Detect previous card
-    taskListElement.querySelectorAll(".task-card").forEach((card) => {
-        // Check if current card is placeholder
-        // Return privious card if current card is placeholder
-        if (card.classList.contains("placeholder-card")) {
-            // Break
-            resulPrevCard = prevCard;
-        } else {
-            prevCard = card;
-        }
-    });
+    taskListElement
+        .querySelectorAll(".task-card, .placeholder-card")
+        .forEach((card) => {
+            // Check if current card is placeholder
+            // Return privious card if current card is placeholder
+            if (card.classList.contains("placeholder-card")) {
+                // Break
+                resulPrevCard = prevCard;
+            } else {
+                prevCard = card;
+            }
+        });
     // Detect listId, cardId
     const prevCardId = resulPrevCard ? resulPrevCard.dataset.cardId : false;
     const preCardListId = taskListElement.dataset.listId;
@@ -79,12 +86,14 @@ function handleDropCard(placeholder, draggedElement) {
     apiMoveCard(cardId, prevCardId, preCardListId);
 
     // Replace placeholder with dragged element
-    taskListElement.replaceChild(draggedElement, placeholder);
+    const beReplaceNode = placeholder.closest(".task-card");
+    taskListElement.replaceChild(draggedElement, beReplaceNode);
+
     handleStopCreatePlaceHolder();
 }
 
 // TODO: add list placeholder
-function addListPlaceholder(hoverElement, hoverLeft = true) {
+function createListPlaceholder(hoverElement, hoverLeft = true) {
     const placeholderElement = document.createElement("div");
     // For treat list placeholder as a task-list
     placeholderElement.classList.add("task-list");
@@ -148,7 +157,7 @@ function taskListDetectHover() {
         if (this.dataset.isLeft !== isLeft) {
             this.dataset.isLeft = String(isLeft); // Use dataset to store state
             // Add task list placeholder by side
-            addListPlaceholder(this, isLeft);
+            createListPlaceholder(this, isLeft);
         }
     }
 
@@ -208,7 +217,7 @@ document.addEventListener("DOMContentLoaded", function () {
     addListForm = document.querySelector("#add-list-form");
     addCardFrom = document.querySelector("#add-card-form");
     addMemberForm = document.querySelector("#add-member-form");
-
+    handleCreatePlaceholder();
     // Handle board hover
     // document
     //     .querySelector("#create-placeholder-btn")
@@ -269,45 +278,47 @@ function handleCreatePlaceholder() {
         ".task-card:not(.placeholder-card)"
     );
 
-    let mouseX = 0;
-    let mouseY = 0;
-
-    function handleMouseMove(event) {
-        mouseX = event.clientX;
-        mouseY = event.clientY;
-    }
-
-    document.addEventListener("mousemove", handleMouseMove);
-
-    function handleCardMouseMove() {
-        const rect = this.getBoundingClientRect();
-        const y = mouseY - rect.top;
-        const isTop = y < rect.height / 2;
-
-        if (this.dataset.isTop !== String(isTop)) {
-            this.dataset.isTop = String(isTop); // Use dataset to store state
-            insertPlaceHolder(this, isTop);
-            // this.querySelector(".position-status").textContent = isTop
-            //     ? "TOP HALF"
-            //     : "BOTTOM HALF";
-        }
-    }
-
+    // Drag card create placeholder(can drop)(up)
     function bindCardEvents(card) {
-        function handleMousemoveWrapper() {
-            card.addEventListener("mousemove", handleCardMouseMove);
-        }
-        function handleMouseoutWrapper() {
-            card.removeEventListener("mousemove", handleCardMouseMove);
+        function handleDragenter() {
+            const draggedElement = document.querySelector(
+                ".task-card[data-dragged='true']"
+            );
+
+            if (draggedElement.dataset.cardId !== card.dataset.cardId) {
+                insertPlaceHolder(card, true);
+            }
         }
 
-        card.addEventListener("mouseover", handleMousemoveWrapper);
-        card.addEventListener("mouseout", handleMouseoutWrapper);
+        function handleDragend() {
+            // Show element again
+            const draggedElement = document.querySelector(
+                ".task-card[data-dragged='true']"
+            );
+            draggedElement.style.display = "flex";
+            draggedElement.style.opacity = "1";
 
-        // Store references to event listeners to remove them later
-        card.handleMousemoveWrapper = handleMousemoveWrapper;
-        card.handleMouseoutWrapper = handleMouseoutWrapper;
+            // Clear all place holder
+            const placeholderElement =
+                document.querySelector(".placeholder-card");
+            placeholderElement && placeholderElement.remove();
+
+            draggedElement.setAttribute("data-dragged", "false");
+        }
+
+        card.addEventListener("dragenter", handleDragenter);
+        card.addEventListener("dragend", handleDragend);
     }
+
+    // // TODO: add placholder to the end if not drag to a card
+    // const taskCardDrag = document.querySelectorAll(".task-card-drag");
+
+    // function bindTaskListBodyEvents(taskListBody) {
+    //     taskListBody.addEventListener("dragenter",  );
+    //     taskListBody.addEventListener("dragend", handleDragend);
+    // }
+
+    // taskCardDrag.forEach(bindTaskListBodyEvents);
 
     taskCards.forEach(bindCardEvents);
 }

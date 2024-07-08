@@ -45,12 +45,12 @@ Board detail
         <button id="close-create-list-placeholder-btn" class="btn btn-sm btn-primary">Close create list placeholder by hover</button>
         <div class="task-lists row row-cols-5 g-3 mt-5">
             {% for list in lists %}
-                <div class="col" id="list-id-{{ list.id }}" data-list-id="{{ list.id }}" draggable="true" ondragstart="drag(event)">
-                    <div class="card bg-dark task-list" data-list-id="{{ list.id }}" style="height: 100%;">
+                <div class="col" id="list-id-{{ list.id }}"  draggable="true" ondragstart="drag(event)">
+                    <div class="card bg-dark task-list">
                         <div class="card-header text-white">
                             {{ list.name }} - {{ list.id }} - {{ list.position }}
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" style="display:flex; flex-direction: column;" data-list-id="{{ list.id }}">
                             {% for card in list.ordered_cards %}
                             <div class="task-card card bg-info my-2" data-card-id="{{ card.id }}" data-list-id="{{ list.id }}" id="card-id-{{ card.id }}" draggable="true" ondragstart="drag(event)">
                                 <div class="card-body">
@@ -60,6 +60,7 @@ Board detail
                                 </div>
                             </div>   
                             {% endfor %}
+                            <div class="task-card" style="width: 100%; min-height: 20px; flex: 1;"></div>
                         </div>
                         <div class="card-footer text-body-secondary">
                             <a href="{% url 'list_add_card_view' list.id %}">Add a card</a>
