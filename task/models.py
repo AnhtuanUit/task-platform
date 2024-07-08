@@ -36,7 +36,7 @@ class Board(models.Model):
 class List(models.Model):
     board = models.ForeignKey("Board", on_delete=models.CASCADE, related_name="lists")
     name = models.CharField(max_length=256)
-    position = models.DecimalField(max_digits=10, decimal_places=2)
+    position = models.DecimalField(max_digits=10, decimal_places=10)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -66,7 +66,7 @@ class Card(models.Model):
     attachments = models.ManyToManyField("Attachment", related_name="cards")
     description = models.CharField(max_length=256)
     due_date = models.DateTimeField(null=True, blank=True)
-    position = models.DecimalField(max_digits=10, decimal_places=2)
+    position = models.DecimalField(max_digits=10, decimal_places=10)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
