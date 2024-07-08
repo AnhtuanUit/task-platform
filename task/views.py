@@ -1,7 +1,6 @@
 import json
 import math
 from django.shortcuts import render, redirect
-from task.models import User
 from django.db.models import Prefetch, Max
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse, HttpResponse
@@ -211,7 +210,14 @@ def add_list(request, board_id):
 
         try:
             # Add list to board in DB
-            List.objects.create(name=name, board=board)
+            max_position = List.objects.filter(board=board).aggregate(Max("position"))[
+                "position__max"
+            ]
+
+            # Compute the next position
+            next_position = max_position + 100 - (max_position + 100) % 100
+
+            List.objects.create(name=name, board=board, position=next_position)
         except:
 
             # Return error message
@@ -277,11 +283,6 @@ def move_list(request, list_id):
             next_list = contiguous_lists[1] if len(contiguous_lists) > 1 else None
 
         if next_list is None:
-            # Compute the next position
-            # max_position = List.objects.filter(board_id=list.board_id).aggregate(
-            #     Max("position")
-            # )["position__max"]
-            # This meant prev_list_id should be the max position
             max_position = prev_position
             next_position = max_position + 100 - (max_position + 100) % 100
         else:
@@ -319,8 +320,18 @@ def add_card(request, list_id):
             )
 
         try:
+            # Max card position of the list
+            max_position = Card.objects.filter(list=list).aggregate(Max("position"))[
+                "position__max"
+            ]
+
+            # Compute the next position
+            next_position = max_position + 100 - (max_position + 100) % 100
+
             # Add card to list in DB
-            Card.objects.create(description=description, list=list)
+            Card.objects.create(
+                description=description, list=list, position=next_position
+            )
         except:
             # Return error message
             return JsonResponse({"error": "Add card error!"}, status=400)
@@ -449,20 +460,6 @@ def card(request, card_id):
 
     if card is None:
         return JsonResponse({"messag": "Card does not exist!"}, status=400)
-
-    # Update card by PUT method
-    if request.method == "PUT":
-
-        # Prepare update card data
-        description = request.PUT["description"]
-
-        # Validate udpate card data
-
-        # Update card in db
-        card.description = description
-        card.save()
-
-        return JsonResponse({"message": "Update card succssfully"})
 
     return render(
         request, "task/card.html", {"card": card, "boards": Board.objects.all()}

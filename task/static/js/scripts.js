@@ -210,22 +210,22 @@ document.addEventListener("DOMContentLoaded", function () {
     addMemberForm = document.querySelector("#add-member-form");
 
     // Handle board hover
-    document
-        .querySelector("#create-placeholder-btn")
-        .addEventListener("click", handleCreatePlaceholder);
+    // document
+    //     .querySelector("#create-placeholder-btn")
+    //     .addEventListener("click", handleCreatePlaceholder);
 
-    document
-        .querySelector("#close-create-placeholder-btn")
-        .addEventListener("click", handleStopCreatePlaceHolder);
+    // document
+    //     .querySelector("#close-create-placeholder-btn")
+    //     .addEventListener("click", handleStopCreatePlaceHolder);
 
-    // Handle list hover
-    document
-        .querySelector("#create-list-placeholder-btn")
-        .addEventListener("click", taskListDetectHover);
+    // // Handle list hover
+    // document
+    //     .querySelector("#create-list-placeholder-btn")
+    //     .addEventListener("click", taskListDetectHover);
 
-    document
-        .querySelector("#close-create-list-placeholder-btn")
-        .addEventListener("click", stopTaskListDetectHover);
+    // document
+    //     .querySelector("#close-create-list-placeholder-btn")
+    //     .addEventListener("click", stopTaskListDetectHover);
 
     if (createBoardForm) {
         // Handle create board
