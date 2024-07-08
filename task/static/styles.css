@@ -1,6 +1,4 @@
-/* #div1 { */
-/* width: 350px;
-    height: 70px;
-    padding: 10px;
-    border: 1px solid #aaaaaa; */
-/* } */
+/* Optional: Hide scrollbar for a cleaner look */
+.task-lists::-webkit-scrollbar {
+    display: none;
+}

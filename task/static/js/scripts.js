@@ -191,7 +191,9 @@ function handleDragenterList(ev) {
         const dragenterElement = ev.target;
         const taskListParent = dragenterElement.closest(".task-lists");
         const biggestHoverElement = dragenterElement.closest(".col");
-        const placeholderElement = createListPlaceholderElement();
+        const placeholderElement = createListPlaceholderElement(
+            dragenterElement.clientHeight
+        );
         taskListParent.insertBefore(placeholderElement, biggestHoverElement);
     }
 }
@@ -270,8 +272,10 @@ function createCardPlaceholderElement() {
 function createListPlaceholderElement() {
     const placeholderElement = document.createElement("div");
     placeholderElement.classList.add("task-list-placeholder");
-    placeholderElement.classList.add("row");
+    placeholderElement.classList.add("col");
+    placeholderElement.classList.add("px-1");
     placeholderElement.setAttribute("ondrop", "drop(event)");
+    placeholderElement.style.flex = "0 0 20%";
 
     // Make it can drop later
     placeholderElement.innerHTML = `
