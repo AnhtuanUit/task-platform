@@ -86,7 +86,8 @@
                             Your boars
                             </button>
                             <div class="collapse show" id="home-collapse">
-                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" style="max-height: 490px;
+    overflow-y: auto;">
                                 {% for board in boards %}
                                 <li>
                                     <a href="{% url 'board' board.id %}" class="nav-link text-white">

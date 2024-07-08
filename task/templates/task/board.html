@@ -41,7 +41,7 @@ Board detail
         <div>
             <a href="{% url 'board_add_list_view' board.id %}">Add more list</a>
         </div>
-        <div class="task-lists g-3 mt-5" style="display:flex; overflow-x: auto; width: 100%; max-width: 100%;">
+        <div class="task-lists g-3 mt-2" style="display:flex; overflow-x: auto; width: 100%; max-width: 100%;">
                 {% for list in lists %}
                 <div class="col px-1" style="flex: 0 0 20%;">
                     <div class="card bg-dark task-list" draggable="true" id="list-id-{{ list.id }}" data-list-id="{{ list.id }}">

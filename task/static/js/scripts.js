@@ -191,9 +191,7 @@ function handleDragenterList(ev) {
         const dragenterElement = ev.target;
         const taskListParent = dragenterElement.closest(".task-lists");
         const biggestHoverElement = dragenterElement.closest(".col");
-        const placeholderElement = createListPlaceholderElement(
-            dragenterElement.clientHeight
-        );
+        const placeholderElement = createListPlaceholderElement();
         taskListParent.insertBefore(placeholderElement, biggestHoverElement);
     }
 }
