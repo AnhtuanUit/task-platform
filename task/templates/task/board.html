@@ -38,21 +38,19 @@ Board detail
     </div>
 </nav>
     <div class="container mt-3">
-        <button id="create-placeholder-btn" class="btn btn-sm btn-primary">Create placeholder by hover</button>
-        <button id="close-create-placeholder-btn" class="btn btn-sm btn-primary">Close create placeholder by hover</button>
-        <p>Click to placeholder to done process</p>
-        <button id="create-list-placeholder-btn" class="btn btn-sm btn-primary">Create list placeholder by hover</button>
-        <button id="close-create-list-placeholder-btn" class="btn btn-sm btn-primary">Close create list placeholder by hover</button>
+        <div>
+            <a href="{% url 'board_add_list_view' board.id %}">Add more list</a>
+        </div>
         <div class="task-lists row row-cols-5 g-3 mt-5">
             {% for list in lists %}
-                <div class="col" id="list-id-{{ list.id }}"  draggable="true" ondragstart="drag(event)">
-                    <div class="card bg-dark task-list">
+                <div class="col">
+                    <div class="card bg-dark task-list" draggable="true" id="list-id-{{ list.id }}" data-list-id="{{ list.id }}">
                         <div class="card-header text-white">
                             {{ list.name }} - {{ list.id }} - {{ list.position }}
                         </div>
                         <div class="card-body" style="display:flex; flex-direction: column;" data-list-id="{{ list.id }}">
                             {% for card in list.ordered_cards %}
-                            <div class="task-card card bg-info my-2" data-card-id="{{ card.id }}" data-list-id="{{ list.id }}" id="card-id-{{ card.id }}" draggable="true" ondragstart="drag(event)">
+                            <div class="task-card card bg-info my-2" data-card-id="{{ card.id }}" data-list-id="{{ list.id }}" id="card-id-{{ card.id }}" draggable="true"">
                                 <div class="card-body">
                                     <a href="{% url 'card' card.id %}">{{ card.description }}</a>
                                     <p>id={{ card.id }} - pos={{ card.position }}</p>
@@ -70,9 +68,4 @@ Board detail
             {% endfor %}
           </div>
     </div>
-    {% comment %} <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"></div> {% endcomment %}
-    {% comment %} <img id="drag1" src="https://www.w3schools.com/html/img_logo.gif" draggable="true" ondragstart="drag(event)" width="336" height="69"> {% endcomment %}
-<div>
-    <a href="{% url 'board_add_list_view' board.id %}">Add more list</a>
-</div>
 {% endblock %}

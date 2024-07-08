@@ -1,240 +1,10 @@
-function allowDrop(ev) {
-    ev.preventDefault();
-}
-
-function drag(ev) {
-    ev.dataTransfer.setData("text", ev.target.id);
-    ev.target.setAttribute("data-dragged", "true");
-
-    // Make dragged blur a bit
-    ev.target.style.opacity = "0.5";
-}
-
-function drop(ev) {
-    ev.preventDefault();
-    var data = ev.dataTransfer.getData("text");
-    draggedElement = document.getElementById(data);
-    placeholder = ev.target;
-
-    // If drag id include "list" or include "card"
-    if (data.includes("card")) {
-        handleDropCard(placeholder, draggedElement);
-    } else if (data.includes("list")) {
-        handleDropList(placeholder, draggedElement);
-    }
-}
-
-function handleDropList(placeholder, draggedElement) {
-    // TODO: detect previous card
-    let prevTaskList;
-    let resulPrevTaskList;
-
-    const taskListsElement = placeholder.closest(".task-lists");
-
-    // Detect previous card
-    taskListsElement.querySelectorAll(".task-list").forEach((taskList) => {
-        // Check if current taskList is placeholder
-        // Return privious taskList if current taskList is placeholder
-        if (taskList.classList.contains("task-list-placeholder")) {
-            // Break
-            resulPrevTaskList = prevTaskList;
-        } else {
-            prevTaskList = taskList;
-        }
-    });
-    // Detect listId, cardId
-    const prevListId = resulPrevTaskList
-        ? resulPrevTaskList.dataset.listId
-        : false;
-    const listId = draggedElement.dataset.listId;
-
-    // Call API for move card position
-    apiMoveList(listId, prevListId);
-
-    // Replace placeholder with dragged element
-    const biggestPlaceholder = placeholder.closest(".task-list-placeholder");
-    taskListsElement.replaceChild(draggedElement, biggestPlaceholder);
-    handleStopCreatePlaceHolder();
-}
-
-function handleDropCard(placeholder, draggedElement) {
-    // TODO: detect previous card
-    let prevCard;
-    let resulPrevCard;
-
-    const taskListElement = placeholder.closest(".card-body");
-
-    // Detect previous card
-    taskListElement
-        .querySelectorAll(".task-card, .placeholder-card")
-        .forEach((card) => {
-            // Check if current card is placeholder
-            // Return privious card if current card is placeholder
-            if (card.classList.contains("placeholder-card")) {
-                // Break
-                resulPrevCard = prevCard;
-            } else {
-                prevCard = card;
-            }
-        });
-    // Detect listId, cardId
-    const prevCardId = resulPrevCard ? resulPrevCard.dataset.cardId : false;
-    const preCardListId = taskListElement.dataset.listId;
-    const cardId = draggedElement.dataset.cardId;
-
-    // Call API for move card position
-    apiMoveCard(cardId, prevCardId, preCardListId);
-
-    // Replace placeholder with dragged element
-    const beReplaceNode = placeholder.closest(".task-card");
-    taskListElement.replaceChild(draggedElement, beReplaceNode);
-
-    handleStopCreatePlaceHolder();
-}
-
-// TODO: add list placeholder
-function createListPlaceholder(hoverElement, hoverLeft = true) {
-    const placeholderElement = document.createElement("div");
-    // For treat list placeholder as a task-list
-    placeholderElement.classList.add("task-list");
-    placeholderElement.classList.add("task-list-placeholder");
-    placeholderElement.classList.add("row");
-    placeholderElement.setAttribute("ondrop", "drop(event)");
-    placeholderElement.setAttribute("ondragover", "allowDrop(event)");
-
-    // TODO: make it can drop later
-    placeholderElement.innerHTML = `
-        <div class="card" style="height: 100%; background-color: #aaa;">
-    `;
-
-    // Clean these orther task list placeholder
-    document.querySelectorAll(".task-list-placeholder").forEach((item) => {
-        item.remove();
-    });
-
-    // Add to left or right
-    const taskListParent = hoverElement.closest(".task-lists");
-    const biggestHoverElement = hoverElement.closest(".col");
-    if (hoverLeft) {
-        taskListParent.insertBefore(placeholderElement, biggestHoverElement);
-    } else {
-        taskListParent.insertBefore(
-            placeholderElement,
-            biggestHoverElement.nextSibling
-        );
-    }
-
-    // TODO: this function will happend when drag drop in this place holder
-    // Currently we fake it as a click
-    placeholderElement.addEventListener("click", function () {
-        stopTaskListDetectHover();
-    });
-}
-
-// TODO: hover lef part, right part add placeholder
-// TODO: enable hover
-function taskListDetectHover() {
-    let mouseX = 0;
-
-    function handleMouseMove(event) {
-        mouseX = event.clientX;
-    }
-
-    document.addEventListener("mousemove", handleMouseMove);
-
-    // Get all taskList
-    const taskLists = document.querySelectorAll(
-        ".task-list:not(.task-list-placeholder)"
-    );
-
-    function handleListMouseMove() {
-        const rect = this.getBoundingClientRect();
-        const x = mouseX - rect.left;
-        // Mouse left or right of task list(rect)
-        const isLeft = x < rect.width / 2;
-
-        // Check if change side
-        if (this.dataset.isLeft !== isLeft) {
-            this.dataset.isLeft = String(isLeft); // Use dataset to store state
-            // Add task list placeholder by side
-            createListPlaceholder(this, isLeft);
-        }
-    }
-
-    // Handle hover for each task list
-    function bindTaskListEvents(taskList) {
-        // Handle task list hover
-        function wrapperHandleTaskListHover() {
-            // Handel mouse move for detect left or right part
-            taskList.addEventListener("mousemove", handleListMouseMove);
-        }
-
-        // Handle task list unhover
-        function wrapperHandleTaskListUnhover() {
-            // Remove event mouse move for each taskList
-            taskList.removeEventListener("mousemove", handleListMouseMove);
-        }
-
-        taskList.addEventListener("mouseover", wrapperHandleTaskListHover);
-        taskList.addEventListener("mouseout", wrapperHandleTaskListUnhover);
-
-        taskList.handleMousemoveWrapper = wrapperHandleTaskListHover;
-        taskList.handleMouseoutWrapper = wrapperHandleTaskListUnhover;
-    }
-
-    // Handle hover for each
-    taskLists.forEach(bindTaskListEvents);
-}
-
-// TODO: stop hover
-function stopTaskListDetectHover() {
-    // Remove all listening events
-    // Add all event relate to it
-    const taskLists = document.querySelectorAll(
-        ".task-list:not(.task-list-placeholder)"
-    );
-
-    // To remove event listeners later:
-    function removeListEvents(taskList) {
-        taskList.removeEventListener(
-            "mouseover",
-            taskList.handleMousemoveWrapper
-        );
-        taskList.removeEventListener(
-            "mouseout",
-            taskList.handleMouseoutWrapper
-        );
-    }
-
-    // Loop through taskLists to remove event listeners
-    taskLists.forEach(removeListEvents);
-}
-// TODO: add drag feature
-// List function for drag feature
-
 document.addEventListener("DOMContentLoaded", function () {
-    createBoardForm = document.querySelector("#create-board-form");
-    addListForm = document.querySelector("#add-list-form");
-    addCardFrom = document.querySelector("#add-card-form");
-    addMemberForm = document.querySelector("#add-member-form");
-    handleCreatePlaceholder();
-    // Handle board hover
-    // document
-    //     .querySelector("#create-placeholder-btn")
-    //     .addEventListener("click", handleCreatePlaceholder);
-
-    // document
-    //     .querySelector("#close-create-placeholder-btn")
-    //     .addEventListener("click", handleStopCreatePlaceHolder);
-
-    // // Handle list hover
-    // document
-    //     .querySelector("#create-list-placeholder-btn")
-    //     .addEventListener("click", taskListDetectHover);
-
-    // document
-    //     .querySelector("#close-create-list-placeholder-btn")
-    //     .addEventListener("click", stopTaskListDetectHover);
+    const createBoardForm = document.querySelector("#create-board-form");
+    const addListForm = document.querySelector("#add-list-form");
+    const addCardFrom = document.querySelector("#add-card-form");
+    const addMemberForm = document.querySelector("#add-member-form");
+    const taskCards = document.querySelectorAll(".task-card");
+    const taskLists = document.querySelectorAll(".task-list");
 
     if (createBoardForm) {
         // Handle create board
@@ -254,103 +24,278 @@ document.addEventListener("DOMContentLoaded", function () {
         // Handle add member to board
         addMemberForm.addEventListener("submit", addMemberToBoard);
     }
+
+    // Drag card element process
+    // 1) Make card dragable
+    taskCards.forEach((dragElement) =>
+        dragElement.addEventListener("dragstart", handleDrag)
+    );
+
+    // 2) Card dragenter create placeholder
+    // const taskLists = document.querySelectorAll(".task-list");
+    // taskCards.forEach((dragenterElement) =>
+    //     dragenterElement.addEventListener("dragenter", handleDragenter)
+    // );
+
+    // 3) Drop card to placeholder
+    // 4) Dragend
+    taskCards.forEach((dragElement) =>
+        dragElement.addEventListener("dragend", handleDragend)
+    );
+
+    // Drag list element process
+    // 1) Make list dragable
+    taskLists.forEach((dragElement) =>
+        dragElement.addEventListener("dragstart", handleDragList)
+    );
+
+    // 2) Card dragenter create placeholder
+    // taskLists.forEach((dragenterElement) =>
+    //     dragenterElement.addEventListener("dragenter", handleDragenterList)
+    // );
+
+    // 3) Drop list to placeholder
+    // 4) Dragend
+    taskLists.forEach((dragElement) =>
+        dragElement.addEventListener("dragend", handleDragendList)
+    );
 });
 
-function handleStopCreatePlaceHolder() {
-    // Add all event relate to it
-    const taskCards = document.querySelectorAll(
-        ".task-card:not(.placeholder-card)"
-    );
-
-    // To remove event listeners later:
-    function removeListEvents(card) {
-        card.removeEventListener("mouseover", card.handleMousemoveWrapper);
-        card.removeEventListener("mouseout", card.handleMouseoutWrapper);
-    }
-
-    // Loop through taskCards to remove event listeners
-    taskCards.forEach(removeListEvents);
+// Some element need this function to allow drop
+function allowDrop(ev) {
+    ev.preventDefault();
 }
 
-function handleCreatePlaceholder() {
-    // Add all event relate to it
-    const taskCards = document.querySelectorAll(
-        ".task-card:not(.placeholder-card)"
+// Drag step 1
+function handleDrag(ev) {
+    ev.stopPropagation();
+
+    // Mark element as dragged
+    ev.target.setAttribute("data-drag-card", "true");
+
+    // Make dragged blur a bit
+    ev.target.style.opacity = "0.5";
+
+    const taskCards = document.querySelectorAll(".task-card");
+    taskCards.forEach((dragenterElement) =>
+        dragenterElement.addEventListener("dragenter", handleDragenter)
     );
-
-    // Drag card create placeholder(can drop)(up)
-    function bindCardEvents(card) {
-        function handleDragenter() {
-            const draggedElement = document.querySelector(
-                ".task-card[data-dragged='true']"
-            );
-
-            if (draggedElement.dataset.cardId !== card.dataset.cardId) {
-                insertPlaceHolder(card, true);
-            }
-        }
-
-        function handleDragend() {
-            // Show element again
-            const draggedElement = document.querySelector(
-                ".task-card[data-dragged='true']"
-            );
-            draggedElement.style.display = "flex";
-            draggedElement.style.opacity = "1";
-
-            // Clear all place holder
-            const placeholderElement =
-                document.querySelector(".placeholder-card");
-            placeholderElement && placeholderElement.remove();
-
-            draggedElement.setAttribute("data-dragged", "false");
-        }
-
-        card.addEventListener("dragenter", handleDragenter);
-        card.addEventListener("dragend", handleDragend);
-    }
-
-    // // TODO: add placholder to the end if not drag to a card
-    // const taskCardDrag = document.querySelectorAll(".task-card-drag");
-
-    // function bindTaskListBodyEvents(taskListBody) {
-    //     taskListBody.addEventListener("dragenter",  );
-    //     taskListBody.addEventListener("dragend", handleDragend);
-    // }
-
-    // taskCardDrag.forEach(bindTaskListBodyEvents);
-
-    taskCards.forEach(bindCardEvents);
 }
 
-function insertPlaceHolder(referenceNode, isTop) {
-    const placeholderHtml = `
-        <div class="card" style="background-color: #292e33; height: 100px;" ondrop="drop(event)" ondragover="allowDrop(event)"></div>  
-    `;
-    const newNode = document.createElement("div");
-    newNode.classList.add("placeholder-card");
-    newNode.classList.add("task-card");
+// Drag step 2
+function handleDragenter(ev) {
+    ev.stopPropagation();
+    const dragenterElement = ev.target.closest(".task-card");
 
-    newNode.innerHTML = placeholderHtml;
-
-    newNode.addEventListener("click", handleStopCreatePlaceHolder);
-
-    // Clean all placeholder
-    document
-        .querySelectorAll(".placeholder-card")
-        .forEach((placeholderCard) => placeholderCard.remove());
-
-    if (isTop) {
-        referenceNode.parentNode.insertBefore(newNode, referenceNode);
-    } else {
-        referenceNode.parentNode.insertBefore(
-            newNode,
-            referenceNode.nextSibling
+    //  Check if dragenter element is not dragged element
+    if (dragenterElement.getAttribute("data-drag-card") !== "true") {
+        // Remove other placeholder
+        const ortherPlaceholder = document.querySelector(
+            ".task-card-placeholder"
         );
+        ortherPlaceholder && ortherPlaceholder.remove();
+
+        // Handle add placeholder before the dragenterElement
+        const parentElement = dragenterElement.closest(".card-body");
+        const placeholderElement = createCardPlaceholderElement();
+        parentElement.insertBefore(placeholderElement, dragenterElement);
     }
 }
 
-function removePlaceHolder() {}
+// Drag step 3
+function drop(ev) {
+    const placeholder = ev.target;
+    const draggedElement = document.querySelector(
+        ".task-card[data-drag-card='true']"
+    );
+    if (!draggedElement) return;
+    // By default element cannot be drop, so make it dropable
+    ev.preventDefault();
+
+    // Detect previous card
+    let prevCard, resulPrevCard;
+    const parentElement = placeholder.closest(".card-body");
+    parentElement
+        .querySelectorAll(".task-card, .task-card-placeholder")
+        .forEach((card) => {
+            // Return previous card if current card is placeholder
+            if (card.classList.contains("task-card-placeholder")) {
+                resulPrevCard = prevCard;
+            } else {
+                prevCard = card;
+            }
+        });
+
+    // Detect listId, cardId
+    const prevCardId = resulPrevCard ? resulPrevCard.dataset.cardId : false;
+    const preCardListId = parentElement.dataset.listId;
+    const cardId = draggedElement.dataset.cardId;
+
+    // Call API for move card position
+    apiMoveCard(cardId, prevCardId, preCardListId);
+
+    // Replace placeholder with dragged element
+    const needReplaceElement = placeholder.closest(".task-card-placeholder");
+    parentElement.replaceChild(draggedElement, needReplaceElement);
+}
+
+// Drag step 4
+function handleDragend(ev) {
+    // Make dragged element visible
+    const draggedElement = ev.target;
+    draggedElement.style.opacity = "1";
+
+    // Remove placeholder
+    const placeholderElement = document.querySelector(".task-card-placeholder");
+    placeholderElement && placeholderElement.remove();
+
+    // Remove dragged attr
+    draggedElement.setAttribute("data-drag-card", "false");
+
+    // Remove event dragenter
+    const taskCards = document.querySelectorAll(".task-card");
+    taskCards.forEach((dragenterElement) =>
+        dragenterElement.removeEventListener("dragenter", handleDragenter)
+    );
+}
+
+// Again for move list
+// Drag list step 1
+function handleDragList(ev) {
+    // Mark element as dragged
+    ev.target.setAttribute("data-drag-list", "true");
+
+    // Make dragged blur a bit
+    ev.target.style.opacity = "0.5";
+
+    // Add event dragenter
+    const taskLists = document.querySelectorAll(".task-list");
+    taskLists.forEach((dragenterElement) =>
+        dragenterElement.addEventListener("dragenter", handleDragenterList)
+    );
+}
+
+// Drag list step 2
+function handleDragenterList(ev) {
+    const dragenterElement = ev.target.closest(".task-list");
+
+    //  Check if dragenter element is not dragged element
+    if (dragenterElement.getAttribute("data-drag-list") !== "true") {
+        // Remove orther task list placeholder
+        const ortherPlaceholder = document.querySelector(
+            ".task-list-placeholder"
+        );
+        ortherPlaceholder && ortherPlaceholder.remove();
+
+        // Add placeholder to left
+        const dragenterElement = ev.target;
+        const taskListParent = dragenterElement.closest(".task-lists");
+        const biggestHoverElement = dragenterElement.closest(".col");
+        const placeholderElement = createListPlaceholderElement();
+        taskListParent.insertBefore(placeholderElement, biggestHoverElement);
+    }
+}
+// Drag list step 3
+function dropList(ev) {
+    // By default element cannot be drop, so make it dropable
+    ev.preventDefault();
+    const placeholder = ev.target;
+    const draggedElement = document.querySelector(
+        ".task-list[data-drag-list='true']"
+    );
+
+    // Detect previous list
+    let prevTaskList, resulPrevTaskList;
+    const parentElement = placeholder.closest(".task-lists");
+    parentElement
+        .querySelectorAll(".task-list, .task-list-placeholder")
+        .forEach((taskList) => {
+            // Return previous taskList if current taskList is placeholder
+            if (taskList.classList.contains("task-list-placeholder")) {
+                resulPrevTaskList = prevTaskList;
+            } else {
+                prevTaskList = taskList;
+            }
+        });
+
+    // Detect listId, listId
+    const prevListId = resulPrevTaskList
+        ? resulPrevTaskList.dataset.listId
+        : false;
+    const listId = draggedElement.dataset.listId;
+
+    // Call API for move card position
+    apiMoveList(listId, prevListId);
+
+    // Replace placeholder with dragged element
+    const needReplaceElement = placeholder.closest(".task-list-placeholder");
+    const colTaskList = draggedElement.closest(".col");
+    parentElement.replaceChild(colTaskList, needReplaceElement);
+}
+// Drag list step 4
+function handleDragendList() {
+    // Make dragged element visible
+    const draggedElement = document.querySelector("div[data-drag-list='true']");
+    draggedElement.style.opacity = "1";
+
+    // Remove placeholder
+    const placeholderElement = document.querySelector(".task-list-placeholder");
+    placeholderElement && placeholderElement.remove();
+
+    // Remove dragged attr
+    draggedElement.setAttribute("data-drag-card", "false");
+
+    // Remove event dragenter
+    const taskLists = document.querySelectorAll(".task-list");
+    taskLists.forEach((dragenterElement) =>
+        dragenterElement.removeEventListener("dragenter", handleDragenterList)
+    );
+}
+
+function createCardPlaceholderElement() {
+    // Make placeholder UI
+    const placeholderHtml = `
+<div class="card" style="background-color: #292e33; height: 100px;"></div>  
+`;
+    const placeholderElement = document.createElement("div");
+    placeholderElement.classList.add("task-card-placeholder");
+    placeholderElement.innerHTML = placeholderHtml;
+
+    // Make placeholder dropable
+    placeholderElement.addEventListener("dragover", allowDrop);
+    placeholderElement.addEventListener("drop", drop);
+    return placeholderElement;
+}
+
+function createListPlaceholderElement() {
+    const placeholderElement = document.createElement("div");
+    placeholderElement.classList.add("task-list-placeholder");
+    placeholderElement.classList.add("row");
+    placeholderElement.setAttribute("ondrop", "drop(event)");
+
+    // Make it can drop later
+    placeholderElement.innerHTML = `
+        <div class="card" style="height: 100%; background-color: #aaa;">
+    `;
+
+    // Make placeholder dropable
+    placeholderElement.addEventListener("dragover", allowDrop);
+    placeholderElement.addEventListener("drop", dropList);
+    return placeholderElement;
+}
+
+// Create list placeholder
+function createListPlaceholder(hoverElement, hoverLeft = true) {
+    // Clean these orther task list placeholder
+    const ortherPlaceholder = document.querySelector(".task-list-placeholder");
+    ortherPlaceholder && ortherPlaceholder.remove();
+
+    // Add to left or right
+    const taskListParent = hoverElement.closest(".task-lists");
+    const biggestHoverElement = hoverElement.closest(".col");
+    const placeholderElement = createListPlaceholderElement();
+    taskListParent.insertBefore(placeholderElement, biggestHoverElement);
+}
 
 function createBoard(e) {
     e.preventDefault();
