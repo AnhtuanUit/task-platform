@@ -141,6 +141,8 @@ function drop(ev) {
 
 // Drag step 4
 function handleDragend(ev) {
+    ev.stopPropagation();
+
     // Make dragged element visible
     const draggedElement = ev.target;
     draggedElement.style.opacity = "1";
