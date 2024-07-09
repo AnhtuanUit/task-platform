@@ -22,7 +22,7 @@ Board detail
                 <a class="nav-link active" aria-current="page" href="#Share">Share</a>
             </li>
         </ul>
-        <div style="display: flex; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 12px;">
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
                   <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
@@ -36,7 +36,7 @@ Board detail
                   <li><a class="dropdown-item" href="#">Sign out</a></li>
                 </ul>
             </div>
-            <button class="btn btn-sm btn-light">Add member</button>
+            <a id="addMemberButton" class="btn btn-sm btn-primary" href="{% url 'board_add_member' board.id %}">Add member</a>
         </div>
       </div>
     </div>
