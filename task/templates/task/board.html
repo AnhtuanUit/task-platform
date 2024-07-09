@@ -46,14 +46,14 @@ Board detail
                 <div class="col px-1" style="flex: 0 0 20%;">
                     <div class="card bg-dark task-list" draggable="true" id="list-id-{{ list.id }}" data-list-id="{{ list.id }}">
                         <div class="card-header text-white">
-                            {{ list.name }}
+                            {{ list.name }} {{ list.position }}
                         </div>
                         <div class="card-body" style="display:flex; flex-direction: column; max-height: 550px !important;
     overflow-y: auto;" data-list-id="{{ list.id }}">
                             {% for card in list.ordered_cards %}
                             <div class="task-card card bg-info my-2" data-card-id="{{ card.id }}" data-list-id="{{ list.id }}" id="card-id-{{ card.id }}" draggable="true">
                                 <div class="card-body">
-                                    <a href="{% url 'card' card.id %}">{{ card.description }}</a>
+                                    <a href="{% url 'card' card.id %}">{{ card.description }} {{ card.position }}</a>
                                 </div>
                             </div>   
                             {% endfor %}
