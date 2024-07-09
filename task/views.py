@@ -171,10 +171,8 @@ def board_add_member_view(request, board_id):
     )
 
 
-# TODO: Show boards, lists, cards
 # TODO: Show board members
 # TODO: Show card detail: …
-# TODO: Drag-and-drop functionality to move cards between lists. (Change card of list)
 
 # APIs
 
@@ -600,38 +598,3 @@ def move_card(request, card_id):
 
         # Return success JSON response
         return JsonResponse({"message": "Move list succssfully."})
-
-
-# TODO: Drag UI and integrate with API for both Card, List - DO THIS
-# TODO:1. Action dag acomponent -> can move it [what can touch can drag]
-# TODO:2. Action touch a component -> can touch [Touch what do what]
-# TODO:3. Call the API and done - Read data of current, and touched
-# TODO:4. Replace touched component with placeholder
-# TODO:5. Depending on touched: add a placeholder
-#     TODO:1. The component
-#     TODO:2. The List column but below the last component
-#     TODO:3. The first component be touch upper top
-
-
-# TODO: Touch to show a placeholder
-# Move to remove place holder
-#
-# Or remove old place holder
-# Dag to that
-# Only handle in case of dag
-
-# ==> DONE right?
-
-# API
-
-
-"""
-# TODO:Move to remove place holder
-- For simple ideas, we want, hover to half below component and half above component
-- So for each case we trigger a event for:
-    1. We create a place holder and add to the side of component (up or down)
-    2. We need remove the old placeholder if it exist
-- So that it
-
-
-"""
