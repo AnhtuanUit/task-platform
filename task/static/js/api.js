@@ -9,6 +9,11 @@ async function apiCreateBoard(name, description) {
         .then((response) => response.json())
         .then((result) => {
             console.log(result);
+            if (result.error) {
+                showAlert(result.error, "danger");
+            } else {
+                showAlert(result.message);
+            }
             return result;
         });
 }
@@ -23,6 +28,11 @@ async function apiCreateList(boardId, listName) {
         .then((response) => response.json())
         .then((result) => {
             console.log(result);
+            if (result.error) {
+                showAlert(result.error, "danger");
+            } else {
+                showAlert(result.message);
+            }
             return result;
         });
 }
@@ -37,6 +47,11 @@ async function apiCreateCard(listId, description) {
         .then((response) => response.json())
         .then((result) => {
             console.log(result);
+            if (result.error) {
+                showAlert(result.error, "danger");
+            } else {
+                showAlert(result.message);
+            }
             return result;
         });
 }
@@ -64,7 +79,15 @@ async function apiMoveCard(cardId, prevCardId, preCardListId) {
 
     return fetch(`/cards/${cardId}/move`, requestOptions)
         .then((response) => response.text())
-        .then((result) => console.log(result))
+        .then((result) => {
+            console.log(result);
+            if (result.error) {
+                showAlert(result.error, "danger");
+            } else {
+                showAlert(result.message);
+            }
+            return result;
+        })
         .catch((error) => console.error(error));
 }
 
@@ -88,7 +111,15 @@ async function apiMoveList(listId, prevListId) {
 
     return fetch(`/lists/${listId}/move`, requestOptions)
         .then((response) => response.text())
-        .then((result) => console.log(result))
+        .then((result) => {
+            console.log(result);
+            if (result.error) {
+                showAlert(result.error, "danger");
+            } else {
+                showAlert(result.message);
+            }
+            return result;
+        })
         .catch((error) => console.error(error));
 }
 
@@ -101,7 +132,12 @@ async function apiAddMemberToBoard(email) {
     })
         .then((response) => response.json())
         .then((result) => {
-            console.log(result);
+            console.log("result", result);
+            if (result.error) {
+                showAlert(result.error, "danger");
+            } else {
+                showAlert(result.message);
+            }
             return result;
         });
 }

@@ -197,7 +197,7 @@ def add_list(request, board_id):
 
         if board is None:
             # Return error: board does not exists
-            return JsonResponse({"error": "Board does not exist!"})
+            return JsonResponse({"error": "Board does not exist!"}, status=400)
 
         # Prepare list data
         data = json.loads(request.body)
@@ -238,7 +238,7 @@ def move_list(request, list_id):
     # Check if list exists
     list = List.objects.filter(id=list_id).first()
     if list is None:
-        return JsonResponse({"message": "List does not exist!"})
+        return JsonResponse({"error": "List does not exist!"}, status=400)
 
     # Check if request is PUT
     if request.method == "PUT":
@@ -272,7 +272,9 @@ def move_list(request, list_id):
                 id=prev_list_id, board_id=list.board.id
             ).first()
             if prev_list is None:
-                return JsonResponse({"message": "Previous list does not exist!"})
+                return JsonResponse(
+                    {"error": "Previous list does not exist!"}, status=400
+                )
             prev_position = prev_list.position
 
         # Find next list position
@@ -313,7 +315,7 @@ def add_card(request, list_id):
         list = List.objects.filter(id=list_id).first()
         if list is None:
             # Return error: list does not exists
-            return JsonResponse({"error": "List does not exist!"})
+            return JsonResponse({"error": "List does not exist!"}, status=400)
 
         # Prepare list data
         data = json.loads(request.body)
@@ -379,7 +381,7 @@ def board_member(request, board_id):
                 # Return successfully message
                 return JsonResponse({"message": "Member added successfully"})
             else:
-                return JsonResponse({"message": "Member already added!"}, status=400)
+                return JsonResponse({"error": "Member already added!"}, status=400)
         except Exception as error:
             print(error)
             return JsonResponse({"error": "Cannot add member to board!"}, status=400)
@@ -537,7 +539,7 @@ def move_card(request, card_id):
     # Check card exist
     card = Card.objects.filter(id=card_id).first()
     if card is None:
-        return JsonResponse({"error": "Card does not exist!"})
+        return JsonResponse({"error": "Card does not exist!"}, status=400)
 
     # Check if request method is PUT
     if request.method == "PUT":
