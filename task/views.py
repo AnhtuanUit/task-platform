@@ -29,9 +29,16 @@ def index(request):
     return render(request, "task/index.html", {"boards": request.user.boards.all()})
 
 
-def profile_view(request):
+@login_required
+def profile_view(request, profile_id):
 
-    return render(request, "task/profile.html", {"boards": request.user.boards.all()})
+    profile = User.objects.filter(id=profile_id).first()
+
+    return render(
+        request,
+        "task/profile.html",
+        {"boards": request.user.boards.all(), "profile": profile},
+    )
 
 
 # Login
@@ -354,13 +361,15 @@ def add_card(request, list_id):
 
 # - API board add member
 @csrf_exempt
+@login_required
 def board_member(request, board_id):
 
     # Check if request method is POST
     if request.method == "POST":
 
         # Check if board exist and get it
-        board = Board.objects.filter(id=board_id).first()
+        board = request.user.boards.filter(id=board_id).first()
+
         if board is None:
             return JsonResponse({"error": "Board does not exists!"}, status=400)
 
@@ -458,11 +467,20 @@ def board(request, board_id):
             )
         )
     )
+    members = board.members.all()
+    total_member = members.count()
+    for index, member in enumerate(members):
+        member.index = total_member - index
 
     return render(
         request,
         "task/board.html",
-        {"board": board, "lists": lists, "boards": request.user.boards.all()},
+        {
+            "board": board,
+            "lists": lists,
+            "boards": request.user.boards.all(),
+            "members": members,
+        },
     )
 
 

@@ -91,14 +91,23 @@ function showAlert(
     type = "success"
 ) {
     const alertPlaceholder = document.getElementById("liveAlertPlaceholder");
+    alertPlaceholder.style.display = "flex";
+    alertPlaceholder.style.flexDirection = "column";
+    alertPlaceholder.style.gap = "6px";
+
     const appendAlert = (message, type) => {
         const wrapper = document.createElement("div");
         wrapper.innerHTML = [
-            `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+            `<div class="alert alert-${type} alert-dismissible" role="alert" style="margin-bottom: 0;">`,
             `   <div>${message}</div>`,
             '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
             "</div>",
         ].join("");
+
+        // Remove after 5 seconds
+        setTimeout(function () {
+            wrapper.remove();
+        }, 3000);
 
         alertPlaceholder.append(wrapper);
     };

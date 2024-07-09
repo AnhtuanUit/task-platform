@@ -5,13 +5,11 @@ Profile
 {% endblock %}
 
 {% block main %}
-    {% if user.is_authenticated %}
-        <h3>{{ user.username }}</h3>
-        Info
-        <ul>
-            <li>
-                Email: {{ user.email }}
-            </li>
-        </ul>
-    {% endif %}
+    <h3>{{ profile.username }}</h3>
+    Info
+    <ul>
+        <li>
+            Email: {{ profile.email }}
+        </li>
+    </ul>
 {% endblock %}

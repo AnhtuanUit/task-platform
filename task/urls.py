@@ -9,7 +9,7 @@ urlpatterns = [
     path("register", views.register_view, name="register"),
     path("logout", views.logout_view, name="logout"),
     # User
-    path("profile", views.profile_view, name="profile"),
+    path("profile/<int:profile_id>", views.profile_view, name="profile"),
     # Create, get board view
     path("create_board", views.create_board_view, name="create_board"),
     path("boards/<int:board_id>", views.board, name="board"),

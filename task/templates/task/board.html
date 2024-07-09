@@ -25,18 +25,23 @@ Board detail
         <div style="display: flex; align-items: center; gap: 12px;">
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                  <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-                  <strong>mdo</strong>
+                  <img src="https://i.pravatar.cc/48?u={{ user.id }}" alt="" width="32" height="32" class="rounded-circle me-2">
+                  <strong>{{ user.username }}</strong>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                  <li><a class="dropdown-item" href="#">New project...</a></li>
-                  <li><a class="dropdown-item" href="#">Settings</a></li>
-                  <li><a class="dropdown-item" href="#">Profile</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="#">Sign out</a></li>
+                  <li><a class="dropdown-item" href="{% url 'profile' user.id %}">Profile</a></li>
                 </ul>
             </div>
             <a class="btn btn-sm btn-primary" href="{% url 'board_add_member' board.id %}">Add member</a>
+            <div style="margin-left: 4px;">
+                {% for member in members %}
+                    {% if member.id != user.id %}
+                        <a href="{% url 'profile' member.id %}">
+                            <img src="https://i.pravatar.cc/48?u={{ member.id }}" alt="" width="32" height="32" class="rounded-circle" style="margin-left: -10px; z-index: {{member.index}}; position: relative; border:3px solid white;">
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
       </div>
     </div>
