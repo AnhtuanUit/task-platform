@@ -292,6 +292,10 @@ def move_list(request, list_id):
         list.position = Decimal((prev_position + next_position) / 2)
         list.save()
 
+        # We reindex list position if these index to closest
+        if next_position - list.position < 1:
+            reindex_list_position()
+
         # Return success JSON response
         return JsonResponse({"message": "Move list succssfully."})
 
@@ -494,6 +498,30 @@ def list(request, list_id):
         return JsonResponse({"message": "Updated list successfully."})
 
 
+def reindex_card_position():
+    lists = Card.objects.values_list("list", flat=True).distinct()
+
+    for list in lists:
+        cards_in_list = Card.objects.filter(list=list).order_by("position")
+        position = 100
+        for card_instance in cards_in_list:
+            card_instance.position = Decimal(position)
+            card_instance.save()
+            position += 100
+
+
+def reindex_list_position():
+    boards = List.objects.values_list("board", flat=True).distinct()
+
+    for board in boards:
+        lists_in_board = List.objects.filter(board=board).order_by("position")
+        position = 100
+        for list_instance in lists_in_board:
+            list_instance.position = Decimal(position)
+            list_instance.save()
+            position += 100
+
+
 @csrf_exempt
 def move_card(request, card_id):
 
@@ -565,6 +593,10 @@ def move_card(request, card_id):
         if card.list.id is not list.id:
             card.list = list
         card.save()
+
+        # We reindex card position if these index to closest
+        if next_position - card.position < 1:
+            reindex_card_position()
 
         # Return success JSON response
         return JsonResponse({"message": "Move list succssfully."})
