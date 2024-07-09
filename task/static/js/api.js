@@ -91,3 +91,17 @@ async function apiMoveList(listId, prevListId) {
         .then((result) => console.log(result))
         .catch((error) => console.error(error));
 }
+
+async function apiAddMemberToBoard(email) {
+    return fetch(`/boards/${boardId}/members`, {
+        body: JSON.stringify({
+            email,
+        }),
+        method: "POST",
+    })
+        .then((response) => response.json())
+        .then((result) => {
+            console.log(result);
+            return result;
+        });
+}

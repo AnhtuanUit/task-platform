@@ -5,47 +5,33 @@ document.addEventListener("DOMContentLoaded", function () {
     const addMemberForm = document.querySelector("#add-member-form");
     const taskCards = document.querySelectorAll(".task-card");
     const taskLists = document.querySelectorAll(".task-list");
-    const addMemberButton = document.querySelector("#addMemberButton");
 
-    if (createBoardForm) {
-        // Handle create board
-        createBoardForm.addEventListener("submit", createBoard);
-    }
+    // 1) Handle create board
+    createBoardForm && createBoardForm.addEventListener("submit", createBoard);
 
-    if (addListForm) {
-        // Handle add list to board
-        addListForm.addEventListener("submit", addListToBoard);
-    }
+    // 2) Handle add list to board
+    addListForm && addListForm.addEventListener("submit", addListToBoard);
 
-    if (addCardFrom) {
-        // Handle add card to list
-        addCardFrom.addEventListener("submit", addCardToList);
-    }
-    if (addMemberForm) {
-        // Handle add member to board
-        addMemberForm.addEventListener("submit", addMemberToBoard);
-    }
+    // 3) Handle add card to list
+    addCardFrom && addCardFrom.addEventListener("submit", addCardToList);
 
-    // Drag card element process
-    // 1) Make card dragable
+    // 4) Handle add member to board
+    addMemberForm && addMemberForm.addEventListener("submit", addMemberToBoard);
+
+    // 5) - A Make card dragable
     taskCards.forEach((dragElement) =>
         dragElement.addEventListener("dragstart", handleDrag)
     );
-    // 2) Card dragenter create placeholder
-    // 3) Drop card to placeholder
-    // 4) Dragend
+    // 5) - B Dragend the card
     taskCards.forEach((dragElement) =>
         dragElement.addEventListener("dragend", handleDragend)
     );
 
-    // Drag list element process
-    // 1) Make list dragable
+    // 6) - A Make list dragable
     taskLists.forEach((dragElement) =>
         dragElement.addEventListener("dragstart", handleDragList)
     );
-    // 2) Card dragenter create placeholder
-    // 3) Drop list to placeholder
-    // 4) Dragend
+    // 6) - B Dragend the list
     taskLists.forEach((dragElement) =>
         dragElement.addEventListener("dragend", handleDragendList)
     );
@@ -90,18 +76,12 @@ function addCardToList(e) {
 function addMemberToBoard(e) {
     e.preventDefault();
 
-    email = document.querySelector("#add-member-email").value;
+    emailElement = document.querySelector("#add-member-email");
     boardId = document.querySelector("#add-member-board-id").value;
 
     // Call API add memeber
-    fetch(`/boards/${boardId}/members`, {
-        body: JSON.stringify({
-            email,
-        }),
-        method: "POST",
-    })
-        .then((response) => response.json())
-        .then((result) => {
-            console.log(result);
-        });
+    apiAddMemberToBoard(emailElement.value).then(() => {
+        // Clear form
+        emailElement.value = "";
+    });
 }

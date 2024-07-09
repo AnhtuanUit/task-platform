@@ -5,6 +5,7 @@ from django.db.models import Prefetch, Max
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 from decimal import Decimal
 
 from .models import (
@@ -22,15 +23,15 @@ from .models import (
 
 # Create your views here.
 # show boards here
+@login_required
 def index(request):
     # Show boards, lists, cards
-    boards = Board.objects.all()
-    return render(request, "task/index.html", {"boards": boards})
+    return render(request, "task/index.html", {"boards": request.user.boards.all()})
 
 
 def profile_view(request):
 
-    return render(request, "task/profile.html", {"boards": boards})
+    return render(request, "task/profile.html", {"boards": request.user.boards.all()})
 
 
 # Login
@@ -121,7 +122,7 @@ def logout_view(request):
 
 # - Create a board for a project
 def create_board_view(request):
-    return render(request, "task/new_board.html", {"boards": Board.objects.all()})
+    return render(request, "task/new_board.html", {"boards": request.user.boards.all()})
 
 
 # -  Board add list
@@ -135,7 +136,7 @@ def board_add_list_view(request, board_id):
     return render(
         request,
         "task/board_add_list.html",
-        {"board": board, "boards": Board.objects.all()},
+        {"board": board, "boards": request.user.boards.all()},
     )
 
 
@@ -151,7 +152,7 @@ def list_add_card_view(request, list_id):
     return render(
         request,
         "task/list_add_card.html",
-        {"list": list, "boards": Board.objects.all()},
+        {"list": list, "boards": request.user.boards.all()},
     )
 
 
@@ -167,7 +168,7 @@ def board_add_member_view(request, board_id):
     return render(
         request,
         "task/board_add_member.html",
-        {"board": board, "boards": Board.objects.all()},
+        {"board": board, "boards": request.user.boards.all()},
     )
 
 
@@ -186,12 +187,13 @@ def board_add_member_view(request, board_id):
 # APIs
 # - API board add list
 @csrf_exempt
+@login_required
 def add_list(request, board_id):
 
     # Check if request is POST
     if request.method == "POST":
         # Check if board exist and get it
-        board = Board.objects.filter(id=board_id).first()
+        board = request.user.boards.filter(id=board_id).first()
 
         if board is None:
             # Return error: board does not exists
@@ -208,16 +210,19 @@ def add_list(request, board_id):
 
         try:
             # Add list to board in DB
-            max_position = List.objects.filter(board=board).aggregate(Max("position"))[
-                "position__max"
-            ]
+            max_position = (
+                List.objects.filter(board=board).aggregate(Max("position"))[
+                    "position__max"
+                ]
+                or 0
+            )
 
             # Compute the next position
             next_position = max_position + 100 - (max_position + 100) % 100
 
             List.objects.create(name=name, board=board, position=next_position)
-        except:
-
+        except Exception as error:
+            print(error)
             # Return error message
             return JsonResponse({"error": "Add list error!"}, status=400)
 
@@ -323,9 +328,12 @@ def add_card(request, list_id):
 
         try:
             # Max card position of the list
-            max_position = Card.objects.filter(list=list).aggregate(Max("position"))[
-                "position__max"
-            ]
+            max_position = (
+                Card.objects.filter(list=list).aggregate(Max("position"))[
+                    "position__max"
+                ]
+                or 0
+            )
 
             # Compute the next position
             next_position = max_position + 100 - (max_position + 100) % 100
@@ -401,7 +409,9 @@ def boards(request):
 
             try:
                 # Create board in DB
-                Board.objects.create(name=name, description=description)
+                new_board = Board.objects.create(name=name, description=description)
+                new_board.members.add(request.user)
+                new_board.save()
 
             except Exception as error:
                 print(error)
@@ -421,15 +431,16 @@ def boards(request):
     boards = Board.objects.prefetch_related("members", "lists__cards")
 
     # Return list of boards
-    return JsonResponse({"boards": boards})
+    return JsonResponse({"boards": request.user.boards.all()})
 
 
 # - API get board by board id
 @csrf_exempt
+@login_required
 def board(request, board_id):
 
     board = (
-        Board.objects.filter(id=board_id)
+        request.user.boards.filter(id=board_id)
         .prefetch_related("members", "lists__cards", "lists")
         .first()
     )
@@ -449,7 +460,7 @@ def board(request, board_id):
     return render(
         request,
         "task/board.html",
-        {"board": board, "lists": lists, "boards": Board.objects.all()},
+        {"board": board, "lists": lists, "boards": request.user.boards.all()},
     )
 
 
@@ -464,7 +475,7 @@ def card(request, card_id):
         return JsonResponse({"messag": "Card does not exist!"}, status=400)
 
     return render(
-        request, "task/card.html", {"card": card, "boards": Board.objects.all()}
+        request, "task/card.html", {"card": card, "boards": request.user.boards.all()}
     )
 
 
