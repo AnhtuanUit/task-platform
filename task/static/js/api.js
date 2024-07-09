@@ -37,11 +37,11 @@ async function apiCreateList(boardId, listName) {
         });
 }
 
-async function apiCreateCard(listId, description) {
+async function apiCreateCard(listId, title) {
     return fetch(`/lists/${listId}/cards`, {
         method: "POST",
         body: JSON.stringify({
-            description,
+            title,
         }),
     })
         .then((response) => response.json())
@@ -83,8 +83,6 @@ async function apiMoveCard(cardId, prevCardId, preCardListId) {
             console.log(result);
             if (result.error) {
                 showAlert(result.error, "danger");
-            } else {
-                showAlert(result.message);
             }
             return result;
         })
@@ -115,8 +113,6 @@ async function apiMoveList(listId, prevListId) {
             console.log(result);
             if (result.error) {
                 showAlert(result.error, "danger");
-            } else {
-                showAlert(result.message);
             }
             return result;
         })
@@ -127,6 +123,25 @@ async function apiAddMemberToBoard(email) {
     return fetch(`/boards/${boardId}/members`, {
         body: JSON.stringify({
             email,
+        }),
+        method: "POST",
+    })
+        .then((response) => response.json())
+        .then((result) => {
+            console.log("result", result);
+            if (result.error) {
+                showAlert(result.error, "danger");
+            } else {
+                showAlert(result.message);
+            }
+            return result;
+        });
+}
+
+async function apiAddCardMember(cardId, memberId) {
+    return fetch(`/cards/${cardId}/members`, {
+        body: JSON.stringify({
+            memberId,
         }),
         method: "POST",
     })

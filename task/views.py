@@ -234,7 +234,7 @@ def add_list(request, board_id):
             return JsonResponse({"error": "Add list error!"}, status=400)
 
         # Return successfully message
-        return JsonResponse({"messesge": "Add list successfully."})
+        return JsonResponse({"message": "Add list successfully."})
 
 
 # APIs
@@ -314,6 +314,7 @@ def move_list(request, list_id):
 
 # - API list add card: descriptions, due dates, labels, and attachments.
 @csrf_exempt
+@login_required
 def add_card(request, list_id):
 
     # Check if request is POST
@@ -326,14 +327,12 @@ def add_card(request, list_id):
 
         # Prepare list data
         data = json.loads(request.body)
-        description = data.get("description")
+        title = data.get("title")
 
         # Validate list data
-        if not description:
+        if not title:
             # Return error: description can not be empty
-            return JsonResponse(
-                {"error", "Field description cannot be blank!"}, status=400
-            )
+            return JsonResponse({"error", "Field title cannot be blank!"}, status=400)
 
         try:
             # Max card position of the list
@@ -348,15 +347,16 @@ def add_card(request, list_id):
             next_position = max_position + 100 - (max_position + 100) % 100
 
             # Add card to list in DB
-            Card.objects.create(
-                description=description, list=list, position=next_position
-            )
+            card = Card.objects.create(title=title, list=list, position=next_position)
+            card.members.add(request.user)
+            card.save()
+
         except:
             # Return error message
             return JsonResponse({"error": "Add card error!"}, status=400)
 
         # Return successfully message
-        return JsonResponse({"messesge": "Add card successfully."})
+        return JsonResponse({"message": "Add card successfully."})
 
 
 # - API board add member
@@ -489,13 +489,31 @@ def board(request, board_id):
 def card(request, card_id):
 
     # Get card detail and return
-    card = Card.objects.filter(id=card_id).first()
+    card = Card.objects.filter(id=card_id).prefetch_related("members").first()
 
     if card is None:
-        return JsonResponse({"messag": "Card does not exist!"}, status=400)
+        return JsonResponse({"message": "Card does not exist!"}, status=400)
+
+    card_members = card.members.all()
+    card_member_ids = card_members.values_list("id", flat=True)
+    all_board_members = card.list.board.members.all()
+    all_board_member_ids = all_board_members.values_list("id", flat=True)
+    unadded_board_members = []
+    for member_id in all_board_member_ids:
+        if member_id not in card_member_ids:
+            unadded_board_members.append(all_board_members.filter(id=member_id).first())
+
+    print(unadded_board_members)
 
     return render(
-        request, "task/card.html", {"card": card, "boards": request.user.boards.all()}
+        request,
+        "task/card.html",
+        {
+            "card": card,
+            "boards": request.user.boards.all(),
+            "unadded_board_members": unadded_board_members,
+            "card_members": card_members,
+        },
     )
 
 
@@ -629,3 +647,32 @@ def move_card(request, card_id):
 
         # Return success JSON response
         return JsonResponse({"message": "Move list succssfully."})
+
+
+@csrf_exempt
+@login_required
+def card_member(request, card_id):
+    # Check if card exist or not
+    card = request.user.cards.filter(id=card_id).first()
+    if card is None:
+        return JsonResponse({"error": "Card does not exist!"}, status=400)
+
+    # Check if POST request
+    if request.method == "POST":
+
+        # Get member id
+        data = json.loads(request.body)
+        member_id = data.get("memberId")
+
+        # Check if member is a valid user
+        member = User.objects.filter(id=member_id).first()
+        if member is None:
+            # Return a error message
+            return JsonResponse({"error": "User does not exist!"}, status=400)
+
+        # Add member to card
+        card.members.add(member)
+        card.save()
+
+        # Return success message
+        return JsonResponse({"message": "Add member to card successfully!"})

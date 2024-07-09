@@ -2,15 +2,41 @@
 {% block title %}
 {% endblock %}
 {% block main %}
-<h1>Card</h1>
-<h2>{{ card.description }} <small>in list <span class="text-grey">{{ card.list.name }}</span></small></h2>
+{% comment %} {% debug %} {% endcomment %}
+<h1>{{ card.title }}</h1>
+<small style="color: grey;">in list <a href="{% url 'board' card.list.board.id %}"><span class="text-grey">{{ card.list.name }}</span></a></small>
 <div>
-    <button>Members >><span>User1</span><span>User2</span></button>
+    <div>
+        <div style="margin-left: 4px;">
+            <form id="add-card-member-form" data-card-id="{{ card.id }}" style="display:flex;">
+                <select id="add-card-member-user" class="form-select" aria-label="Default select example">
+                    <option selected>Members</option>
+                    {% for member in unadded_board_members %}
+                        {% if member.id != user.id %}
+                            <option value="{{ member.id }}">
+                                <a href="{% url 'profile' member.id %}">
+                                    <strong> {{ member.username }} </strong>
+                                </a>
+                            </option>
+                        {% endif %}
+                    {% endfor %} 
+                </select>
+                <button type="submit">Add member</button>
+            </form>
+            {% for member in card_members %}
+                {% if member.id != user.id %}
+                    <a href="{% url 'profile' member.id %}">
+                        <img src="https://i.pravatar.cc/48?u={{ member.id }}" alt="" width="32" height="32" class="rounded-circle" style="margin-left: -10px; z-index: {{member.index}}; position: relative; border:3px solid white;">
+                    </a>
+                {% endif %}
+            {% endfor %} 
+        </div>
+    </div>
     <button>Labels A +</button>
     <button>Notification</button>
     <button>Due date Aug, 2, 8:54PM</button>
 </div>
-<h4>Description</h4>
+<h4>{{ card.description }}</h4>
 <p>Some description here</p>
 <h4>Attachments</h4>
 <div>
@@ -33,7 +59,7 @@
 </div>
 
 <div>
-    <a href={% url 'index' %}>Back to index</a>
+    <a href={% url 'board' card.list.board.id %}>Back to: {{ card.list.board.name }}</a>
 </div>
 </div>
 {% endblock %}

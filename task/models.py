@@ -64,9 +64,11 @@ class Card(models.Model):
     list = models.ForeignKey("List", on_delete=models.CASCADE, related_name="cards")
     labels = models.ManyToManyField("Label", related_name="cards")
     attachments = models.ManyToManyField("Attachment", related_name="cards")
+    title = models.CharField(max_length=256)
     description = models.CharField(max_length=256)
     due_date = models.DateTimeField(null=True, blank=True)
     position = models.DecimalField(max_digits=10, decimal_places=2)
+    members = models.ManyToManyField(User, related_name="cards")
     created_at = models.DateTimeField(auto_now_add=True)
 
 

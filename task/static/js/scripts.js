@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const addMemberForm = document.querySelector("#add-member-form");
     const taskCards = document.querySelectorAll(".task-card");
     const taskLists = document.querySelectorAll(".task-list");
+    const addCardMemberForm = document.querySelector("#add-card-member-form");
 
     // 1) Handle create board
     createBoardForm && createBoardForm.addEventListener("submit", createBoard);
@@ -35,7 +36,23 @@ document.addEventListener("DOMContentLoaded", function () {
     taskLists.forEach((dragElement) =>
         dragElement.addEventListener("dragend", handleDragendList)
     );
+
+    // 7) Add card member
+    addCardMemberForm &&
+        addCardMemberForm.addEventListener("submit", handleAddCardMember);
 });
+
+function handleAddCardMember(e) {
+    e.preventDefault();
+    const memberElement = document.querySelector("#add-card-member-user");
+    const cardId = document.querySelector("#add-card-member-form").dataset
+        .cardId;
+    // Call API add card member
+    apiAddCardMember(cardId, memberElement.value).then(() => {
+        // Reload the page for update new data
+        // location.reload();
+    });
+}
 
 function createBoard(e) {
     e.preventDefault();
@@ -65,11 +82,11 @@ function addListToBoard(e) {
 function addCardToList(e) {
     e.preventDefault();
 
-    const descriptionElement = document.querySelector("#add-card-description");
+    const titleElement = document.querySelector("#add-card-title");
     const listIdElement = document.querySelector("#add-card-list-id");
 
-    apiCreateCard(listIdElement.value, descriptionElement.value).then(() => {
-        descriptionElement.value = "";
+    apiCreateCard(listIdElement.value, titleElement.value).then(() => {
+        titleElement.value = "";
     });
 }
 
@@ -86,10 +103,7 @@ function addMemberToBoard(e) {
     });
 }
 
-function showAlert(
-    message = "Nice, you triggered this alert message!",
-    type = "success"
-) {
+function showAlert(message = "", type = "success") {
     const alertPlaceholder = document.getElementById("liveAlertPlaceholder");
     alertPlaceholder.style.display = "flex";
     alertPlaceholder.style.flexDirection = "column";

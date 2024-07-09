@@ -44,4 +44,6 @@ urlpatterns = [
     path("cards/<int:card_id>/move", views.move_card, name="move_card"),
     # - API MEMBER - board add member
     path("boards/<int:board_id>/members", views.board_member, name="board_member"),
+    # - API Member - card add member
+    path("cards/<int:card_id>/members", views.card_member, name="card_member"),
 ]
