@@ -1,5 +1,5 @@
 import json
-import math
+from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.db.models import Prefetch, Max
 from django.contrib.auth import authenticate, login, logout
@@ -17,10 +17,16 @@ from .models import (
     Assignment,
     Notification,
 )
+from django import forms
+
+
+class EditProfileForm(forms.Form):
+    bio = forms.CharField(max_length=256)
+    first_name = forms.CharField(max_length=256)
+    last_name = forms.CharField(max_length=256)
+
 
 # Login, logout, edit profile
-
-
 # Create your views here.
 # show boards here
 @login_required
@@ -39,6 +45,62 @@ def profile_view(request, profile_id):
         "task/profile.html",
         {"boards": request.user.boards.all(), "profile": profile},
     )
+
+
+@login_required
+def edit_profile_view(request, profile_id):
+
+    # Check if this is profile of user
+    if request.user.id is not profile_id:
+        return HttpResponse("Page not found!")
+
+    # Check if profile exist
+    profile = User.objects.filter(id=profile_id).first()
+    if profile is None:
+        return HttpResponse("Profile does not exist!")
+
+    # Update profile
+    if request.method == "POST":
+
+        # Validate
+        form = EditProfileForm(request.POST)
+        if form.is_valid():
+            # Get clean data fields
+            bio = form.cleaned_data.get("bio")
+            first_name = form.cleaned_data.get("first_name")
+            last_name = form.cleaned_data.get("last_name")
+
+            # Update profile
+            profile.bio = bio
+            profile.first_name = first_name
+            profile.last_name = last_name
+            profile.save()
+
+            return redirect(reverse("profile", args=[profile_id]))
+
+        else:
+            return render(
+                request,
+                "task/edit_profile.html",
+                {"boards": request.user.boards.all(), "profile": profile, "form": form},
+            )
+
+    else:
+        return render(
+            request,
+            "task/edit_profile.html",
+            {
+                "boards": request.user.boards.all(),
+                "profile": profile,
+                "form": EditProfileForm(
+                    initial={
+                        "bio": profile.bio,
+                        "first_name": profile.first_name,
+                        "last_name": profile.last_name,
+                    }
+                ),
+            },
+        )
 
 
 # Login

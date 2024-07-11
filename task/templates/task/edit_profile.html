@@ -1,0 +1,24 @@
+{% extends "task/layout.html" %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block main %}
+    <h3>{{ profile.username }}</h3>
+    Info
+    <ul>
+        <li>
+            Email: {{ profile.email }}
+        </li>
+    </ul>
+    <form action="{% url 'edit_profile' profile.id %}" method="POST">
+        {% comment %} <input type="text" autofocus autocomplete name="email" placeholder="Email" value="{{ profile.email }}">
+        <input type="text" name="bio" value="{{ profile.bio }}">
+        <input type="text" name="first_name" value="{{ profile.first_name }}">
+        <input type="text" name="last_name" value="{{ profile.last_name }}"> {% endcomment %}
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Save">
+    </form>
+{% endblock %}
