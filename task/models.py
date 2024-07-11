@@ -21,6 +21,17 @@ class User(AbstractUser):
     bio = models.CharField(max_length=256)
 
 
+# 1.2 Project    * name, description, created_by, created_at, updated_at
+
+
+class Project(models.Model):
+    name = models.CharField(max_length=256)
+    description = models.CharField(max_length=256)
+    created_by = models.ManyToManyField(User, related_name="projects")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
 # 2. Board: name, description, created_at
 #  3. BoardMembership: board_id, member_id, created_at
 
