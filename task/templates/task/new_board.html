@@ -5,17 +5,20 @@ Create new board
 {% endblock %}
 
 {% block main %}
-    <div>
-        <h1>Create new board</h1>
+    <div class="mt-5">
+        <h1 class="mb-3">Create new board</h1>
         {% if message %}
             <p>{{ message }}</p>
         {% endif %}
         <form id="create-board-form" action="{% url 'boards' %}" method="post">
             {% csrf_token %}
-            <input id="create-board-name" autofocus type="text" placeholder="Board name" name="name">
-            <input id="create-board-description" type="text" placeholder="Board description" name="description">
-            <input id="create-board-submit" type="submit" value="Create board">
+            <div class="mb-3">
+                <input class="form-control w-auto" id="create-board-name" autofocus type="text" placeholder="Board name" name="name">
+            </div>
+            <div class="mb-3">
+                <input class="form-control w-auto" id="create-board-description" type="text" placeholder="Board description" name="description">
+            </div>
+            <input class="form-control w-auto btn btn-primary" id="create-board-submit" type="submit" value="Create board">
         </form>
-        <a href="{% url 'index' %}">All boards</a>
     </div>
 {% endblock %}

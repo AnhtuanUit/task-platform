@@ -21,6 +21,37 @@ Board detail
             <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="#Share">Share</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{% url 'edit_board' board.id %}">Edit</a>
+            </li>
+            <li class="nav-item">
+              <!-- Button trigger modal -->
+                <button type="button" class="nav-link active" data-bs-toggle="modal" data-bs-target="#confirmBoardDeletionModal">
+                    Delete
+                </button>
+                
+                <!-- Modal -->
+                <div class="modal fade text-white" id="confirmBoardDeletionModal" tabindex="-1" aria-labelledby="confirmBoardDeletionModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="confirmBoardDeletionModalLabel">Confirm Deletion</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to delete this item?</p>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <form action="{% url 'delete_board' board.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </li>
         </ul>
         <div style="display: flex; align-items: center; gap: 12px;">
             <div class="dropdown">
@@ -49,17 +80,56 @@ Board detail
 <div class="mt-3" style="margin-left: 12px;">
     <div class="task-lists g-3 mt-2" style="display:flex; overflow-x: auto; width: 100%; max-width: 100%;">
             {% for list in lists %}
+            <!-- Modal -->
+            <div class="modal fade text-white" id="confirmListDeletionModal" tabindex="-1" aria-labelledby="confirmListDeletionModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content" style="background: black;">
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="confirmListDeletionModalLabel">Confirm Deletion</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this item?</p>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <form action="{% url 'delete_list' list.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <!-- End Modal -->
             <div class="col px-1" style="flex: 0 0 20%;">
                 <div class="card bg-dark task-list" draggable="true" id="list-id-{{ list.id }}" data-list-id="{{ list.id }}">
                     <div class="card-header text-white">
-                        {{ list.name }} {{ list.position }}
+                        <div style="display: flex;justify-content: space-between;">
+                            <span>{{ list.name }}</span>
+                            
+                            <div class="dropdown">
+                                <button style="background: transparent; border: 0;" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="white"><path d="M20 14a2 2 0 1 1-.001-3.999A2 2 0 0 1 20 14ZM6 12a2 2 0 1 1-3.999.001A2 2 0 0 1 6 12Zm8 0a2 2 0 1 1-3.999.001A2 2 0 0 1 14 12Z"></path></svg>
+                                </button>
+                                <ul class="dropdown-menu">
+                                  <li><a class="dropdown-item" href="{% url 'edit_list' list.id %}">Edit</a></li>
+                                  <li>
+                                    <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmListDeletionModal">
+                                        Delete
+                                    </button>
+                                </li>
+                                </ul>
+                              </div>
+                        </div>
                     </div>
                     <div class="card-body" style="display:flex; flex-direction: column; max-height: 550px !important; overflow-y: auto;" data-list-id="{{ list.id }}">
                         {% for card in list.ordered_cards %}
                         <a href="{% url 'card' card.id %}">
                             <div class="task-card card bg-info my-2" data-card-id="{{ card.id }}" data-list-id="{{ list.id }}" id="card-id-{{ card.id }}" draggable="true">
-                                <div class="card-body">
-                                    {{ card.title }}
+                                <div class="card-body" style="display: flex; justify-content: space-between;">
+                                    <span>{{ card.title }}</span>
+                                    <a href="{% url 'edit_card_title' card.id %}"><i class="bi bi-pencil"></i></a>
                                 </div>
                             </div>   
                         </a>

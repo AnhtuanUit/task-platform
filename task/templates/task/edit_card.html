@@ -1,13 +1,13 @@
 {% extends "task/layout.html" %}
 
 {% block title %}
-Profile
+Edit card
 {% endblock %}
 
 {% block main %}
     <div class="mt-5">
-        <h3>{{ profile.username }}</h3>
-        <form action="{% url 'edit_profile' profile.id %}" method="POST">
+        <h3>Edit card</h3>
+        <form action="{% url 'edit_card' card.id %}" method="POST">
             {% csrf_token %}
             {{ form }}
             <input class="btn btn-primary" type="submit" value="Save">

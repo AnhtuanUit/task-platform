@@ -64,6 +64,9 @@ function createBoard(e) {
         // Clearn form
         nameElement.value = "";
         descriptionElement.value = "";
+
+        // Redirect to new board
+        window.location.reload();
     });
 }
 

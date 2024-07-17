@@ -7,26 +7,117 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal
+from .helpers import apology
 
 from .models import (
     Board,
     User,
     List,
-    Label,
     Card,
-    Assignment,
-    Notification,
 )
 from django import forms
 
 
 class EditProfileForm(forms.Form):
-    bio = forms.CharField(max_length=256)
-    first_name = forms.CharField(max_length=256)
-    last_name = forms.CharField(max_length=256)
+    template_name = "form_snippet.html"
+    bio = forms.CharField(
+        max_length=256,
+        widget=forms.TextInput(
+            attrs={"class": "form-control w-auto", "placeholder": "Bio"}
+        ),
+    )
+    first_name = forms.CharField(
+        max_length=256,
+        widget=forms.TextInput(
+            attrs={"class": "form-control w-auto", "placeholder": "First name"}
+        ),
+    )
+    last_name = forms.CharField(
+        max_length=256,
+        widget=forms.TextInput(
+            attrs={"class": "form-control w-auto", "placeholder": "Last name"}
+        ),
+    )
 
 
-# Login, logout, edit profile
+class EditBoardForm(forms.Form):
+    template_name = "form_snippet.html"
+    name = forms.CharField(
+        max_length=256,
+        widget=forms.TextInput(
+            attrs={"class": "form-control w-auto", "placeholder": "Name"}
+        ),
+    )
+    description = forms.CharField(
+        max_length=256,
+        widget=forms.TextInput(
+            attrs={"class": "form-control w-auto", "placeholder": "Description"}
+        ),
+    )
+
+
+class EditListForm(forms.Form):
+    template_name = "form_snippet.html"
+    name = forms.CharField(
+        max_length=256,
+        widget=forms.TextInput(
+            attrs={"class": "form-control w-auto", "placeholder": "Name"}
+        ),
+    )
+
+
+class EditCardTitleForm(forms.Form):
+    template_name = "form_snippet.html"
+    title = forms.CharField(
+        max_length=256,
+        widget=forms.TextInput(
+            attrs={"class": "form-control w-auto", "placeholder": "Title"}
+        ),
+    )
+
+
+class EditCardForm(forms.Form):
+    template_name = "form_snippet.html"
+    title = forms.CharField(
+        max_length=256,
+        widget=forms.TextInput(
+            attrs={"class": "form-control w-auto", "placeholder": "Title"}
+        ),
+    )
+    description = forms.CharField(
+        required=False,
+        max_length=256,
+        widget=forms.TextInput(
+            attrs={"class": "form-control w-auto", "placeholder": "Description"}
+        ),
+    )
+    due_date = forms.DateTimeField(
+        required=False,
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": "form-control w-auto",
+                "type": "datetime-local",
+                "placeholder": "Due date",
+                "min": "2018-06-07T00:00",
+                "max": "2025-06-14T00:00",
+            }
+        ),
+    )
+    member_id = forms.ChoiceField(
+        required=False,
+        choices=[],
+    )
+
+    def __init__(self, *args, **kwargs):
+        initial_choices = kwargs.pop("initial_choices", [])
+        super(EditCardForm, self).__init__(*args, **kwargs)
+        self.fields["member_id"].choices = initial_choices
+
+    # TODO: upload attachments as update card form
+    # attachments = models.ManyToManyField("Attachment", related_name="cards")
+
+
+# Login, logout profile
 # Create your views here.
 # show boards here
 @login_required
@@ -194,6 +285,76 @@ def create_board_view(request):
     return render(request, "task/new_board.html", {"boards": request.user.boards.all()})
 
 
+# - Edit board
+@login_required
+def edit_board_view(request, board_id):
+
+    # Check if board exist
+    board = request.user.boards.filter(id=board_id).first()
+    if board is None:
+        return apology(request, "Board does not exist", 400)
+
+    # Check if post method
+    if request.method == "POST":
+
+        form = EditBoardForm(request.POST)
+        # Validate form data
+        if form.is_valid():
+
+            # Get clean data
+            name = form.cleaned_data.get("name")
+            description = form.cleaned_data.get("description")
+
+            # Update board to DB
+            board.name = name
+            board.description = description
+            board.save()
+
+            return redirect(reverse("board", args=[board_id]))
+
+        # If not valid form data
+        else:
+            return render(
+                request,
+                "task/edit_board.html",
+                {"boards": request.user.boards.all(), "board": board, "form": form},
+            )
+
+    else:
+        return render(
+            request,
+            "task/edit_board.html",
+            {
+                "boards": request.user.boards.all(),
+                "board": board,
+                "form": EditBoardForm(
+                    initial={"name": board.name, "description": board.description}
+                ),
+            },
+        )
+
+
+# - Delete board
+@login_required
+def delete_board(request, board_id):
+
+    # Check if board exists
+    board = request.user.boards.filter(id=board_id).first()
+    if board is None:
+        return apology(request, "Board does not exist!", 400)
+
+    # Delete on method POST
+    if request.method == "POST":
+
+        # Delete board
+        board.delete()
+
+        # Rediect to home page if delete success
+        return redirect("index")
+
+    return apology(request, "Delete not allowed via GET", 400)
+
+
 # -  Board add list
 def board_add_list_view(request, board_id):
 
@@ -207,6 +368,86 @@ def board_add_list_view(request, board_id):
         "task/board_add_list.html",
         {"board": board, "boards": request.user.boards.all()},
     )
+
+
+# - Edit list
+@login_required
+def edit_list_view(request, list_id):
+
+    # Get list by list_id
+    list = List.objects.filter(id=list_id).first()
+    if list is None:
+        return apology(request, "List does not exist!", 400)
+
+    # Check if the user is member of the board associated with this list
+    if request.user not in list.board.members.all():
+        return apology(request, "Board does not exist!", 400)
+
+    if request.method == "POST":
+
+        # Parse post data
+        form = EditListForm(request.POST)
+
+        # Valid form
+        if form.is_valid():
+
+            name = form.cleaned_data["name"]
+
+            # Update list
+            list.name = name
+            list.save()
+
+            # Rediect to current board if delete success
+            return redirect(reverse("board", args=[list.board.id]))
+
+        else:
+            return render(
+                request,
+                "task/edit_list_view.html",
+                {
+                    "list": list,
+                    "boards": request.user.boards.all(),
+                    "form": form,
+                },
+            )
+
+    return render(
+        request,
+        "task/edit_list_view.html",
+        {
+            "list": list,
+            "boards": request.user.boards.all(),
+            "form": EditListForm(
+                initial={
+                    "name": list.name,
+                }
+            ),
+        },
+    )
+
+
+# - Delete list
+@login_required
+def delete_list(request, list_id):
+    # Get list by list_id
+    list = List.objects.filter(id=list_id).first()
+    if list is None:
+        return apology(request, "List does not exist!", 400)
+
+    # Check if the user is member of the board associated with this list
+    if request.user not in list.board.members.all():
+        return apology(request, "Board does not exist!", 400)
+
+    # Delete on method POST
+    if request.method == "POST":
+
+        # Delete board
+        list.delete()
+
+        # Rediect to current board if delete success
+        return redirect(reverse("board", args=[list.board.id]))
+
+    return apology(request, "Delete not allowed via GET", 400)
 
 
 # - List add card: descriptions, due dates, labels, and attachments.
@@ -223,6 +464,160 @@ def list_add_card_view(request, list_id):
         "task/list_add_card.html",
         {"list": list, "boards": request.user.boards.all()},
     )
+
+
+# - Edit card title
+@login_required
+def edit_card_title(request, card_id):
+
+    # Check if card eixst
+    card = Card.objects.filter(id=card_id).first()
+    if card is None:
+        return apology(request, "Card does not exist!", 400)
+
+    # Check if card belong to user
+    if request.user not in card.list.board.members.all():
+        return apology(request, "Card does not exist!", 400)
+
+    # Edit card by POST request
+    if request.method == "POST":
+
+        form = EditCardTitleForm(request.POST)
+
+        # Validate form data
+        if form.is_valid():
+            # Prepare form data
+            title = form.cleaned_data["title"]
+
+            # Update card to DB
+            card.title = title
+            card.save()
+
+            # Redirect to current board
+            return redirect(reverse("board", args=[card.list.board.id]))
+
+        else:
+            return render(
+                request,
+                "task/edit_card_title.html",
+                {"boards": request.user.boards.all(), "card": card, "form": form},
+            )
+
+    return render(
+        request,
+        "task/edit_card_title.html",
+        {
+            "boards": request.user.boards.all(),
+            "card": card,
+            "form": EditCardTitleForm(initial={"title": card.title}),
+        },
+    )
+
+
+# - Edit card
+@login_required
+def edit_card(request, card_id):
+
+    # Check if card eixst
+    card = Card.objects.filter(id=card_id).first()
+    if card is None:
+        return apology(request, "Card does not exist!", 400)
+
+    # Check if card belong to user
+    if request.user not in card.list.board.members.all():
+        return apology(request, "Card does not exist!", 400)
+
+    # Get member_choices
+    card_members = card.members.all()
+    all_board_members = card.list.board.members.all()
+    member_choices = [("", "Add member")]
+    member_choice_instances = []
+
+    for member in all_board_members:
+        if member not in card_members:
+            member_choices.append((member.id, member.email))
+            member_choice_instances.append(member)
+
+    # Edit card by POST request
+    if request.method == "POST":
+
+        form = EditCardForm(request.POST, initial_choices=member_choices)
+
+        # Validate form data
+        if form.is_valid():
+            # Prepare form data
+            title = form.cleaned_data["title"]
+            description = form.cleaned_data["description"]
+            due_date = form.cleaned_data["due_date"]
+            member_id = form.cleaned_data["member_id"]
+
+            # Get member
+            if member_id:
+                member = User.objects.filter(id=member_id).first()
+                if member not in member_choice_instances:
+                    return apology(request, "Member does not exist!", 400)
+                else:
+                    # Update card member to DB
+                    card.members.add(member)
+
+            # Update card to DB
+            card.title = title
+            card.due_date = due_date
+            card.description = description
+            card.save()
+
+            # Redirect to current board
+            return redirect(reverse("card", args=[card.id]))
+
+        else:
+            return render(
+                request,
+                "task/edit_card.html",
+                {"boards": request.user.boards.all(), "card": card, "form": form},
+            )
+
+    return render(
+        request,
+        "task/edit_card.html",
+        {
+            "boards": request.user.boards.all(),
+            "card": card,
+            "form": EditCardForm(
+                initial={
+                    "title": card.title,
+                    "description": card.description,
+                    "due_date": card.due_date,
+                },
+                initial_choices=member_choices,
+            ),
+        },
+    )
+
+
+# - Delete card
+@login_required
+def delete_card(request, card_id):
+
+    # Check if card exist
+    card = Card.objects.filter(id=card_id).first()
+    if card is None:
+        return apology(request, "Card does not exist!", 400)
+
+    # Check if user have permission
+    if not request.user in card.members.all():
+        return apology(request, "You don't have permission!", 400)
+
+    # Delete by request method POST
+    if request.method == "POST":
+
+        # Delete card from DB
+        card.delete()
+
+        # Redirect to board page
+        return redirect(reverse("board", args=[card.list.board.id]))
+
+    # DELETE operation should not use GET method
+    return apology(request, "Delete not allowed via GET", 400)
 
 
 # - Board add member
@@ -546,26 +941,18 @@ def board(request, board_id):
     )
 
 
-# - API show card detail:attach file, lables, ...
+# - Get card detail:attach file, lables, ...
 @csrf_exempt
 def card(request, card_id):
 
     # Get card detail and return
+    # TODO: Fix role: card can be seen by all people in board
     card = Card.objects.filter(id=card_id).prefetch_related("members").first()
 
     if card is None:
         return JsonResponse({"message": "Card does not exist!"}, status=400)
 
     card_members = card.members.all()
-    card_member_ids = card_members.values_list("id", flat=True)
-    all_board_members = card.list.board.members.all()
-    all_board_member_ids = all_board_members.values_list("id", flat=True)
-    unadded_board_members = []
-    for member_id in all_board_member_ids:
-        if member_id not in card_member_ids:
-            unadded_board_members.append(all_board_members.filter(id=member_id).first())
-
-    print(unadded_board_members)
 
     return render(
         request,
@@ -573,7 +960,6 @@ def card(request, card_id):
         {
             "card": card,
             "boards": request.user.boards.all(),
-            "unadded_board_members": unadded_board_members,
             "card_members": card_members,
         },
     )
