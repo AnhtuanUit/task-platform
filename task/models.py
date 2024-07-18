@@ -1,3 +1,4 @@
+import os
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
@@ -63,18 +64,17 @@ class Label(models.Model):
 
 #  4.2 Attachment:
 class Attachment(models.Model):
+    title = models.CharField(max_length=256, blank=True)
     card = models.ForeignKey(
-        "Card", on_delete=models.CASCADE, related_name="card_attachments"
+        "Card", on_delete=models.CASCADE, related_name="attachments"
     )
-    file = models.FileField(upload_to="attachments/")
+    file = models.FileField(upload_to="uploads/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
 
 #  5. Card: list_id, descriptions, due_date, labels, and attachments, created_at
 class Card(models.Model):
     list = models.ForeignKey("List", on_delete=models.CASCADE, related_name="cards")
-    labels = models.ManyToManyField("Label", related_name="cards")
-    attachments = models.ManyToManyField("Attachment", related_name="cards")
     title = models.CharField(max_length=256)
     description = models.CharField(max_length=256)
     due_date = models.DateTimeField(null=True, blank=True)

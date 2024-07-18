@@ -1,4 +1,7 @@
 import json
+import os
+import mimetypes
+from django.conf import settings
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.db.models import Prefetch, Max
@@ -14,6 +17,7 @@ from .models import (
     User,
     List,
     Card,
+    Attachment,
 )
 from django import forms
 
@@ -113,8 +117,107 @@ class EditCardForm(forms.Form):
         super(EditCardForm, self).__init__(*args, **kwargs)
         self.fields["member_id"].choices = initial_choices
 
-    # TODO: upload attachments as update card form
-    # attachments = models.ManyToManyField("Attachment", related_name="cards")
+
+class CreateAttachmentForm(forms.Form):
+    title = forms.CharField(
+        max_length=256,
+        required=False,
+        widget=forms.DateTimeInput(
+            attrs={"class": "form-control w-auto", "placeholder": "Title"}
+        ),
+    )
+    file = forms.FileField()
+
+
+@login_required
+def create_attachment_file(request, card_id):
+    # Check if card exsits
+    card = Card.objects.filter(id=card_id).first()
+    if card is None:
+        return apology(request, "Card does not exist!", 400)
+
+    # Check if user is board member
+    if request.user not in card.list.board.members.all():
+        return apology(request, "Forbidden.", 403)
+
+    form = CreateAttachmentForm(request.POST, request.FILES)
+    if request.method == "POST":
+        if form.is_valid():
+
+            # Cleaned data
+            title = form.cleaned_data["title"]
+
+            # Create attachment
+            attachment = Attachment(file=request.FILES["file"], card=card, title=title)
+            attachment.save()
+
+            # Redirect to current card
+            return redirect(reverse("card", args=[card.id]))
+
+        else:
+            return render(
+                request,
+                "task/create_attachment_file.html",
+                {
+                    "card": card,
+                    "form": form,
+                    "boards": request.user.boards.all(),
+                },
+            )
+
+    return render(
+        request,
+        "task/create_attachment_file.html",
+        {
+            "card": card,
+            "form": CreateAttachmentForm(),
+            "boards": request.user.boards.all(),
+        },
+    )
+
+
+@login_required
+def delete_attachment_file(request, attachment_id):
+    # Check if attachement exist
+    attachment = Attachment.objects.filter(id=attachment_id).first()
+    if attachment is None:
+        return apology(request, "Attachment does not exist!", 400)
+
+    # Check if user not belong to the board of attachement
+    if request.user not in attachment.card.list.board.members.all():
+        return apology(request, "Forbidden.", 403)
+
+    # Check if method is POST
+    if request.method == "POST":
+
+        # Delete attachment instance
+        attachment.delete()
+
+        # Redirect to current card
+        return redirect(reverse("card", args=[attachment.card.id]))
+
+    else:
+        # Operate DELETE cannot be perform by GET method
+        return apology(request, "Delete not allowed via GET", 400)
+
+
+@login_required
+def serve_file(request, file_path):
+    # Check if the user has permission to access the file
+    # if not request.user.has_perm("app_name.view_file"):
+    #     raise Http404("You do not have permission to access this file.")
+
+    file_path = os.path.join(settings.MEDIA_ROOT, file_path)
+    if os.path.exists(file_path):
+        with open(file_path, "rb") as fh:
+            mime_type, _ = mimetypes.guess_type(file_path)
+            response = HttpResponse(fh.read(), content_type=mime_type)
+            response["Content-Disposition"] = (
+                f"inline; filename={os.path.basename(file_path)}"
+            )
+            return response
+    else:
+        return apology(request, "Find not found.")
 
 
 # Login, logout profile
@@ -943,16 +1046,20 @@ def board(request, board_id):
 
 # - Get card detail:attach file, lables, ...
 @csrf_exempt
+@login_required
 def card(request, card_id):
 
-    # Get card detail and return
-    # TODO: Fix role: card can be seen by all people in board
-    card = Card.objects.filter(id=card_id).prefetch_related("members").first()
-
+    # Check if card exist
+    card = Card.objects.filter(id=card_id).first()
     if card is None:
-        return JsonResponse({"message": "Card does not exist!"}, status=400)
+        return apology(request, "Card does not exist!", 400)
+
+    # Check if use is board member
+    if request.user not in card.list.board.members.all():
+        return apology(request, "Forbidden.", 403)
 
     card_members = card.members.all()
+    attachments = card.attachments.all()
 
     return render(
         request,
@@ -961,6 +1068,7 @@ def card(request, card_id):
             "card": card,
             "boards": request.user.boards.all(),
             "card_members": card_members,
+            "attachments": attachments,
         },
     )
 

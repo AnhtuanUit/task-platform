@@ -46,12 +46,25 @@ urlpatterns = [
         views.delete_card,
         name="delete_card",
     ),
+    # Create attachment file
+    path(
+        "cards/<int:card_id>/create_attachment_file",
+        views.create_attachment_file,
+        name="create_attachment_file",
+    ),
+    path(
+        "delete_attachment_file/<int:attachment_id>",
+        views.delete_attachment_file,
+        name="delete_attachment_file",
+    ),
     # Create member(board) view
     path(
         "boards/<int:board_id>/add_member",
         views.board_add_member_view,
         name="board_add_member",
     ),
+    # Server media file
+    path("media/<path:file_path>/", views.serve_file, name="media"),
     # APIs
     # - API create new board
     # - API Show boards, lists, cards
