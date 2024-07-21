@@ -3,6 +3,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # Send a message
+    path("send/<str:message>", views.send_message, name="send"),
     path("", views.index, name="index"),
     # Authenticate
     path("login", views.login_view, name="login"),

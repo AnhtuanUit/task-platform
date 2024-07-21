@@ -30,7 +30,17 @@ class RealtimeConsumer(AsyncWebsocketConsumer):
 
     # Receive message from room group
     async def realtime_message(self, event):
-        message = event["message"]
+        data = event["data"]
+        action = event["action"]
+        resource = event["resource"]
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({"message": message}))
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "data": data,
+                    "action": action,
+                    "resource": resource,
+                }
+            )
+        )

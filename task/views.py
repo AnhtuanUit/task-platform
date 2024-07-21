@@ -1,4 +1,5 @@
 import json
+import decimal
 import os
 import mimetypes
 from django.conf import settings
@@ -11,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal
 from .helpers import apology
+from django.forms.models import model_to_dict
 
 from .models import (
     Board,
@@ -129,6 +131,63 @@ class CreateAttachmentForm(forms.Form):
     file = forms.FileField()
 
 
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, decimal.Decimal):
+            return float(obj)
+        return super(DecimalEncoder, self).default(obj)
+
+
+def send_realtime_data(board_id, action, resource, data):
+    data_json = json.dumps(data, cls=DecimalEncoder)
+    channel_layer = get_channel_layer()
+    print(f"realtime.{action}{resource}")
+    async_to_sync(channel_layer.group_send)(
+        f"realtime_{board_id}",
+        {
+            "type": f"realtime.message",
+            "data": data_json,
+            "action": action,
+            "resource": resource,
+        },
+    )
+
+
+def layer_send_message(message):
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f"realtime_lobby",
+        {"type": f"realtime.message", "message": message},
+    )
+
+
+# Define all message
+# 1. type: create, delete, update(move)
+# 2. resouce: “board”, “list”, “card”
+# 3. data: board, list, card
+# 1. Board
+# TODO: {"type": "realtime.edit_board", "data": { board: updated_board }}
+# TODO: {"type": "realtime.delete_board", "data": { board_id: "1" }}
+# TODO: {"type": "realtime.create_list", "data": { board_id: "1", list: created_list }}
+# TODO: {"type": "realtime.edit_list", "data": { board_id: "1", list: updated_list }}
+# TODO: {"type": "realtime.delete_list", "data": { board_id: "1", list_id: "1" }}
+# TODO: {"type": "realtime.create_card", "data": { board_id: "1", card: created_card }}
+# TODO: {"type": "realtime.edit_card", "data": { board_id: "1", card: updated_card }}
+# TODO: {"type": "realtime.delete_card", "data": { board_id: "1", card_id: "1" }}
+# TODO: {"type": "realtime.move_list", "data": { board_id: "1", list: moved_list }}
+# TODO: {"type": "realtime.move_card", "data": { board_id: "1", card: moved_card }}
+# TODO: {"type": "realtime.create_attachment", "data": { board_id: "1", card: updated_card }}
+
+
+def send_message(request, message):
+    layer_send_message(message)
+    return redirect("index")
+
+
 @login_required
 def create_attachment_file(request, card_id):
     # Check if card exsits
@@ -150,6 +209,14 @@ def create_attachment_file(request, card_id):
             # Create attachment
             attachment = Attachment(file=request.FILES["file"], card=card, title=title)
             attachment.save()
+
+            # Realtime update FE
+            send_realtime_data(
+                card.list.board.id,
+                "create",
+                "attachment_file",
+                {"attachment": attachment},
+            )
 
             # Redirect to current card
             return redirect(reverse("card", args=[card.id]))
@@ -192,6 +259,14 @@ def delete_attachment_file(request, attachment_id):
 
         # Delete attachment instance
         attachment.delete()
+
+        # Realtime update FE
+        send_realtime_data(
+            card.list.board.id,
+            "delete",
+            "attachment_file",
+            {"id": attachment.id},
+        )
 
         # Redirect to current card
         return redirect(reverse("card", args=[attachment.card.id]))
@@ -413,6 +488,9 @@ def edit_board_view(request, board_id):
             board.description = description
             board.save()
 
+            # Realtime update FE
+            send_realtime_data(board.id, "edit", "board", {"board": board})
+
             return redirect(reverse("board", args=[board_id]))
 
         # If not valid form data
@@ -451,6 +529,9 @@ def delete_board(request, board_id):
 
         # Delete board
         board.delete()
+
+        # Realtime update FE
+        send_realtime_data(board.id, "delete", "board", {"id": board.id})
 
         # Rediect to home page if delete success
         return redirect("index")
@@ -500,6 +581,9 @@ def edit_list_view(request, list_id):
             list.name = name
             list.save()
 
+            # Realtime update FE
+            send_realtime_data(list.board.id, "edit", "list", {"list": list})
+
             # Rediect to current board if delete success
             return redirect(reverse("board", args=[list.board.id]))
 
@@ -546,6 +630,9 @@ def delete_list(request, list_id):
 
         # Delete board
         list.delete()
+
+        # Realtime update FE
+        send_realtime_data(list.board.id, "delete", "list", {"id": list.id})
 
         # Rediect to current board if delete success
         return redirect(reverse("board", args=[list.board.id]))
@@ -595,6 +682,9 @@ def edit_card_title(request, card_id):
             # Update card to DB
             card.title = title
             card.save()
+
+            # Realtime update FE
+            send_realtime_data(card.list.board.id, "edit", "card_title", {"card": card})
 
             # Redirect to current board
             return redirect(reverse("board", args=[card.list.board.id]))
@@ -669,6 +759,9 @@ def edit_card(request, card_id):
             card.description = description
             card.save()
 
+            # Realtime update FE
+            send_realtime_data(card.list.board.id, "edit", "card", {"card": card})
+
             # Redirect to current board
             return redirect(reverse("card", args=[card.id]))
 
@@ -716,6 +809,9 @@ def delete_card(request, card_id):
         # Delete card from DB
         card.delete()
 
+        # Realtime update FE
+        send_realtime_data(card.list.board.id, "delete", "card", {"id": card.id})
+
         # Redirect to board page
         return redirect(reverse("board", args=[card.list.board.id]))
 
@@ -739,12 +835,7 @@ def board_add_member_view(request, board_id):
     )
 
 
-# TODO: Show board members
-# TODO: Show card detail: …
-
 # APIs
-
-
 #  Show boards, lists, cards
 #  Show board members
 #  Show card detail: …
@@ -787,7 +878,14 @@ def add_list(request, board_id):
             # Compute the next position
             next_position = max_position + 100 - (max_position + 100) % 100
 
-            List.objects.create(name=name, board=board, position=next_position)
+            list = List(name=name, board=board, position=next_position)
+            list.save()
+
+            # Realtime update FE
+            send_realtime_data(
+                list.board.id, "create", "list", {"list": model_to_dict(list)}
+            )
+
         except Exception as error:
             print(error)
             # Return error message
@@ -860,13 +958,17 @@ def move_list(request, list_id):
         else:
             next_position = next_list.position
 
-        # TODO: Update list with new position
+        # Update list with new position
         list.position = Decimal((prev_position + next_position) / 2)
         list.save()
 
         # We reindex list position if these index to closest
         if next_position - list.position < 1:
             reindex_list_position()
+            list = List.objects.filter(id=list.id).first()
+
+        # Realtime update FE
+        send_realtime_data(list.board.id, "move", "list", {"list": list})
 
         # Return success JSON response
         return JsonResponse({"message": "Move list succssfully."})
@@ -911,6 +1013,9 @@ def add_card(request, list_id):
             card.members.add(request.user)
             card.save()
 
+            # Realtime update FE
+            send_realtime_data(card.list.board.id, "create", "card", {"card": card})
+
         except:
             # Return error message
             return JsonResponse({"error": "Add card error!"}, status=400)
@@ -947,6 +1052,15 @@ def board_member(request, board_id):
             if not board.members.filter(id=member.id).exists():
                 board.members.add(member)
                 board.save()
+
+                # Realtime update FE
+                send_realtime_data(
+                    board.id,
+                    "create",
+                    "board_member",
+                    {"board_member": member},
+                )
+
                 # Return successfully message
                 return JsonResponse({"message": "Member added successfully"})
             else:

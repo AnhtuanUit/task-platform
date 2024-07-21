@@ -1,12 +1,12 @@
 {% extends "task/layout.html" %}
-{% debug %}
+{% load static %}
 {% block title %}
 Board detail
 {% endblock %}
 {% block main %}
 <nav class="navbar navbar-expand-lg bg-secondary"  data-bs-theme="dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'board' board.id %}">{{ board.name }}</a>
+      <a id="board-title" class="navbar-brand" href="{% url 'board' board.id %}" data-board-id="{{ board.id }}">{{ board.name }}</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -149,4 +149,8 @@ Board detail
             </div>
     </div>
 </div>
+
+{% endblock %}
+{% block scripts %}
+<script  src="{% static 'js/websocket.js' %}"></script>
 {% endblock %}
