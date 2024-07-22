@@ -39,6 +39,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Delete list to board
                 deleteList(listId);
             }
+
+            // Handle create card
+            if (data.action === "create" && data.resource === "card") {
+                const card = JSON.parse(data?.data).card;
+
+                // Add list to board
+                addNewCardToList(card);
+            }
         };
 
         chatSocket.onclose = function (e) {
@@ -61,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
     openBoardSocket(boardId);
 });
 
-function renderListHtml(list) {
+function renderListElement(list) {
     const newListHtml = `
         <div class="col px-1" style="flex: 0 0 20%;">
             <div class="card bg-dark task-list" draggable="true" id="list-id-${list.id}" data-list-id="${list.id}">
@@ -111,7 +119,7 @@ function addNewListToBoard(list) {
     );
 
     // Render new list element
-    const newElement = renderListHtml(list);
+    const newElement = renderListElement(list);
 
     // Insert new element
     const newListContainer = referenceElement.closest(".task-lists");
@@ -125,7 +133,7 @@ function editListToBoard(list) {
         .closest(".col");
 
     // Render new list element
-    const newElement = renderListHtml(list);
+    const newElement = renderListElement(list);
 
     // Replace new list element
     oldElement.replaceWith(newElement);
@@ -138,4 +146,42 @@ function deleteList(listId) {
         .closest(".col");
     // Remove the list element
     listElement.remove();
+}
+
+function renderNewCardHtml(card) {
+    const newCardHtml = `
+       <div class="task-card card bg-info my-2" data-card-id="${card.id}" data-list-id="${card.list}" id="card-id-${card.id}" draggable="true">
+            <a href="/cards/${card.id}"></a>
+            <div class="card-body" style="display: flex; justify-content: space-between;">
+                <a href="/cards/${card.id}">
+                    <span>${card.title}</span>
+                </a>
+                <a href="/edit_card_title/${card.id}"><i class="bi bi-pencil"></i></a>
+            </div>
+        </div>
+    `;
+
+    // Create a temporary container to hold the new HTML
+    const tempContainer = document.createElement("div");
+    tempContainer.innerHTML = newCardHtml;
+
+    // Select the new element from the temporary container
+    const newElement = tempContainer.firstElementChild;
+    return newElement;
+}
+
+function addNewCardToList(card) {
+    // Find list element by list id
+    const listElement = document.querySelector(
+        `#list-id-${card.list} > .card-body`
+    );
+
+    // New card element
+    const cardElement = renderNewCardHtml(card);
+
+    // Add to the end of list element
+    const theLastEmptyCardElement = listElement.querySelector(
+        `.task-card:last-child`
+    );
+    listElement.insertBefore(cardElement, theLastEmptyCardElement);
 }

@@ -1015,10 +1015,20 @@ def add_card(request, list_id):
             card.members.add(request.user)
             card.save()
 
-            # Realtime update FE
-            send_realtime_data(card.list.board.id, "create", "card", {"card": card})
+            card_dict = model_to_dict(card)
+            # Manually convert related fields
+            card_dict["members"] = [
+                {"id": member.id, "username": member.username}
+                for member in card.members.all()
+            ]
 
-        except:
+            # Realtime update FE
+            send_realtime_data(
+                card.list.board.id, "create", "card", {"card": card_dict}
+            )
+
+        except Exception as error:
+            print(error)
             # Return error message
             return JsonResponse({"error": "Add card error!"}, status=400)
 
