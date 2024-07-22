@@ -23,6 +23,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Add list to board
                 addNewListToBoard(list);
             }
+
+            // Handle edit list
+            // list.board.id, "edit", "list", {"list": model_to_dict(list)}
+            if (data.action === "edit" && data.resource === "list") {
+                const list = JSON.parse(data?.data).list;
+
+                // Edit list to board
+                editListToBoard(list);
+            }
         };
 
         chatSocket.onclose = function (e) {
@@ -45,14 +54,9 @@ document.addEventListener("DOMContentLoaded", function () {
     openBoardSocket(boardId);
 });
 
-function addNewListToBoard(list) {
-    // The add list button
-    const referenceElement = document.querySelector(
-        ".task-lists > div.col:last-of-type"
-    );
-    const newListContainer = referenceElement.closest(".task-lists");
+function renderListHtml(list) {
     const newListHtml = `
-            <div class="col px-1" style="flex: 0 0 20%;">
+        <div class="col px-1" style="flex: 0 0 20%;">
             <div class="card bg-dark task-list" draggable="true" id="list-id-${list.id}" data-list-id="${list.id}">
                 <div class="card-header text-white">
                     <div style="display: flex;justify-content: space-between;">
@@ -90,5 +94,32 @@ function addNewListToBoard(list) {
 
     // Select the new element from the temporary container
     const newElement = tempContainer.firstElementChild;
+    return newElement;
+}
+
+function addNewListToBoard(list) {
+    // The add list button
+    const referenceElement = document.querySelector(
+        ".task-lists > div.col:last-of-type"
+    );
+
+    // Render new list element
+    const newElement = renderListHtml(list);
+
+    // Insert new element
+    const newListContainer = referenceElement.closest(".task-lists");
     newListContainer.insertBefore(newElement, referenceElement);
+}
+
+function editListToBoard(list) {
+    // Find list element by list id
+    const oldElement = document
+        .querySelector(`#list-id-${list.id}`)
+        .closest(".col");
+
+    // Render new list element
+    const newElement = renderListHtml(list);
+
+    // Replace new list element
+    oldElement.replaceWith(newElement);
 }

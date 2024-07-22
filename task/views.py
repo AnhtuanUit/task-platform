@@ -582,7 +582,9 @@ def edit_list_view(request, list_id):
             list.save()
 
             # Realtime update FE
-            send_realtime_data(list.board.id, "edit", "list", {"list": list})
+            send_realtime_data(
+                list.board.id, "edit", "list", {"list": model_to_dict(list)}
+            )
 
             # Rediect to current board if delete success
             return redirect(reverse("board", args=[list.board.id]))
