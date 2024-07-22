@@ -25,12 +25,19 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             // Handle edit list
-            // list.board.id, "edit", "list", {"list": model_to_dict(list)}
             if (data.action === "edit" && data.resource === "list") {
                 const list = JSON.parse(data?.data).list;
 
                 // Edit list to board
                 editListToBoard(list);
+            }
+
+            // Handle delete list
+            if (data.action === "delete" && data.resource === "list") {
+                const listId = JSON.parse(data?.data)?.id;
+
+                // Delete list to board
+                deleteList(listId);
             }
         };
 
@@ -122,4 +129,13 @@ function editListToBoard(list) {
 
     // Replace new list element
     oldElement.replaceWith(newElement);
+}
+
+function deleteList(listId) {
+    // Find list element by list id
+    const listElement = document
+        .querySelector(`#list-id-${listId}`)
+        .closest(".col");
+    // Remove the list element
+    listElement.remove();
 }

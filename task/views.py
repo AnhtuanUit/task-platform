@@ -145,7 +145,7 @@ class DecimalEncoder(json.JSONEncoder):
 def send_realtime_data(board_id, action, resource, data):
     data_json = json.dumps(data, cls=DecimalEncoder)
     channel_layer = get_channel_layer()
-    print(f"realtime.{action}{resource}")
+
     async_to_sync(channel_layer.group_send)(
         f"realtime_{board_id}",
         {
@@ -634,7 +634,7 @@ def delete_list(request, list_id):
         list.delete()
 
         # Realtime update FE
-        send_realtime_data(list.board.id, "delete", "list", {"id": list.id})
+        send_realtime_data(list.board.id, "delete", "list", {"id": list_id})
 
         # Rediect to current board if delete success
         return redirect(reverse("board", args=[list.board.id]))
