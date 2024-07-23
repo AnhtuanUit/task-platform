@@ -77,7 +77,7 @@ function getListMemberHtml(members) {
 
 function getAttachmentHtml(attachment) {
     return `
-        <div class="card">
+        <div class="card" id="attachment-id-${attachment.id}">
             <div class="card-body" style="display: flex; justify-content: space-between;">
                 <div>
                     <h5>${

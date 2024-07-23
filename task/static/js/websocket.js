@@ -397,10 +397,10 @@ function addAttachment(attachment) {
     const cardAttachments = document.querySelector("#card-attachments");
 
     // Generate new attachment element
-    const getAttachmentHtml = getAttachmentHtml(attachment);
+    const attachmentHtml = getAttachmentHtml(attachment);
 
     // Add to parent element
-    cardAttachments.insertAdjacentHTML("beforeend", getAttachmentHtml);
+    cardAttachments.insertAdjacentHTML("beforeend", attachmentHtml);
 }
 
 function deleteAttachment(id) {
