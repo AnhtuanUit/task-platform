@@ -125,7 +125,7 @@ Board detail
                     </div>
                     <div class="card-body" style="display:flex; flex-direction: column; max-height: 550px !important; overflow-y: auto;" data-list-id="{{ list.id }}">
                         {% for card in list.ordered_cards %}
-                            <div class="task-card card bg-info my-2" data-card-id="{{ card.id }}" data-list-id="{{ list.id }}" id="card-id-{{ card.id }}" draggable="true">
+                            <div class="task-card card bg-info my-2" data-card-id="{{ card.id }}" data-list-id="{{ list.id }}" id="card-id-{{ card.id }}" draggable="true" data-card-position="{{ card.position }}">
                                 <div class="card-body" style="display: flex; justify-content: space-between;">
                                     <a href="{% url 'card' card.id %}">
                                         <span>{{ card.title }}</span>
@@ -134,7 +134,7 @@ Board detail
                                 </div>
                             </div>   
                         {% endfor %}
-                        <div class="task-card" style="width: 100%; min-height: 20px; flex: 1;"></div>
+                        <div class="task-card-hidden" style="width: 100%; min-height: 20px; flex: 1;"></div>
                     </div>
                     <div class="card-footer text-body-secondary">
                         <a href="{% url 'list_add_card_view' list.id %}">Add a card</a>

@@ -92,6 +92,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Move list
                 moveList(list);
             }
+
+            // Handle move card
+            if (data.action === "move" && data.resource === "card") {
+                const card = JSON.parse(data?.data).card;
+
+                // Move card
+                moveCard(card);
+            }
         };
 
         chatSocket.onclose = function (e) {
@@ -118,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
 function renderListElement(list) {
     const newListHtml = `
         <div class="col px-1" style="flex: 0 0 20%;">
-            <div class="card bg-dark task-list" draggable="true" id="list-id-${list.id}" data-list-id="${list.id}">
+            <div class="card bg-dark task-list" draggable="true" id="list-id-${list.id}" data-list-id="${list.id}" data-list-position="${list.position}">
                 <div class="card-header text-white">
                     <div style="display: flex;justify-content: space-between;">
                         <span>${list.name}</span>
@@ -139,7 +147,6 @@ function renderListElement(list) {
                     </div>
                 </div>
                 <div class="card-body" style="display:flex; flex-direction: column; max-height: 550px !important; overflow-y: auto;" data-list-id="${list.id}">
-                    
                     <div class="task-card" style="width: 100%; min-height: 20px; flex: 1;"></div>
                 </div>
                 <div class="card-footer text-body-secondary">
@@ -199,7 +206,7 @@ function deleteList(listId) {
 
 function renderNewCardElement(card) {
     const newCardHtml = `
-       <div class="task-card card bg-info my-2" data-card-id="${card.id}" data-list-id="${card.list}" id="card-id-${card.id}" draggable="true">
+       <div class="task-card card bg-info my-2" data-card-id="${card.id}" data-list-id="${card.list}" id="card-id-${card.id}" draggable="true" data-card-position="${card.position}">
             <div class="card-body" style="display: flex; justify-content: space-between;">
                 <a href="/cards/${card.id}">
                     <span>${card.title}</span>
@@ -228,9 +235,8 @@ function addNewCardToList(card) {
     const cardElement = renderNewCardElement(card);
 
     // Add to the end of list element
-    const theLastEmptyCardElement = listElement.querySelector(
-        `.task-card:last-child`
-    );
+    const theLastEmptyCardElement =
+        listElement.querySelector(`.task-card-hidden`);
     listElement.insertBefore(cardElement, theLastEmptyCardElement);
 }
 
@@ -319,9 +325,78 @@ function moveList(list) {
         referenceElement = afterEl.closest(".col");
     }
 
-    const listElement = document
-        .querySelector(`#list-id-${list.id}`)
-        .closest(".col");
+    const listElement = document.querySelector(`#list-id-${list.id}`);
 
-    referenceElement.insertAdjacentElement("beforebegin", listElement);
+    // Update list position dataset
+    listElement.dataset.listPosition = list.position;
+
+    referenceElement.insertAdjacentElement(
+        "beforebegin",
+        listElement.closest(".col")
+    );
+}
+
+function moveCard(card) {
+    // Check if card be reset, then we reload the page
+    if (Number(card.position) % 100 === 0) {
+        window.location.reload();
+    }
+
+    // Moving card element
+    const cardElement = document.querySelector(`#card-id-${card.id}`);
+
+    // Change position of card
+    cardElement.dataset.cardPosition = card.position;
+
+    // Container element
+    const containerElement = document.querySelector(`#list-id-${card.list}`);
+
+    // Get all card of board
+    const cardElements = containerElement.querySelectorAll(".task-card");
+
+    // Compute move element position
+
+    // Ex: [10, 20, 30, 40, 50, 60];
+    // Case 1: 10 20 -> refresh all page
+    // Case 2: 5 => left = null, right 10
+    // Case 3: 35 => left 30, right = 40
+    // Case 4: 65 => left = 60, right = null
+
+    // Find left and right
+    let beforeEl, afterEl;
+
+    // Find left is the last el lower than position
+    cardElements.forEach((el) => {
+        if (Number(el.dataset.cardPosition) < Number(card.position)) {
+            beforeEl = el;
+        }
+        // TODO: Break
+    });
+    // Find right is the first bigger than position
+    cardElements.forEach((el) => {
+        if (
+            !afterEl &&
+            Number(el.dataset.cardPosition) > Number(card.position)
+        ) {
+            afterEl = el;
+            // TODO: Break
+        }
+    });
+
+    // 1. Case first element
+    // 2. Case last element
+    // 3. Case middle element
+    // All case insert before
+    let referenceElement;
+
+    const hiddenCardElement =
+        containerElement.querySelector(".task-card-hidden");
+
+    if (!afterEl) {
+        referenceElement = hiddenCardElement;
+    } else {
+        referenceElement = afterEl;
+    }
+
+    referenceElement.insertAdjacentElement("beforebegin", cardElement);
 }

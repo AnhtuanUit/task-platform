@@ -13,7 +13,9 @@ function handleDrag(ev) {
     // Make dragged blur a bit
     ev.target.style.opacity = "0.5";
 
-    const taskCards = document.querySelectorAll(".task-card");
+    const taskCards = document.querySelectorAll(
+        ".task-card, .task-card-hidden"
+    );
     taskCards.forEach((dragenterElement) =>
         dragenterElement.addEventListener("dragenter", handleDragenter)
     );
@@ -22,7 +24,7 @@ function handleDrag(ev) {
 // Drag step 2
 function handleDragenter(ev) {
     ev.stopPropagation();
-    const dragenterElement = ev.target.closest(".task-card");
+    const dragenterElement = ev.target.closest(".task-card, .task-card-hidden");
 
     //  Check if dragenter element is not dragged element
     if (dragenterElement.getAttribute("data-drag-card") !== "true") {
@@ -92,7 +94,9 @@ function handleDragend(ev) {
     draggedElement.setAttribute("data-drag-card", "false");
 
     // Remove event dragenter
-    const taskCards = document.querySelectorAll(".task-card");
+    const taskCards = document.querySelectorAll(
+        ".task-card, .task-card-hidden"
+    );
     taskCards.forEach((dragenterElement) =>
         dragenterElement.removeEventListener("dragenter", handleDragenter)
     );

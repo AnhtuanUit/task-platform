@@ -1342,8 +1342,17 @@ def move_card(request, card_id):
         if next_position - card.position < 1:
             reindex_card_position()
 
+        # Manual serialize card data
+        card_dict = model_to_dict(card)
+        card_dict["members"] = [
+            {"id": mem.id, "username": mem.username} for mem in card.members.all()
+        ]
+
+        # Realtime update FE
+        send_realtime_data(list.board.id, "move", "card", {"card": card_dict})
+
         # Return success JSON response
-        return JsonResponse({"message": "Move list succssfully."})
+        return JsonResponse({"message": "Move card succssfully."})
 
 
 @csrf_exempt
