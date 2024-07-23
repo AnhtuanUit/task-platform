@@ -11,7 +11,7 @@ function htmlToElement(html) {
     return newElement;
 }
 
-function getTaskListHtml() {
+function getTaskListHtml(list) {
     return `
         <div class="col px-1" style="flex: 0 0 20%;">
             <div class="card bg-dark task-list" draggable="true" id="list-id-${list.id}" data-list-id="${list.id}" data-list-position="${list.position}">
@@ -34,7 +34,7 @@ function getTaskListHtml() {
                     </div>
                 </div>
                 <div class="card-body" style="display:flex; flex-direction: column; max-height: 550px !important; overflow-y: auto;" data-list-id="${list.id}">
-                    <div class="task-card" style="width: 100%; min-height: 20px; flex: 1;"></div>
+                    <div class="task-card-hidden" style="width: 100%; min-height: 20px; flex: 1;"></div>
                 </div>
                 <div class="card-footer text-body-secondary">
                     <a href="/lists/${list.id}/add_card">Add a card</a>
