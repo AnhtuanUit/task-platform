@@ -108,7 +108,9 @@ function handleDragList(ev) {
     ev.target.style.opacity = "0.5";
 
     // Add event dragenter
-    const taskLists = document.querySelectorAll(".task-list");
+    const taskLists = document.querySelectorAll(
+        ".task-list, #task-add-list-btn"
+    );
     taskLists.forEach((dragenterElement) =>
         dragenterElement.addEventListener("dragenter", handleDragenterList)
     );
@@ -116,7 +118,9 @@ function handleDragList(ev) {
 
 // Drag list step 2
 function handleDragenterList(ev) {
-    const dragenterElement = ev.target.closest(".task-list");
+    const dragenterElement = ev.target.closest(
+        ".task-list, #task-add-list-btn"
+    );
 
     //  Check if dragenter element is not dragged element
     if (dragenterElement.getAttribute("data-drag-list") !== "true") {

@@ -984,7 +984,7 @@ def move_list(request, list_id):
             list = List.objects.filter(id=list.id).first()
 
         # Realtime update FE
-        send_realtime_data(list.board.id, "move", "list", {"list": list})
+        send_realtime_data(list.board.id, "move", "list", {"list": model_to_dict(list)})
 
         # Return success JSON response
         return JsonResponse({"message": "Move list succssfully."})

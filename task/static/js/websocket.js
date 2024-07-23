@@ -84,6 +84,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Delete card
                 deleteCard(cardId);
             }
+
+            // Handle move list
+            if (data.action === "move" && data.resource === "list") {
+                const list = JSON.parse(data?.data)?.list;
+
+                // Move list
+                moveList(list);
+            }
         };
 
         chatSocket.onclose = function (e) {
@@ -254,4 +262,58 @@ function deleteCard(cardId) {
     if (cardElement) {
         cardElement.remove();
     }
+}
+
+function moveList(list) {
+    // Get all list of board
+    const listElements = document.querySelectorAll(".task-list");
+
+    // Compute move element position
+
+    // Ex: [10, 20, 30, 40, 50, 60];
+    // Case 1: 10 20 -> refresh all page
+    // Case 2: 5 => left = null, right 10
+    // Case 3: 35 => left 30, right = 40
+    // Case 4: 65 => left = 60, right = null
+
+    // Find left and right
+    let beforeEl, afterEl;
+
+    // Find left is the last el lower than position
+    listElements.forEach((el) => {
+        if (Number(el.dataset.listPosition) < Number(list.position)) {
+            beforeEl = el;
+        }
+        // TODO: Break
+    });
+    // Find right is the first bigger than position
+    listElements.forEach((el) => {
+        if (
+            !afterEl &&
+            Number(el.dataset.listPosition) > Number(list.position)
+        ) {
+            afterEl = el;
+            // TODO: Break
+        }
+    });
+
+    // 1. Case first element
+    // 2. Case last element
+    // 3. Case middle element
+    // All case insert before
+    let referenceElement;
+    const lastTasklist = document
+        .querySelector("#task-add-list-btn")
+        .closest(".col");
+    if (!afterEl) {
+        referenceElement = lastTasklist;
+    } else {
+        referenceElement = afterEl.closest(".col");
+    }
+
+    const listElement = document
+        .querySelector(`#list-id-${list.id}`)
+        .closest(".col");
+
+    referenceElement.insertAdjacentElement("beforebegin", listElement);
 }

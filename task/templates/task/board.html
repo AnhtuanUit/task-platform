@@ -103,7 +103,7 @@ Board detail
             </div>
             <!-- End Modal -->
             <div class="col px-1" style="flex: 0 0 20%;">
-                <div class="card bg-dark task-list" draggable="true" id="list-id-{{ list.id }}" data-list-id="{{ list.id }}">
+                <div class="card bg-dark task-list" draggable="true" id="list-id-{{ list.id }}" data-list-id="{{ list.id }}" data-list-position="{{ list.position }}">
                     <div class="card-header text-white">
                         <div style="display: flex;justify-content: space-between;">
                             <span>{{ list.name }}</span>
@@ -143,7 +143,7 @@ Board detail
             </div>
             {% endfor %}
             <div class="col px-1" style="flex: 0 0 20%;">
-                <div class="card bg-dark task-list" draggable="true" id="list-id-{{ list.id }}" data-list-id="{{ list.id }}">
+                <div class="card bg-dark" draggable="true" id="task-add-list-btn" data-list-id="{{ list.id }}">
                     <a class="btn btn-secondary" href="{% url 'board_add_list_view' board.id %}">+ Add another list</a>
                 </div>
             </div>
