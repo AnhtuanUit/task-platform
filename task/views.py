@@ -826,7 +826,7 @@ def delete_card(request, card_id):
         card.delete()
 
         # Realtime update FE
-        send_realtime_data(card.list.board.id, "delete", "card", {"id": card.id})
+        send_realtime_data(card.list.board.id, "delete", "card", {"id": card_id})
 
         # Redirect to board page
         return redirect(reverse("board", args=[card.list.board.id]))

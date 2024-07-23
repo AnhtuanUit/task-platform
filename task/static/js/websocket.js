@@ -76,6 +76,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     editCardToList(card);
                 }
             }
+
+            // Handle delete card
+            if (data.action === "delete" && data.resource === "card") {
+                const cardId = JSON.parse(data?.data)?.id;
+
+                // Delete card
+                deleteCard(cardId);
+            }
         };
 
         chatSocket.onclose = function (e) {
@@ -181,7 +189,6 @@ function deleteList(listId) {
 function renderNewCardElement(card) {
     const newCardHtml = `
        <div class="task-card card bg-info my-2" data-card-id="${card.id}" data-list-id="${card.list}" id="card-id-${card.id}" draggable="true">
-            <a href="/cards/${card.id}"></a>
             <div class="card-body" style="display: flex; justify-content: space-between;">
                 <a href="/cards/${card.id}">
                     <span>${card.title}</span>
@@ -238,4 +245,13 @@ function editCardDetail(card) {
     );
     cardDescriptionElement.textContent =
         card.description || "Write some thing ...";
+}
+
+function deleteCard(cardId) {
+    // Get card element by card id
+    const cardElement = document.querySelector(`#card-id-${cardId}`);
+    // Remove card element
+    if (cardElement) {
+        cardElement.remove();
+    }
 }
