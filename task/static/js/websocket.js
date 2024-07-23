@@ -64,6 +64,18 @@ document.addEventListener("DOMContentLoaded", function () {
                     editCardDetail(card);
                 }
             }
+
+            // Handle edit card title
+            if (data.action === "edit" && data.resource === "card_title") {
+                const card = JSON.parse(data?.data).card;
+
+                const currentPath = window.location.pathname;
+
+                if (currentPath.includes("boards")) {
+                    // Edit card list
+                    editCardToList(card);
+                }
+            }
         };
 
         chatSocket.onclose = function (e) {
