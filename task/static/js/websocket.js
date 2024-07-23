@@ -104,8 +104,25 @@ document.addEventListener("DOMContentLoaded", function () {
             // Handle add board member
             if (data.action === "create" && data.resource === "board_member") {
                 const members = JSON.parse(data?.data).members;
-
                 addBoardMember(members);
+            }
+
+            // Handle add attachment
+            if (
+                data.action === "create" &&
+                data.resource === "attachment_file"
+            ) {
+                const attachment = JSON.parse(data?.data).attachment;
+                addAttachment(attachment);
+            }
+
+            // Handle delete attachment
+            if (
+                data.action === "delete" &&
+                data.resource === "attachment_file"
+            ) {
+                const id = JSON.parse(data?.data).id;
+                deleteAttachment(id);
             }
         };
 
@@ -477,4 +494,46 @@ function addBoardMember(members) {
     }
     const membersHtml = generateMembersHtml(members);
     boardMembers.innerHTML = membersHtml;
+}
+
+function geneateAttachmentHtml(attachment) {
+    return `
+        <div class="card">
+            <div class="card-body" style="display: flex; justify-content: space-between;">
+                <div>
+                    <h5>${
+                        attachment.title ||
+                        attachment.file.replace("/media", "")
+                    }</h5>
+                    <img src="${
+                        attachment.file
+                    }" width="200" alt="Attachment image">
+                </div>
+                <form action="/delete_attachment_file/${
+                    attachment.id
+                }" method="POST">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">
+                    <input class="btn btn-sm btn-primary" type="submit" value="Delete">
+                </form>
+            </div>
+        </div>
+    `;
+}
+
+function addAttachment(attachment) {
+    // Get attachment parent element
+    const cardAttachments = document.querySelector("#card-attachments");
+    // Generate new attachment element
+    const attachmentHtml = geneateAttachmentHtml(attachment);
+    // Add to parent element
+    cardAttachments.insertAdjacentHTML("beforeend", attachmentHtml);
+}
+
+function deleteAttachment(id) {
+    // Find attachement by id
+    const attachementElement = document.querySelector(`#attachment-id-${id}`);
+    // Remove elemenet
+    if (attachementElement) {
+        attachementElement.remove();
+    }
 }

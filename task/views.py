@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from decimal import Decimal
 from .helpers import apology
 from django.forms.models import model_to_dict
+from django.db.models.fields.files import FieldFile
 
 from .models import (
     Board,
@@ -139,6 +140,8 @@ class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, decimal.Decimal):
             return float(obj)
+        if isinstance(obj, FieldFile):
+            return obj.url if obj else None
         return super(DecimalEncoder, self).default(obj)
 
 
@@ -215,7 +218,7 @@ def create_attachment_file(request, card_id):
                 card.list.board.id,
                 "create",
                 "attachment_file",
-                {"attachment": attachment},
+                {"attachment": model_to_dict(attachment)},
             )
 
             # Redirect to current card
@@ -262,10 +265,10 @@ def delete_attachment_file(request, attachment_id):
 
         # Realtime update FE
         send_realtime_data(
-            card.list.board.id,
+            attachment.card.list.board.id,
             "delete",
             "attachment_file",
-            {"id": attachment.id},
+            {"id": attachment_id},
         )
 
         # Redirect to current card
@@ -1082,16 +1085,17 @@ def board_member(request, board_id):
                 board.save()
 
                 # Model to dict
-                members_dict = [{"id": member.id, "username": member.username} for member in board.members.all()]
+                members_dict = [
+                    {"id": member.id, "username": member.username}
+                    for member in board.members.all()
+                ]
 
                 # Realtime update FE
                 send_realtime_data(
                     board.id,
                     "create",
                     "board_member",
-                    {
-                        "members": members_dict
-                    },
+                    {"members": members_dict},
                 )
 
                 # Return successfully message
