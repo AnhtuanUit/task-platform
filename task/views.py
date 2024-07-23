@@ -1081,12 +1081,17 @@ def board_member(request, board_id):
                 board.members.add(member)
                 board.save()
 
+                # Model to dict
+                members_dict = [{"id": member.id, "username": member.username} for member in board.members.all()]
+
                 # Realtime update FE
                 send_realtime_data(
                     board.id,
                     "create",
                     "board_member",
-                    {"board_member": member},
+                    {
+                        "members": members_dict
+                    },
                 )
 
                 # Return successfully message

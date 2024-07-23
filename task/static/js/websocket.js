@@ -100,6 +100,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Move card
                 moveCard(card);
             }
+
+            // Handle add board member
+            if (data.action === "create" && data.resource === "board_member") {
+                const members = JSON.parse(data?.data).members;
+
+                addBoardMember(members);
+            }
         };
 
         chatSocket.onclose = function (e) {
@@ -276,15 +283,19 @@ function formatDate(isoString) {
     return formattedDateLowerCase.replace(" at", ",");
 }
 
+function generateMember(member) {
+    return `
+        <a href="/profile/${member.id}">
+            <img src="https://i.pravatar.cc/48?u=${member.id}" alt="" width="32" height="32" class="rounded-circle" style="margin-left: -10px; position: relative; border:3px solid white;  z-index: ${member.index}">
+        </a>
+    `;
+}
+
 function generateMembersHtml(members) {
     let membersHtml = "";
     for (member of members) {
         if (member.id != userId) {
-            membersHtml += `
-                <a href="/profile/${member.id}">
-                    <img src="https://i.pravatar.cc/48?u=${member.id}" alt="" width="32" height="32" class="rounded-circle" style="margin-left: -10px; position: relative; border:3px solid white;">
-                </a>
-            `;
+            membersHtml += generateMember(member);
         }
     }
     return membersHtml;
@@ -453,4 +464,17 @@ function moveCard(card) {
     }
 
     referenceElement.insertAdjacentElement("beforebegin", cardElement);
+}
+
+function addBoardMember(members) {
+    // Get board member parent element
+    const boardMembers = document.querySelector("#board-members");
+
+    // Generate new board member element
+    const totalMember = members.length;
+    for (let i = 0; i < members.length; i++) {
+        members[i].index = totalMember - i;
+    }
+    const membersHtml = generateMembersHtml(members);
+    boardMembers.innerHTML = membersHtml;
 }

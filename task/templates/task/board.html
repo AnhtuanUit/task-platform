@@ -64,7 +64,7 @@ Board detail
                 </ul>
             </div>
             <a class="btn btn-sm btn-primary" href="{% url 'board_add_member' board.id %}">Add member</a>
-            <div style="margin-left: 4px;">
+            <div id="board-members" style="margin-left: 4px;">
                 {% for member in members %}
                     {% if member.id != user.id %}
                         <a href="{% url 'profile' member.id %}">
