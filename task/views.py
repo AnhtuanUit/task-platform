@@ -774,6 +774,8 @@ def edit_card(request, card_id):
             card_dict["members"] = [
                 {"id": mem.id, "username": mem.username} for mem in card.members.all()
             ]
+            if card_dict["due_date"]:
+                card_dict["due_date"] = card_dict["due_date"].isoformat()
 
             # Realtime update FE
             send_realtime_data(card.list.board.id, "edit", "card", {"card": card_dict})

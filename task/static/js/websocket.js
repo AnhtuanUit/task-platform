@@ -251,6 +251,45 @@ function editCardToList(card) {
     existCardElement.replaceWith(newCardElement);
 }
 
+function formatDate(isoString) {
+    const date = new Date(isoString);
+
+    const options = {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+    };
+
+    // Format the date
+    const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
+        date
+    );
+
+    // Convert AM/PM to lowercase and add periods
+    const formattedDateLowerCase = formattedDate
+        .replace(" AM", " a.m.")
+        .replace(" PM", " p.m.");
+
+    return formattedDateLowerCase.replace(" at", ",");
+}
+
+function generateMembersHtml(members) {
+    let membersHtml = "";
+    for (member of members) {
+        if (member.id != userId) {
+            membersHtml += `
+                <a href="/profile/${member.id}">
+                    <img src="https://i.pravatar.cc/48?u=${member.id}" alt="" width="32" height="32" class="rounded-circle" style="margin-left: -10px; position: relative; border:3px solid white;">
+                </a>
+            `;
+        }
+    }
+    return membersHtml;
+}
+
 function editCardDetail(card) {
     // Replace card title
     const cardTitleElement = document.querySelector("#card-title");
@@ -262,6 +301,21 @@ function editCardDetail(card) {
     );
     cardDescriptionElement.textContent =
         card.description || "Write some thing ...";
+
+    // Replace card due date
+    const cardDueDateElement = document.querySelector(
+        "#card-group-due-date > a"
+    );
+    cardDueDateElement.textContent =
+        (card.due_date && formatDate(card.due_date)) || "Chose due date ...";
+
+    // Replace card members
+    const cardMembersElement = document.querySelector(
+        "#card-group-memebers > div"
+    );
+
+    const membersHtml = generateMembersHtml(card.members);
+    cardMembersElement.innerHTML = membersHtml;
 }
 
 function deleteCard(cardId) {

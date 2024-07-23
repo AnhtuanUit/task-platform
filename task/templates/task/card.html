@@ -16,19 +16,23 @@
     </form>    
 </div>
 <small>in list <a class="btn btn-sm btn-secondary" href="{% url 'board' card.list.board.id %}"><span class="text-grey">{{ card.list.name }}</span></a></small>
-<h4>Members</h4>
+<div id="card-group-memebers">
+    <h4>Members</h4>
     <div style="margin-left: 8px;">
         {% for member in card_members %}
             {% if member.id != user.id %}
                 <a href="{% url 'profile' member.id %}">
-                    <img src="https://i.pravatar.cc/48?u={{ member.id }}" alt="" width="32" height="32" class="rounded-circle" style="margin-left: -10px; z-index: {{member.index}}; position: relative; border:3px solid white;">
+                    <img src="https://i.pravatar.cc/48?u={{ member.id }}" alt="" width="32" height="32" class="rounded-circle" style="margin-left: -10px; position: relative; border:3px solid white;">
                 </a>
             {% endif %}
         {% endfor %} 
-        <a class="btn btn-sm btn-light" href="{% url 'edit_card' card.id %}">Add</a>
-    </div>
+    <a class="btn btn-sm btn-light" href="{% url 'edit_card' card.id %}">Add</a>
+</div>
+</div>
+<div id="card-group-due-date">
     <h4>Due date</h4>
     <a class="btn btn-sm btn-light" href="{% url 'edit_card' card.id %}">{{ card.due_date|default:"Chose due date ..." }}</a>
+</div>    
 <div id="card-group-description">
     <h4>Description</h4>
     <a class="btn btn-sm btn-light" href="{% url 'edit_card' card.id %}">{{ card.description|default:"Write some thing ..." }}</a>
