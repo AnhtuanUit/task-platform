@@ -44,8 +44,25 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.action === "create" && data.resource === "card") {
                 const card = JSON.parse(data?.data).card;
 
-                // Add list to board
+                // Add list
                 addNewCardToList(card);
+            }
+
+            // Handle edit card
+            if (data.action === "edit" && data.resource === "card") {
+                const card = JSON.parse(data?.data).card;
+
+                const currentPath = window.location.pathname;
+
+                if (currentPath.includes("boards")) {
+                    // Edit card list
+                    editCardToList(card);
+                }
+
+                if (currentPath.includes("cards")) {
+                    // Edit card detail
+                    editCardDetail(card);
+                }
             }
         };
 
@@ -63,10 +80,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    const boardId = document.querySelector("#board-title").dataset.boardId;
-    console.log("Listening");
+    const boardId = document.querySelector("#board-title")?.dataset.boardId;
+    const cardBoardId = document.querySelector("#card-title")?.dataset.boardId;
+
     // Open the WebSocket connection
-    openBoardSocket(boardId);
+    openBoardSocket(boardId || cardBoardId);
 });
 
 function renderListElement(list) {
@@ -148,7 +166,7 @@ function deleteList(listId) {
     listElement.remove();
 }
 
-function renderNewCardHtml(card) {
+function renderNewCardElement(card) {
     const newCardHtml = `
        <div class="task-card card bg-info my-2" data-card-id="${card.id}" data-list-id="${card.list}" id="card-id-${card.id}" draggable="true">
             <a href="/cards/${card.id}"></a>
@@ -177,11 +195,35 @@ function addNewCardToList(card) {
     );
 
     // New card element
-    const cardElement = renderNewCardHtml(card);
+    const cardElement = renderNewCardElement(card);
 
     // Add to the end of list element
     const theLastEmptyCardElement = listElement.querySelector(
         `.task-card:last-child`
     );
     listElement.insertBefore(cardElement, theLastEmptyCardElement);
+}
+
+function editCardToList(card) {
+    // Find exist card
+    const existCardElement = document.querySelector(`#card-id-${card.id}`);
+
+    // Render new card element
+    const newCardElement = renderNewCardElement(card);
+
+    // Replace list with new card
+    existCardElement.replaceWith(newCardElement);
+}
+
+function editCardDetail(card) {
+    // Replace card title
+    const cardTitleElement = document.querySelector("#card-title");
+    cardTitleElement.textContent = card.title;
+
+    // Replace card description
+    const cardDescriptionElement = document.querySelector(
+        "#card-group-description > a"
+    );
+    cardDescriptionElement.textContent =
+        card.description || "Write some thing ...";
 }

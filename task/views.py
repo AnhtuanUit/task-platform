@@ -761,8 +761,14 @@ def edit_card(request, card_id):
             card.description = description
             card.save()
 
+            # Manual serialize the card data
+            card_dict = model_to_dict(card)
+            card_dict["members"] = [
+                {"id": mem.id, "username": mem.username} for mem in card.members.all()
+            ]
+
             # Realtime update FE
-            send_realtime_data(card.list.board.id, "edit", "card", {"card": card})
+            send_realtime_data(card.list.board.id, "edit", "card", {"card": card_dict})
 
             # Redirect to current board
             return redirect(reverse("card", args=[card.id]))
@@ -1192,6 +1198,7 @@ def card(request, card_id):
         "task/card.html",
         {
             "card": card,
+            "board": card.list.board,
             "boards": request.user.boards.all(),
             "card_members": card_members,
             "attachments": attachments,
