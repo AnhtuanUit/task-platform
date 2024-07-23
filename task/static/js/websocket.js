@@ -14,8 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
-            console.log("data", data);
-
+            console.log(data);
             // Handle create list
             if (data.action === "create" && data.resource === "list") {
                 const list = JSON.parse(data?.data).list;
@@ -124,6 +123,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 const id = JSON.parse(data?.data).id;
                 deleteAttachment(id);
             }
+
+            // Handle edit board
+            if (data.action === "edit" && data.resource === "board") {
+                const board = JSON.parse(data?.data).board;
+                editBoard(board);
+            }
         };
 
         chatSocket.onclose = function (e) {
@@ -147,51 +152,6 @@ document.addEventListener("DOMContentLoaded", function () {
     openBoardSocket(boardId || cardBoardId);
 });
 
-function renderListElement(list) {
-    const newListHtml = `
-        <div class="col px-1" style="flex: 0 0 20%;">
-            <div class="card bg-dark task-list" draggable="true" id="list-id-${list.id}" data-list-id="${list.id}" data-list-position="${list.position}">
-                <div class="card-header text-white">
-                    <div style="display: flex;justify-content: space-between;">
-                        <span>${list.name}</span>
-                        
-                        <div class="dropdown">
-                            <button style="background: transparent; border: 0;" data-bs-toggle="dropdown" aria-expanded="false">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="white"><path d="M20 14a2 2 0 1 1-.001-3.999A2 2 0 0 1 20 14ZM6 12a2 2 0 1 1-3.999.001A2 2 0 0 1 6 12Zm8 0a2 2 0 1 1-3.999.001A2 2 0 0 1 14 12Z"></path></svg>
-                            </button>
-                            <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/edit_list/${list.id}">Edit</a></li>
-                            <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmListDeletionModal">
-                                    Delete
-                                </button>
-                            </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body" style="display:flex; flex-direction: column; max-height: 550px !important; overflow-y: auto;" data-list-id="${list.id}">
-                    <div class="task-card" style="width: 100%; min-height: 20px; flex: 1;"></div>
-                </div>
-                <div class="card-footer text-body-secondary">
-                    <a href="/lists/${list.id}/add_card">Add a card</a>
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Create a temporary container to hold the new HTML
-    const tempContainer = document.createElement("div");
-    tempContainer.innerHTML = newListHtml;
-
-    // Select the new element from the temporary container
-    const newElement = tempContainer.firstElementChild;
-
-    // TODO: add dragenter feature for it
-    // TODO: add csrfmiddlewaretoken to form
-    return newElement;
-}
-
 function addNewListToBoard(list) {
     // The add list button
     const referenceElement = document.querySelector(
@@ -199,11 +159,11 @@ function addNewListToBoard(list) {
     );
 
     // Render new list element
-    const newElement = renderListElement(list);
+    const newTaskListElement = renderTaskListElement(list);
 
     // Insert new element
     const newListContainer = referenceElement.closest(".task-lists");
-    newListContainer.insertBefore(newElement, referenceElement);
+    newListContainer.insertBefore(newTaskListElement, referenceElement);
 }
 
 function editListToBoard(list) {
@@ -213,10 +173,10 @@ function editListToBoard(list) {
         .closest(".col");
 
     // Render new list element
-    const newElement = renderListElement(list);
+    const updatedTaskListElement = renderTaskListElement(list);
 
     // Replace new list element
-    oldElement.replaceWith(newElement);
+    oldElement.replaceWith(updatedTaskListElement);
 }
 
 function deleteList(listId) {
@@ -224,29 +184,9 @@ function deleteList(listId) {
     const listElement = document
         .querySelector(`#list-id-${listId}`)
         .closest(".col");
+
     // Remove the list element
-    listElement.remove();
-}
-
-function renderNewCardElement(card) {
-    const newCardHtml = `
-       <div class="task-card card bg-info my-2" data-card-id="${card.id}" data-list-id="${card.list}" id="card-id-${card.id}" draggable="true" data-card-position="${card.position}">
-            <div class="card-body" style="display: flex; justify-content: space-between;">
-                <a href="/cards/${card.id}">
-                    <span>${card.title}</span>
-                </a>
-                <a href="/edit_card_title/${card.id}"><i class="bi bi-pencil"></i></a>
-            </div>
-        </div>
-    `;
-
-    // Create a temporary container to hold the new HTML
-    const tempContainer = document.createElement("div");
-    tempContainer.innerHTML = newCardHtml;
-
-    // Select the new element from the temporary container
-    const newElement = tempContainer.firstElementChild;
-    return newElement;
+    listElement && listElement.remove();
 }
 
 function addNewCardToList(card) {
@@ -256,12 +196,12 @@ function addNewCardToList(card) {
     );
 
     // New card element
-    const cardElement = renderNewCardElement(card);
+    const newCardElement = renderCardElement(card);
 
     // Add to the end of list element
     const theLastEmptyCardElement =
         listElement.querySelector(`.task-card-hidden`);
-    listElement.insertBefore(cardElement, theLastEmptyCardElement);
+    listElement.insertBefore(newCardElement, theLastEmptyCardElement);
 }
 
 function editCardToList(card) {
@@ -269,53 +209,10 @@ function editCardToList(card) {
     const existCardElement = document.querySelector(`#card-id-${card.id}`);
 
     // Render new card element
-    const newCardElement = renderNewCardElement(card);
+    const updatedCardElement = renderCardElement(card);
 
-    // Replace list with new card
-    existCardElement.replaceWith(newCardElement);
-}
-
-function formatDate(isoString) {
-    const date = new Date(isoString);
-
-    const options = {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-    };
-
-    // Format the date
-    const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
-        date
-    );
-
-    // Convert AM/PM to lowercase and add periods
-    const formattedDateLowerCase = formattedDate
-        .replace(" AM", " a.m.")
-        .replace(" PM", " p.m.");
-
-    return formattedDateLowerCase.replace(" at", ",");
-}
-
-function generateMember(member) {
-    return `
-        <a href="/profile/${member.id}">
-            <img src="https://i.pravatar.cc/48?u=${member.id}" alt="" width="32" height="32" class="rounded-circle" style="margin-left: -10px; position: relative; border:3px solid white;  z-index: ${member.index}">
-        </a>
-    `;
-}
-
-function generateMembersHtml(members) {
-    let membersHtml = "";
-    for (member of members) {
-        if (member.id != userId) {
-            membersHtml += generateMember(member);
-        }
-    }
-    return membersHtml;
+    // Replace exist card with updated card
+    existCardElement.replaceWith(updatedCardElement);
 }
 
 function editCardDetail(card) {
@@ -341,18 +238,16 @@ function editCardDetail(card) {
     const cardMembersElement = document.querySelector(
         "#card-group-memebers > div"
     );
-
-    const membersHtml = generateMembersHtml(card.members);
-    cardMembersElement.innerHTML = membersHtml;
+    const listMemberHtml = getListMemberHtml(card.members);
+    cardMembersElement.innerHTML = listMemberHtml;
 }
 
 function deleteCard(cardId) {
     // Get card element by card id
     const cardElement = document.querySelector(`#card-id-${cardId}`);
+
     // Remove card element
-    if (cardElement) {
-        cardElement.remove();
-    }
+    cardElement && cardElement.remove();
 }
 
 function moveList(list) {
@@ -380,7 +275,7 @@ function moveList(list) {
         if (Number(el.dataset.listPosition) < Number(list.position)) {
             beforeEl = el;
         }
-        // TODO: Break
+        // TODO: Break for optimize peformance
     });
     // Find right is the first bigger than position
     listElements.forEach((el) => {
@@ -389,14 +284,13 @@ function moveList(list) {
             Number(el.dataset.listPosition) > Number(list.position)
         ) {
             afterEl = el;
-            // TODO: Break
+            // TODO: Break for optimize peformance
         }
     });
 
     // 1. Case first element
     // 2. Case last element
     // 3. Case middle element
-    // All case insert before
     let referenceElement;
     const lastTasklist = document
         .querySelector("#task-add-list-btn")
@@ -452,7 +346,7 @@ function moveCard(card) {
         if (Number(el.dataset.cardPosition) < Number(card.position)) {
             beforeEl = el;
         }
-        // TODO: Break
+        // TODO: Break for optimize peformance
     });
     // Find right is the first bigger than position
     cardElements.forEach((el) => {
@@ -461,14 +355,13 @@ function moveCard(card) {
             Number(el.dataset.cardPosition) > Number(card.position)
         ) {
             afterEl = el;
-            // TODO: Break
+            // TODO: Break for optimize peformance
         }
     });
 
     // 1. Case first element
     // 2. Case last element
     // 3. Case middle element
-    // All case insert before
     let referenceElement;
 
     const hiddenCardElement =
@@ -480,6 +373,7 @@ function moveCard(card) {
         referenceElement = afterEl;
     }
 
+    // Insert card element to new position
     referenceElement.insertAdjacentElement("beforebegin", cardElement);
 }
 
@@ -492,48 +386,33 @@ function addBoardMember(members) {
     for (let i = 0; i < members.length; i++) {
         members[i].index = totalMember - i;
     }
-    const membersHtml = generateMembersHtml(members);
-    boardMembers.innerHTML = membersHtml;
-}
+    const membersHtml = getListMemberHtml(members);
 
-function geneateAttachmentHtml(attachment) {
-    return `
-        <div class="card">
-            <div class="card-body" style="display: flex; justify-content: space-between;">
-                <div>
-                    <h5>${
-                        attachment.title ||
-                        attachment.file.replace("/media", "")
-                    }</h5>
-                    <img src="${
-                        attachment.file
-                    }" width="200" alt="Attachment image">
-                </div>
-                <form action="/delete_attachment_file/${
-                    attachment.id
-                }" method="POST">
-                    <input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">
-                    <input class="btn btn-sm btn-primary" type="submit" value="Delete">
-                </form>
-            </div>
-        </div>
-    `;
+    // Update board members
+    boardMembers.innerHTML = membersHtml;
 }
 
 function addAttachment(attachment) {
     // Get attachment parent element
     const cardAttachments = document.querySelector("#card-attachments");
+
     // Generate new attachment element
-    const attachmentHtml = geneateAttachmentHtml(attachment);
+    const getAttachmentHtml = getAttachmentHtml(attachment);
+
     // Add to parent element
-    cardAttachments.insertAdjacentHTML("beforeend", attachmentHtml);
+    cardAttachments.insertAdjacentHTML("beforeend", getAttachmentHtml);
 }
 
 function deleteAttachment(id) {
     // Find attachement by id
     const attachementElement = document.querySelector(`#attachment-id-${id}`);
+
     // Remove elemenet
-    if (attachementElement) {
-        attachementElement.remove();
-    }
+    attachementElement && attachementElement.remove();
+}
+
+function editBoard(board) {
+    // Replace board name
+    const boardTitleElement = document.querySelector("#board-title");
+    boardTitleElement.textContent = board.name;
 }

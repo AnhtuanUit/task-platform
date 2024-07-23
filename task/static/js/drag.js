@@ -2,7 +2,7 @@
 function allowDrop(ev) {
     ev.preventDefault();
 }
-
+// Move card element
 // Drag step 1
 function handleDrag(ev) {
     ev.stopPropagation();
@@ -102,7 +102,7 @@ function handleDragend(ev) {
     );
 }
 
-// Again for move list
+// Move list element
 // Drag list step 1
 function handleDragList(ev) {
     // Mark element as dragged
@@ -138,7 +138,7 @@ function handleDragenterList(ev) {
         const dragenterElement = ev.target;
         const taskListParent = dragenterElement.closest(".task-lists");
         const biggestHoverElement = dragenterElement.closest(".col");
-        const placeholderElement = createListPlaceholderElement();
+        const placeholderElement = renderTaskListPlaceholderElement();
         taskListParent.insertBefore(placeholderElement, biggestHoverElement);
     }
 }
@@ -179,6 +179,7 @@ function dropList(ev) {
     const colTaskList = draggedElement.closest(".col");
     parentElement.replaceChild(colTaskList, needReplaceElement);
 }
+
 // Drag list step 4
 function handleDragendList() {
     // Make dragged element visible
@@ -199,49 +200,29 @@ function handleDragendList() {
     );
 }
 
+function renderTaskListPlaceholderElement() {
+    // Some element need this function to allow drop
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+
+    const taskListPlaceholderElement = htmlToElement(
+        getTaskListPlaceholderHtml()
+    );
+
+    // Make placeholder dropable
+    taskListPlaceholderElement.addEventListener("dragover", allowDrop);
+    taskListPlaceholderElement.addEventListener("drop", dropList);
+
+    return taskListPlaceholderElement;
+}
+
 function createCardPlaceholderElement() {
     // Make placeholder UI
-    const placeholderHtml = `
-<div class="card" style="background-color: #292e33; height: 100px;"></div>  
-`;
-    const placeholderElement = document.createElement("div");
-    placeholderElement.classList.add("task-card-placeholder");
-    placeholderElement.innerHTML = placeholderHtml;
+    const cardPlaceholderElement = htmlToElement(getCardPlaceholderHtml());
 
     // Make placeholder dropable
-    placeholderElement.addEventListener("dragover", allowDrop);
-    placeholderElement.addEventListener("drop", drop);
-    return placeholderElement;
-}
-
-function createListPlaceholderElement() {
-    const placeholderElement = document.createElement("div");
-    placeholderElement.classList.add("task-list-placeholder");
-    placeholderElement.classList.add("col");
-    placeholderElement.classList.add("px-1");
-    placeholderElement.setAttribute("ondrop", "drop(event)");
-    placeholderElement.style.flex = "0 0 20%";
-
-    // Make it can drop later
-    placeholderElement.innerHTML = `
-        <div class="card" style="height: 100%; background-color: #aaa;">
-    `;
-
-    // Make placeholder dropable
-    placeholderElement.addEventListener("dragover", allowDrop);
-    placeholderElement.addEventListener("drop", dropList);
-    return placeholderElement;
-}
-
-// Create list placeholder
-function createListPlaceholder(hoverElement, hoverLeft = true) {
-    // Clean these orther task list placeholder
-    const ortherPlaceholder = document.querySelector(".task-list-placeholder");
-    ortherPlaceholder && ortherPlaceholder.remove();
-
-    // Add to left or right
-    const taskListParent = hoverElement.closest(".task-lists");
-    const biggestHoverElement = hoverElement.closest(".col");
-    const placeholderElement = createListPlaceholderElement();
-    taskListParent.insertBefore(placeholderElement, biggestHoverElement);
+    cardPlaceholderElement.addEventListener("dragover", allowDrop);
+    cardPlaceholderElement.addEventListener("drop", drop);
+    return cardPlaceholderElement;
 }

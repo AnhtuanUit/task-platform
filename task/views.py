@@ -491,8 +491,14 @@ def edit_board_view(request, board_id):
             board.description = description
             board.save()
 
+            # Manual serialize board data
+            board_dict = model_to_dict(board)
+            board_dict["members"] = [
+                {"id": mem.id, "username": mem.username} for mem in board.members.all()
+            ]
+
             # Realtime update FE
-            send_realtime_data(board.id, "edit", "board", {"board": board})
+            send_realtime_data(board.id, "edit", "board", {"board": board_dict})
 
             return redirect(reverse("board", args=[board_id]))
 
