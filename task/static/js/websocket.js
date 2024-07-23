@@ -155,6 +155,9 @@ function renderListElement(list) {
 
     // Select the new element from the temporary container
     const newElement = tempContainer.firstElementChild;
+
+    // TODO: add dragenter feature for it
+    // TODO: add csrfmiddlewaretoken to form
     return newElement;
 }
 
@@ -265,6 +268,11 @@ function deleteCard(cardId) {
 }
 
 function moveList(list) {
+    // Check if list be reset, then we reload the page
+    if (Number(list.position) % 100 === 0) {
+        window.location.reload();
+    }
+
     // Get all list of board
     const listElements = document.querySelectorAll(".task-list");
 
