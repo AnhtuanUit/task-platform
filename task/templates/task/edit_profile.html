@@ -10,7 +10,7 @@ Profile
         <form action="{% url 'edit_profile' profile.id %}" method="POST">
             {% csrf_token %}
             {{ form }}
-            <input class="btn btn-primary" type="submit" value="Save">
+            <input class="btn" style="background: #397D99; color: white;" type="submit" value="Save">
         </form>
     </div>
 {% endblock %}

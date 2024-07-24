@@ -92,7 +92,7 @@ function getAttachmentHtml(attachment) {
                     attachment.id
                 }" method="POST">
                     <input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">
-                    <input class="btn btn-sm btn-primary" type="submit" value="Delete">
+                    <input class="btn btn-sm" style="background: #397D99; color: white;" type="submit" value="Delete">
                 </form>
             </div>
         </div>

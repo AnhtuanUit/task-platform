@@ -5,16 +5,16 @@ Login
 {% endblock %}
 
 {% block main %}
-    <div>
-        <h1>Login</h1>
+    <div class="container">
+        <h1 class="mt-5">Login</h1>
         {% if message %}
             <p>{{ message }}</p>
         {% endif %}
         <form action="{% url 'login' %}" method="POST">
             {% csrf_token %}
-            <input autofocus type="text" placeholder="Username" name="username">
-            <input type="password" placeholder="Password" name="password">
-            <input type="submit" value="Login">
+            <input class="form-control w-auto mb-3" autofocus type="text" placeholder="Username" name="username">
+            <input class="form-control w-auto mb-3" type="password" placeholder="Password" name="password">
+            <input class="btn" style="background: #397D99; color: white;" type="submit" value="Login">
         </form>
     </div>
 {% endblock %}

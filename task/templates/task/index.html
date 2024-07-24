@@ -6,13 +6,13 @@ Home
 
 {% block main %}
 <div class="container">
-    <h1 class="mt-5">Your workspace</h1>
+    <h1 class="mt-5">Your boards</h1>
     <div class="row row-cols-lg-4 mt-2 g-4">
         {% for board in boards %}
             <div class="col">
-                    <div class="card">
-                        <a class="btn btn-warning" href="{% url 'board' board.id %}">
-                            <div class="card-body">
+                    <div class="card" style="border: none;">
+                        <a class="btn" style="color: white; background: #0067A3; border-radius: 0;" href="{% url 'board' board.id %}">
+                            <div class="card-body" style="text-align: left;">
                                     <p class="card-title">{{ board.name }}</p>
                             </div>
                         </a>

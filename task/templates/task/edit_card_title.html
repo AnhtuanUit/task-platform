@@ -11,7 +11,7 @@ Edit card title
             <form action="{% url 'edit_card_title' card.id %}" method="POST">
                 {% csrf_token %}
                 {{ form }}
-                <input class="btn btn-primary" type="submit" value="Save">
+                <input class="btn" style="background: #397D99; color: white;" type="submit" value="Save">
             </form>
         </div>
     </div>

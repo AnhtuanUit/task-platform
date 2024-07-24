@@ -5,17 +5,14 @@ List add card
 {% endblock %}
 {% block main %}
     <div class="container">
-        <h1 class="mt-5">List add card</h1>
-        <h2>Add card to list: {{ list.name }}</h2>
-        <h3 class="mt-3 mb-2">Board name: {{ list.board.name }}</h3>
-        
+        <h1 class="mt-5">Create card [List: {{ list.name }} | Board: {{ list.board.name }}]</h1>
         <form id="add-card-form">
-            <input id ="add-card-list-id" type="hidden" name="id" value="{{ list.id }}">
-            <input id="add-card-title" autofocus name="title" placeholder="Title of the card" type="text">
-            <input type="submit" value="Add card">
+            <input class="form-control w-auto mb-3" id ="add-card-list-id" type="hidden" name="id" value="{{ list.id }}">
+            <input class="form-control w-auto mb-3" id="add-card-title" autofocus name="title" placeholder="Title of the card" type="text">
+            <input class="btn" style="background: #397D99; color: white;" type="submit" value="Add card">
         <form>
         <div class="mt-4">
-            <a class="btn btn-sm btn-primary" href="{% url 'board' list.board.id %}">Back to board</a>
+            <a class="btn btn-sm" style="background: #397D99; color: white;"  href="{% url 'board' list.board.id %}">Back to board</a>
         </div>
     </div>
 {% endblock %}

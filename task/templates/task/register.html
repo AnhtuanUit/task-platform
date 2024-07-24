@@ -5,18 +5,18 @@ Register
 {% endblock %}
 
 {% block main %}
-    <div>
-        <h1>Register</h1>
+    <div class="container">
+        <h1 class="mt-5">Register</h1>
         {% if message %}
             <p>{{ message }}</p>
         {% endif %}
         <form action="{% url 'register' %}" method="POST">
             {% csrf_token %}
-            <input autofocus type="text" placeholder="Username" name="username">
-            <input type="password" placeholder="Password" name="password">
-            <input type="password" placeholder="confirmation password" name="confirmation">
-            <input type="email" placeholder="Email" name="email">
-            <input type="submit" value="Register">
+            <input class="form-control w-auto mb-3" autofocus type="text" placeholder="Username" name="username">
+            <input class="form-control w-auto mb-3" type="password" placeholder="Password" name="password">
+            <input class="form-control w-auto mb-3" type="password" placeholder="confirmation password" name="confirmation">
+            <input class="form-control w-auto mb-3" type="email" placeholder="Email" name="email">
+            <input class="btn" style="background: #397D99; color: white;" type="submit" value="Register">
         </form>
     </div>
 {% endblock %}

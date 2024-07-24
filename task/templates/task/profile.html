@@ -17,6 +17,6 @@ Profile
         </li>
     </ul>
     {% if request.user.id == profile.id %}
-        <a class="btn btn-primary" href="{% url 'edit_profile' profile.id %}">Edit</a>
+        <a class="btn" style="background: #397D99; color: white;" href="{% url 'edit_profile' profile.id %}">Edit</a>
     {% endif %}
 {% endblock %}
