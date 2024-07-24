@@ -121,6 +121,7 @@ class EditCardForm(forms.Form):
 
 
 class CreateAttachmentForm(forms.Form):
+    template_name = "form_snippet.html"
     title = forms.CharField(
         max_length=256,
         required=False,
@@ -128,7 +129,9 @@ class CreateAttachmentForm(forms.Form):
             attrs={"class": "form-control w-auto", "placeholder": "Title"}
         ),
     )
-    file = forms.FileField()
+    file = forms.FileField(
+        widget=forms.FileInput(attrs={"class": "form-control w-auto"})
+    )
 
 
 from channels.layers import get_channel_layer

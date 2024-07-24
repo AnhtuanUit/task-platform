@@ -7,7 +7,7 @@ Edit list
 {% block main %}
     <div class="container">
         <div class="mt-5">
-            <h3>Edit list</h3>
+            <h1>Edit list</h1>
             <form action="{% url 'edit_list' list.id %}" method="POST">
                 {% csrf_token %}
                 {{ form }}

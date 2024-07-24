@@ -5,12 +5,14 @@ Create attachment file
 {% endblock %}
 
 {% block main %}
-    <div class="mt-5">
-        <h3>Create attachment file</h3>
-        <form action="{% url 'create_attachment_file' card.id %}" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form }}
-            <input class="btn" style="background: #397D99; color: white;" type="submit" value="Save">
-        </form>
+    <div class="container">
+        <div class="mt-5">
+            <h1>Create attachment file</h1>
+            <form action="{% url 'create_attachment_file' card.id %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form }}
+                <input class="btn" style="background: #397D99; color: white;" type="submit" value="Save">
+            </form>
+        </div>
     </div>
 {% endblock %}

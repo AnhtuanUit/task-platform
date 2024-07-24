@@ -6,7 +6,7 @@ Profile
 
 {% block main %}
     <div class="mt-5">
-        <h3>{{ profile.username }}</h3>
+        <h1>{{ profile.username }}</h1>
         <form action="{% url 'edit_profile' profile.id %}" method="POST">
             {% csrf_token %}
             {{ form }}
