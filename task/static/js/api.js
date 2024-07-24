@@ -1,6 +1,9 @@
 async function apiCreateBoard(name, description) {
     return fetch("/boards", {
         method: "POST",
+        headers: {
+            "Browser-ID": browserId, // Include Browser ID in headers
+        },
         body: JSON.stringify({
             name,
             description,
@@ -21,6 +24,9 @@ async function apiCreateBoard(name, description) {
 async function apiCreateList(boardId, listName) {
     return fetch(`/boards/${boardId}/lists`, {
         method: "POST",
+        headers: {
+            "Browser-ID": browserId, // Include Browser ID in headers
+        },
         body: JSON.stringify({
             name: listName,
         }),
@@ -40,6 +46,9 @@ async function apiCreateList(boardId, listName) {
 async function apiCreateCard(listId, title) {
     return fetch(`/lists/${listId}/cards`, {
         method: "POST",
+        headers: {
+            "Browser-ID": browserId, // Include Browser ID in headers
+        },
         body: JSON.stringify({
             title,
         }),
@@ -59,6 +68,7 @@ async function apiCreateCard(listId, title) {
 async function apiMoveCard(cardId, prevCardId, preCardListId) {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Browser-ID", browserId);
 
     const body = {};
     if (preCardListId) {
@@ -92,6 +102,7 @@ async function apiMoveCard(cardId, prevCardId, preCardListId) {
 async function apiMoveList(listId, prevListId) {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Browser-ID", browserId);
 
     const body = {};
     if (prevListId) {
@@ -124,6 +135,9 @@ async function apiAddMemberToBoard(email) {
         body: JSON.stringify({
             email,
         }),
+        headers: {
+            "Browser-ID": browserId, // Include Browser ID in headers
+        },
         method: "POST",
     })
         .then((response) => response.json())
@@ -143,6 +157,9 @@ async function apiAddCardMember(cardId, memberId) {
         body: JSON.stringify({
             memberId,
         }),
+        headers: {
+            "Browser-ID": browserId, // Include Browser ID in headers
+        },
         method: "POST",
     })
         .then((response) => response.json())

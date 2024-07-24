@@ -218,7 +218,10 @@ def create_attachment_file(request, card_id):
                 card.list.board.id,
                 "create",
                 "attachment_file",
-                {"attachment": model_to_dict(attachment)},
+                {
+                    "attachment": model_to_dict(attachment),
+                    "browser_id": request.headers.get("Browser-ID"),
+                },
             )
 
             # Redirect to current card
@@ -268,7 +271,7 @@ def delete_attachment_file(request, attachment_id):
             attachment.card.list.board.id,
             "delete",
             "attachment_file",
-            {"id": attachment_id},
+            {"id": attachment_id, "browser_id": request.headers.get("Browser-ID")},
         )
 
         # Redirect to current card
@@ -498,7 +501,12 @@ def edit_board_view(request, board_id):
             ]
 
             # Realtime update FE
-            send_realtime_data(board.id, "edit", "board", {"board": board_dict})
+            send_realtime_data(
+                board.id,
+                "edit",
+                "board",
+                {"board": board_dict, "browser_id": request.headers.get("Browser-ID")},
+            )
 
             return redirect(reverse("board", args=[board_id]))
 
@@ -540,7 +548,12 @@ def delete_board(request, board_id):
         board.delete()
 
         # Realtime update FE
-        send_realtime_data(board.id, "delete", "board", {"id": board.id})
+        send_realtime_data(
+            board.id,
+            "delete",
+            "board",
+            {"id": board.id, "browser_id": request.headers.get("Browser-ID")},
+        )
 
         # Rediect to home page if delete success
         return redirect("index")
@@ -592,7 +605,13 @@ def edit_list_view(request, list_id):
 
             # Realtime update FE
             send_realtime_data(
-                list.board.id, "edit", "list", {"list": model_to_dict(list)}
+                list.board.id,
+                "edit",
+                "list",
+                {
+                    "list": model_to_dict(list),
+                    "browser_id": request.headers.get("Browser-ID"),
+                },
             )
 
             # Rediect to current board if delete success
@@ -643,7 +662,12 @@ def delete_list(request, list_id):
         list.delete()
 
         # Realtime update FE
-        send_realtime_data(list.board.id, "delete", "list", {"id": list_id})
+        send_realtime_data(
+            list.board.id,
+            "delete",
+            "list",
+            {"id": list_id, "browser_id": request.headers.get("Browser-ID")},
+        )
 
         # Rediect to current board if delete success
         return redirect(reverse("board", args=[list.board.id]))
@@ -702,7 +726,10 @@ def edit_card_title(request, card_id):
 
             # Realtime update FE
             send_realtime_data(
-                card.list.board.id, "edit", "card_title", {"card": card_dict}
+                card.list.board.id,
+                "edit",
+                "card_title",
+                {"card": card_dict, "browser_id": request.headers.get("Browser-ID")},
             )
 
             # Redirect to current board
@@ -787,7 +814,12 @@ def edit_card(request, card_id):
                 card_dict["due_date"] = card_dict["due_date"].isoformat()
 
             # Realtime update FE
-            send_realtime_data(card.list.board.id, "edit", "card", {"card": card_dict})
+            send_realtime_data(
+                card.list.board.id,
+                "edit",
+                "card",
+                {"card": card_dict, "browser_id": request.headers.get("Browser-ID")},
+            )
 
             # Redirect to current board
             return redirect(reverse("card", args=[card.id]))
@@ -837,7 +869,12 @@ def delete_card(request, card_id):
         card.delete()
 
         # Realtime update FE
-        send_realtime_data(card.list.board.id, "delete", "card", {"id": card_id})
+        send_realtime_data(
+            card.list.board.id,
+            "delete",
+            "card",
+            {"id": card_id, "browser_id": request.headers.get("Browser-ID")},
+        )
 
         # Redirect to board page
         return redirect(reverse("board", args=[card.list.board.id]))
@@ -910,7 +947,13 @@ def add_list(request, board_id):
 
             # Realtime update FE
             send_realtime_data(
-                list.board.id, "create", "list", {"list": model_to_dict(list)}
+                list.board.id,
+                "create",
+                "list",
+                {
+                    "list": model_to_dict(list),
+                    "browser_id": request.headers.get("Browser-ID"),
+                },
             )
 
         except Exception as error:
@@ -992,10 +1035,20 @@ def move_list(request, list_id):
         # We reindex list position if these index to closest
         if next_position - list.position < 1:
             reindex_list_position()
+
+            # Find the list after reindex
             list = List.objects.filter(id=list.id).first()
 
         # Realtime update FE
-        send_realtime_data(list.board.id, "move", "list", {"list": model_to_dict(list)})
+        send_realtime_data(
+            list.board.id,
+            "move",
+            "list",
+            {
+                "list": model_to_dict(list),
+                "browser_id": request.headers.get("Browser-ID"),
+            },
+        )
 
         # Return success JSON response
         return JsonResponse({"message": "Move list succssfully."})
@@ -1049,7 +1102,10 @@ def add_card(request, list_id):
 
             # Realtime update FE
             send_realtime_data(
-                card.list.board.id, "create", "card", {"card": card_dict}
+                card.list.board.id,
+                "create",
+                "card",
+                {"card": card_dict, "browser_id": request.headers.get("Browser-ID")},
             )
 
         except Exception as error:
@@ -1101,7 +1157,10 @@ def board_member(request, board_id):
                     board.id,
                     "create",
                     "board_member",
-                    {"members": members_dict},
+                    {
+                        "members": members_dict,
+                        "browser_id": request.headers.get("Browser-ID"),
+                    },
                 )
 
                 # Return successfully message
@@ -1358,6 +1417,8 @@ def move_card(request, card_id):
         # We reindex card position if these index to closest
         if next_position - card.position < 1:
             reindex_card_position()
+            # Find the card after reindex
+            card = Card.objects.filter(id=card_id).first()
 
         # Manual serialize card data
         card_dict = model_to_dict(card)
@@ -1366,7 +1427,12 @@ def move_card(request, card_id):
         ]
 
         # Realtime update FE
-        send_realtime_data(list.board.id, "move", "card", {"card": card_dict})
+        send_realtime_data(
+            list.board.id,
+            "move",
+            "card",
+            {"card": card_dict, "browser_id": request.headers.get("Browser-ID")},
+        )
 
         # Return success JSON response
         return JsonResponse({"message": "Move card succssfully."})

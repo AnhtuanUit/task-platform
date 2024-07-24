@@ -22,3 +22,12 @@ function formatDate(isoString) {
 
     return formattedDateLowerCase.replace(" at", ",");
 }
+
+function getBrowserId() {
+    let browserId = localStorage.getItem("browserId");
+    if (!browserId) {
+        browserId = "browser_" + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem("browserId", browserId);
+    }
+    return browserId;
+}

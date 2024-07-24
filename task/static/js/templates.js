@@ -116,9 +116,27 @@ function getCardPlaceholderHtml() {
 }
 
 function renderTaskListElement(list) {
-    return htmlToElement(getTaskListHtml(list));
+    const taskListContainerElement = htmlToElement(getTaskListHtml(list));
+    const taskListElement =
+        taskListContainerElement.querySelector(".task-list");
+
+    // Make task list dragable
+    taskListElement.addEventListener("dragstart", handleDragList);
+
+    // Dragend the task list
+    taskListElement.addEventListener("dragend", handleDragendList);
+
+    return taskListElement;
 }
 
 function renderCardElement(card) {
-    return htmlToElement(getCardHtml(card));
+    const cardElement = htmlToElement(getCardHtml(card));
+
+    // Make card dragable
+    cardElement.addEventListener("dragstart", handleDrag);
+
+    // Dragend the card
+    cardElement.addEventListener("dragend", handleDragend);
+
+    return cardElement;
 }

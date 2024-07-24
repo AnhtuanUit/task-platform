@@ -122,9 +122,7 @@ function handleDragList(ev) {
 
 // Drag list step 2
 function handleDragenterList(ev) {
-    const dragenterElement = ev.target.closest(
-        ".task-list, #task-add-list-btn"
-    );
+    const dragenterElement = ev.target;
 
     //  Check if dragenter element is not dragged element
     if (dragenterElement.getAttribute("data-drag-list") !== "true") {
@@ -177,13 +175,13 @@ function dropList(ev) {
     // Replace placeholder with dragged element
     const needReplaceElement = placeholder.closest(".task-list-placeholder");
     const colTaskList = draggedElement.closest(".col");
-    parentElement.replaceChild(colTaskList, needReplaceElement);
+    needReplaceElement.replaceWith(colTaskList);
 }
 
 // Drag list step 4
-function handleDragendList() {
+function handleDragendList(ev) {
     // Make dragged element visible
-    const draggedElement = document.querySelector("div[data-drag-list='true']");
+    const draggedElement = ev.target;
     draggedElement.style.opacity = "1";
 
     // Remove placeholder
@@ -191,7 +189,7 @@ function handleDragendList() {
     placeholderElement && placeholderElement.remove();
 
     // Remove dragged attr
-    draggedElement.setAttribute("data-drag-card", "false");
+    draggedElement.setAttribute("data-drag-list", "false");
 
     // Remove event dragenter
     const taskLists = document.querySelectorAll(".task-list");

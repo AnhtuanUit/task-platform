@@ -15,6 +15,12 @@ document.addEventListener("DOMContentLoaded", function () {
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
             console.log(data);
+
+            // Check if is the same browser id
+            if (data.browser_id === browserId) {
+                return;
+            }
+
             // Handle create list
             if (data.action === "create" && data.resource === "list") {
                 const list = JSON.parse(data?.data).list;
