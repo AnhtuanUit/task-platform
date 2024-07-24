@@ -126,7 +126,7 @@ function renderTaskListElement(list) {
     // Dragend the task list
     taskListElement.addEventListener("dragend", handleDragendList);
 
-    return taskListElement;
+    return taskListContainerElement;
 }
 
 function renderCardElement(card) {
