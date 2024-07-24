@@ -17,108 +17,105 @@
         </title>
         <link href="{% static 'styles.css' %}" rel="stylesheet">
     </head>
-    <body>
-        <header>
-            <nav class="navbar navbar-expand-lg bg-primary"  data-bs-theme="dark">
-                <div class="container-fluid">
-                  <a class="navbar-brand fw-bold" href="{% url 'index' %}">Tasks</a>
-                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                  </button>
-                  <div class="collapse navbar-collapse" id="navbarHeader">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="display: flex;
-    align-items: center;">
-                        {% if user.is_authenticated %}
-                      {% comment %} <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
-                      </li> {% endcomment %}
-                      <li class="nav-item">
-                        <a class="nav-link text-white fw-bold" href="{% url 'create_board' %}">Create new board</a>
-                      </li>
-                      <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="display: flex; align-items: center; gap: 4px;">
-                            <img src="https://i.pravatar.cc/48?u={{ user.id }}" alt="" width="32" height="32" class="rounded-circle me-2">
-                            <strong>{{ user.username }}</strong>
-                        </a>
-                        <ul class="dropdown-menu">
-                          <li><a class="dropdown-item" href="{% url 'profile' user.id %}">Profile</a></li>
-                          <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                        </ul>
-                      </li>
-                    </ul>
-                    {% comment %} <form class="d-flex" role="search">
-                      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                      <button class="btn btn-success" type="submit">Search</button>
-                    </form> {% endcomment %}
-                    {% else %}
-                      <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="{% url 'register' %}">Register</a>
-                      </li>
-                      {% endif %}
-                  </div>
-                </div>
-              </nav>
-        </header>
-        <main>
-            <div id="liveAlertPlaceholder"></div>
-            <div class="d-flex flex-nowrap">
-                {% if user.is_authenticated %}
-                <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-warning" style="width: 280px;">
-                    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                      <span class="fs-4">Your workspace</span>
-                    </a>
-                    <hr>
-                    <ul class="nav nav-pills flex-column mb-auto">
-                      <li class="nav-item">
-                        <a href="#members" class="nav-link text-white" aria-current="page">
-                          Members
-                        </a>
-                      </li>
-                      <li class="mb-1">
-                        <button  class="nav-link text-white collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
-                            Your boars
-                            </button>
-                            <div class="collapse show" id="home-collapse">
-                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" style="max-height: 490px; overflow-y: auto;">
-                                {% for board in boards %}
-                                <li>
-                                    <a href="{% url 'board' board.id %}" class="nav-link text-white">
-                                      <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
-                                      {{ board.name }}
+    <body style="height: 100vh;">
+        <div style="display: flex; flex-direction: column; height: 100%;">
+            <header>
+                <nav class="navbar navbar-expand-lg"  data-bs-theme="dark" style="background: #085c80;">
+                    <div class="container-fluid">
+                      <a class="navbar-brand fw-bold" href="{% url 'index' %}">Tasks</a>
+                      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                      </button>
+                      <div class="collapse navbar-collapse" id="navbarHeader">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="display: flex; align-items: center;">
+                            {% if user.is_authenticated %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="display: flex; align-items: center; gap: 4px;">
+                                        <span>Your boards</span>
                                     </a>
-                                  </li>
-                                  {% endfor %}
-                            </ul>
+                                    <ul class="dropdown-menu">
+                                        {% for board in boards %}
+                                            <li><a class="dropdown-item" href="{% url 'board' board.id %}">{{ board.name }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="btn fw-bold text-white" style="background: #397D99" href="{% url 'create_board' %}">New board</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="display: flex; align-items: center; gap: 4px;">
+                                        <img src="https://i.pravatar.cc/48?u={{ user.id }}" alt="" width="32" height="32" class="rounded-circle me-2">
+                                        <span>{{ user.username }}</span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'profile' user.id %}">Profile</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                                    </ul>
+                                </li>
+                            {% else %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'register' %}">Register</a>
+                                </li>
+                          {% endif %}
+                        </ul>
+                      </div>
+                    </div>
+                  </nav>
+            </header>
+            <main style="flex: 1;">
+                <div id="liveAlertPlaceholder"></div>
+                <div class="d-flex flex-nowrap" style="height: 100%;">
+                    {% if user.is_authenticated %}
+                    <div class="d-none d-lg-flex flex-column flex-shrink-0 p-3 text-white" style="width: 230px; background: #0A6892;">
+                        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                          <span class="fs-4">Your workspace</span>
+                        </a>
+                        <hr>
+                        <ul class="nav nav-pills flex-column mb-auto">
+                          <li class="mb-1">
+                            <button class="nav-link text-white collapsed dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+                                Your boars
+                            </button>
+                            <div class="collapse show " id="home-collapse">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" style="max-height: 490px; overflow-y: auto;">
+                                    {% for board in boards %}
+                                    <li>
+                                        <a href="{% url 'board' board.id %}" class="nav-link text-white">
+                                        <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                                        {{ board.name }}
+                                        </a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
                             </div>
-                      </li>
-                    </ul>                
+                          </li>
+                        </ul>                
+                    </div>
+                    {% endif %}
+                    <div style="flex: 1; background: white; overflow-x: hidden; min-height: 700px;">
+                        {% block main %}
+                        {% endblock %}
+                    </div>
                 </div>
-                {% endif %}
-                <div style="flex: 1; background: white; overflow-x: hidden; min-height: 700px;" class="container-fluid">
-                    {% block main %}
-                    BODY: TODO
-                    {% endblock %}
+            </main>
+            <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 border-top" style="background: #085c80; border: none;">
+                <div class="col-md-4 d-flex align-items-center">
+                  <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
+                    <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
+                  </a>
+                  <span class="mb-3 mb-md-0 text-white">© 2024 Company, Inc</span>
                 </div>
-            </div>
-        </main>
-        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 border-top bg-primary">
-            <div class="col-md-4 d-flex align-items-center">
-              <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
-                <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
-              </a>
-              <span class="mb-3 mb-md-0 text-body-secondary">© 2024 Company, Inc</span>
-            </div>
-        
-            <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-              <li class="ms-3"><a class="text-body-secondary" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#twitter"></use></svg></a></li>
-              <li class="ms-3"><a class="text-body-secondary" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg></a></li>
-              <li class="ms-3"><a class="text-body-secondary" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#facebook"></use></svg></a></li>
-            </ul>
-           
-        </footer>
+            
+                <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+                  <li class="ms-3"><a class="text-body-secondary" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#twitter"></use></svg></a></li>
+                  <li class="ms-3"><a class="text-body-secondary" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg></a></li>
+                  <li class="ms-3"><a class="text-body-secondary" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#facebook"></use></svg></a></li>
+                </ul>
+            </footer>
+        </div>
         
         <!-- Boostrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

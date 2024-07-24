@@ -65,6 +65,14 @@ urlpatterns = [
         views.board_add_member_view,
         name="board_add_member",
     ),
+    path(
+        "boars/<int:board_id>/members", views.board_members_view, name="board_members"
+    ),
+    path(
+        "boars/<int:board_id>/delete_member",
+        views.board_delete_member,
+        name="board_delete_member",
+    ),
     # Server media file
     path("media/<path:file_path>/", views.serve_file, name="media"),
     # APIs

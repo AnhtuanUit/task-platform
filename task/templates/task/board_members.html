@@ -1,0 +1,49 @@
+{% extends "task/layout.html" %}
+
+{% block title %}
+Board members
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <h1 class="mt-5">{{ board.name }}</h1>
+    <div class="d-flex mt-4 mb-2" style="justify-content: space-between; align-items: center;">
+        <h2>Members</h2>
+        <a class="btn btn-sm btn-primary" href="{% url 'board_add_member' board.id %}">Add member</a>
+    </div>
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Username</th>
+            <th scope="col">Email</th>
+            <th scope="col">Image</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for member in members %}
+                <tr>
+                    <th scope="row">{{ member.index }}</th>
+                    <td>{{ member.username }}</td>
+                    <td>{{ member.email }}</td>
+                    <td><img src="https://i.pravatar.cc/48?u={{ member.id }}" alt="" width="32" height="32" class="rounded-circle me-2"></td>
+                    <td>
+                        
+                        {% if user.id != member.id %}
+                            <form action="{% url 'board_delete_member' board.id %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" value="{{ member.id }}" name="memberId">
+                                <input class="btn btn-sm btn-primary" type="submit" value="Delete">
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+      <div class="mt-4">
+        <a class="btn btn-sm btn-primary" href="{% url 'board' board.id %}">Back to board</a>
+    </div>
+</div>
+{% endblock %}

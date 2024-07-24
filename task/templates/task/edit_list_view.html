@@ -5,12 +5,14 @@ Edit list
 {% endblock %}
 
 {% block main %}
-    <div class="mt-5">
-        <h3>Edit list</h3>
-        <form action="{% url 'edit_list' list.id %}" method="POST">
-            {% csrf_token %}
-            {{ form }}
-            <input class="btn btn-primary" type="submit" value="Save">
-        </form>
+    <div class="container">
+        <div class="mt-5">
+            <h3>Edit list</h3>
+            <form action="{% url 'edit_list' list.id %}" method="POST">
+                {% csrf_token %}
+                {{ form }}
+                <input class="btn btn-primary" type="submit" value="Save">
+            </form>
+        </div>
     </div>
 {% endblock %}

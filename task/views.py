@@ -14,6 +14,7 @@ from decimal import Decimal
 from .helpers import apology
 from django.forms.models import model_to_dict
 from django.db.models.fields.files import FieldFile
+import pytz
 
 from .models import (
     Board,
@@ -101,13 +102,11 @@ class EditCardForm(forms.Form):
     due_date = forms.DateTimeField(
         required=False,
         widget=forms.DateTimeInput(
+            format="%Y-%m-%dT%H:%M",
             attrs={
                 "class": "form-control w-auto",
                 "type": "datetime-local",
-                "placeholder": "Due date",
-                "min": "2018-06-07T00:00",
-                "max": "2025-06-14T00:00",
-            }
+            },
         ),
     )
     member_id = forms.ChoiceField(
@@ -897,6 +896,58 @@ def board_add_member_view(request, board_id):
         "task/board_add_member.html",
         {"board": board, "boards": request.user.boards.all()},
     )
+
+
+# - Board members
+@login_required
+def board_members_view(request, board_id):
+
+    # Chek if board exist
+    board = Board.objects.filter(id=board_id).first()
+    if board is None:
+        return apology(request, "Board does not exist!", 400)
+
+    # Check if user is board member
+    if not request.user in board.members.all():
+        return apology(request, "Forbidden.", 403)
+
+    members = board.members.all()
+    for index, member in enumerate(members, start=1):
+        member.index = index
+
+    return render(
+        request,
+        "task/board_members.html",
+        {
+            "board": board,
+            "boards": request.user.boards.all(),
+            "members": members,
+        },
+    )
+
+
+@login_required
+def board_delete_member(request, board_id):
+
+    # Chek if board exist
+    board = Board.objects.filter(id=board_id).first()
+    if board is None:
+        return apology(request, "Board does not exist!", 400)
+
+    # Check if user is board member
+    if not request.user in board.members.all():
+        return apology(request, "Forbidden.", 403)
+
+    if request.method == "POST":
+
+        # Get delete data
+        member_id = request.POST["memberId"]
+
+        # Get member
+        member = User.objects.filter(id=member_id).first()
+        board.members.remove(member)
+
+        return redirect(reverse("board_members", args=[board_id]))
 
 
 # APIs

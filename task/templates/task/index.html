@@ -5,9 +5,20 @@ Home
 {% endblock %}
 
 {% block main %}
-    {% comment %} <ul>
+<div class="container">
+    <h1 class="mt-5">Your workspace</h1>
+    <div class="row row-cols-lg-4 mt-2 g-4">
         {% for board in boards %}
-        <li><a href="{% url 'board' board.id %}">{{ board.name }}</a></li>
+            <div class="col">
+                    <div class="card">
+                        <a class="btn btn-warning" href="{% url 'board' board.id %}">
+                            <div class="card-body">
+                                    <p class="card-title">{{ board.name }}</p>
+                            </div>
+                        </a>
+                    </div>
+            </div>
         {% endfor %}
-    </ul> {% endcomment %}
+    </div>
+</div>
 {% endblock %}

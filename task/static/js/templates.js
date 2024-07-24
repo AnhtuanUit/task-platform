@@ -14,7 +14,7 @@ function htmlToElement(html) {
 function getTaskListHtml(list) {
     return `
         <div class="col px-1" style="flex: 0 0 20%;">
-            <div class="card bg-dark task-list" draggable="true" id="list-id-${list.id}" data-list-id="${list.id}" data-list-position="${list.position}">
+            <div class="card task-list" style="background: #f1f2f4; border-radius: 16px;" draggable="true" id="list-id-${list.id}" data-list-id="${list.id}" data-list-position="${list.position}">
                 <div class="card-header text-white">
                     <div style="display: flex;justify-content: space-between;">
                         <span>${list.name}</span>
@@ -102,7 +102,7 @@ function getAttachmentHtml(attachment) {
 function getTaskListPlaceholderHtml() {
     return `
         <div class="task-list-placeholder col px-1" style="flex: 0 0 20%;">
-            <div class="card" style="height: 100%; background-color: #aaa;">
+            <div class="card" style="height: 100%; background-color: #ffffff3b; border: none; border-radius: 16px;">
         </div>
     `;
 }
@@ -110,7 +110,7 @@ function getTaskListPlaceholderHtml() {
 function getCardPlaceholderHtml() {
     return `
         <div class="task-card-placeholder">
-            <div class="card" style="background-color: #292e33; height: 100px;"></div>  
+            <div class="card" style="background-color: #ddd; height: 100px; border: none; border-radius: 12px;"></div>  
         </div>
     `;
 }

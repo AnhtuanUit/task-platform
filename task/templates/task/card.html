@@ -3,67 +3,69 @@
 {% block title %}
 {% endblock %}
 {% block main %}
-<h1 id="card-title" data-board-id="{{ board.id }}">
-    {{ card.title }}
-</h1>
-<div class="mb-4">
-    <a class="btn btn-sm btn-primary" href="{% url 'edit_card' card.id %}">Edit</a>
-    <form action="{% url 'delete_card' card.id %}" method="POST" style="display:inline-block;">
-            {% csrf_token %}
-            <input class="btn btn-sm btn-primary" type="submit" value="Delete">
-    </form>    
-</div>
-<small>in list <a class="btn btn-sm btn-secondary" href="{% url 'board' card.list.board.id %}"><span class="text-grey">{{ card.list.name }}</span></a></small>
-<div id="card-group-memebers">
-    <h4>Members</h4>
-    <div style="margin-left: 8px;">
-        {% for member in card_members %}
-            {% if member.id != user.id %}
-                <a href="{% url 'profile' member.id %}">
-                    <img src="https://i.pravatar.cc/48?u={{ member.id }}" alt="" width="32" height="32" class="rounded-circle" style="margin-left: -10px; position: relative; border:3px solid white;">
-                </a>
-            {% endif %}
-        {% endfor %} 
+<div class="container">
+    <h1 class="mt-5" id="card-title" data-board-id="{{ board.id }}">
+        {{ card.title }}
+    </h1>
+    <div class="mb-4">
+        <a class="btn btn-sm btn-primary" href="{% url 'edit_card' card.id %}">Edit</a>
+        <form action="{% url 'delete_card' card.id %}" method="POST" style="display:inline-block;">
+                {% csrf_token %}
+                <input class="btn btn-sm btn-primary" type="submit" value="Delete">
+        </form>    
     </div>
-    <a class="btn btn-sm btn-light" href="{% url 'edit_card' card.id %}">Add</a>
-</div>
-<div id="card-group-due-date">
-    <h4>Due date</h4>
-    <a class="btn btn-sm btn-light" href="{% url 'edit_card' card.id %}">{{ card.due_date|default:"Chose due date ..." }}</a>
-</div>    
-<div id="card-group-description">
-    <h4>Description</h4>
-    <a class="btn btn-sm btn-light" href="{% url 'edit_card' card.id %}">{{ card.description|default:"Write some thing ..." }}</a>
-</div>
-<h4>Attachments</h4>
-<div>
-    <div id="card-attachments">
-        {% for attachment in attachments %}
-            <div class="card" id="attachment-id-{{ attachment.id }}">
-                <div class="card-body" style="display: flex; justify-content: space-between;">
-                    <div>
-                        {% if attachment.title %}
-                            <h5>{{ attachment.title }}</h5>
-                        {% else %}
-                            <h5>{{ attachment.file.name }}</h5>
-                        {% endif %}
-                        <img src="{{attachment.file.url}}" width="200" alt="Attachment image">
+    <small>in list <a class="btn btn-sm btn-secondary" href="{% url 'board' card.list.board.id %}"><span class="text-grey">{{ card.list.name }}</span></a></small>
+    <div id="card-group-memebers">
+        <h4>Members</h4>
+        <div style="margin-left: 8px;">
+            {% for member in card_members %}
+                {% if member.id != user.id %}
+                    <a href="{% url 'profile' member.id %}">
+                        <img src="https://i.pravatar.cc/48?u={{ member.id }}" alt="" width="32" height="32" class="rounded-circle" style="margin-left: -10px; position: relative; border:3px solid white;">
+                    </a>
+                {% endif %}
+            {% endfor %} 
+        </div>
+        <a class="btn btn-sm btn-light" href="{% url 'edit_card' card.id %}">Add</a>
+    </div>
+    <div id="card-group-due-date">
+        <h4>Due date</h4>
+        <a class="btn btn-sm btn-light" href="{% url 'edit_card' card.id %}">{{ card.due_date|default:"Chose due date ..." }}</a>
+    </div>    
+    <div id="card-group-description">
+        <h4>Description</h4>
+        <a class="btn btn-sm btn-light" href="{% url 'edit_card' card.id %}">{{ card.description|default:"Write some thing ..." }}</a>
+    </div>
+    <h4>Attachments</h4>
+    <div>
+        <div id="card-attachments">
+            {% for attachment in attachments %}
+                <div class="card" id="attachment-id-{{ attachment.id }}">
+                    <div class="card-body" style="display: flex; justify-content: space-between;">
+                        <div>
+                            {% if attachment.title %}
+                                <h5>{{ attachment.title }}</h5>
+                            {% else %}
+                                <h5>{{ attachment.file.name }}</h5>
+                            {% endif %}
+                            <img src="{{attachment.file.url}}" width="200" alt="Attachment image">
+                        </div>
+                        <form action="{% url 'delete_attachment_file' attachment.id %}" method="POST">
+                            {% csrf_token %}
+                            <input class="btn btn-sm btn-primary" type="submit" value="Delete">
+                        </form>
                     </div>
-                    <form action="{% url 'delete_attachment_file' attachment.id %}" method="POST">
-                        {% csrf_token %}
-                        <input class="btn btn-sm btn-primary" type="submit" value="Delete">
-                    </form>
                 </div>
-            </div>
-        {% empty %}
-            No attachments
-        {% endfor %}
+            {% empty %}
+                No attachments
+            {% endfor %}
+        </div>
+        <a class="btn btn-sm btn-light" href="{% url 'create_attachment_file' card.id %}">Add</a>
     </div>
-    <a class="btn btn-sm btn-light" href="{% url 'create_attachment_file' card.id %}">Add</a>
+    <h4 class="mt-3">
+        <a  class="btn btn-sm btn-primary" href={% url 'board' card.list.board.id %}>Back to: {{ card.list.board.name }}</a>
+    </h4>
 </div>
-<h4 class="mt-3">
-    <a  class="btn btn-sm btn-primary" href={% url 'board' card.list.board.id %}>Back to: {{ card.list.board.name }}</a>
-</h4>
 {% endblock %}
 {% block scripts %}
 <script  src="{% static 'js/websocket.js' %}"></script>
