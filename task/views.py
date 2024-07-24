@@ -1069,9 +1069,9 @@ def move_list(request, list_id):
         ).order_by("position")[:2]
 
         if prev_list_id is None:
-            next_list = contiguous_lists[0] if len(contiguous_lists) > 1 else None
+            next_list = contiguous_lists[0] if len(contiguous_lists) > 0 else None
         else:
-            next_list = contiguous_lists[1] if len(contiguous_lists) > 1 else None
+            next_list = contiguous_lists[1] if len(contiguous_lists) > 0 else None
 
         if next_list is None:
             max_position = prev_position
@@ -1369,16 +1369,13 @@ def list(request, list_id):
         return JsonResponse({"message": "Updated list successfully."})
 
 
-def reindex_card_position():
-    lists = Card.objects.values_list("list", flat=True).distinct()
-
-    for list in lists:
-        cards_in_list = Card.objects.filter(list=list).order_by("position")
-        position = 100
-        for card_instance in cards_in_list:
-            card_instance.position = Decimal(position)
-            card_instance.save()
-            position += 100
+def reindex_card_position(card):
+    cards_in_list = Card.objects.filter(list=card.list).order_by("position")
+    position = 100
+    for card_instance in cards_in_list:
+        card_instance.position = Decimal(position)
+        card_instance.save()
+        position += 100
 
 
 def reindex_list_position():
@@ -1440,13 +1437,13 @@ def move_card(request, card_id):
 
         # Find next card position
         contiguous_cards = Card.objects.filter(
-            list_id=card.list.id, position__gte=prev_position
+            list=list, position__gte=prev_position
         ).order_by("position")[:2]
 
         if prev_card_id is None:
-            next_card = contiguous_cards[0] if len(contiguous_cards) > 1 else None
+            next_card = contiguous_cards[0] if len(contiguous_cards) > 0 else None
         else:
-            next_card = contiguous_cards[1] if len(contiguous_cards) > 1 else None
+            next_card = contiguous_cards[1] if len(contiguous_cards) > 0 else None
 
         if next_card is None:
             # Compute the next position
@@ -1461,13 +1458,13 @@ def move_card(request, card_id):
 
         # TODO: Update list with new position
         card.position = Decimal((prev_position + next_position) / 2)
-        if card.list.id is not list.id:
+        if card.list is not list:
             card.list = list
         card.save()
 
         # We reindex card position if these index to closest
         if next_position - card.position < 1:
-            reindex_card_position()
+            reindex_card_position(card)
             # Find the card after reindex
             card = Card.objects.filter(id=card_id).first()
 

@@ -9,6 +9,7 @@ function handleDrag(ev) {
 
     // Mark element as dragged
     ev.target.setAttribute("data-drag-card", "true");
+    ev.target.style.outline = "2px solid transparent";
 
     // Make dragged blur a bit
     ev.target.style.opacity = "0.5";
@@ -25,6 +26,9 @@ function handleDrag(ev) {
 function handleDragenter(ev) {
     ev.stopPropagation();
     const dragenterElement = ev.target.closest(".task-card, .task-card-hidden");
+    const draggedElement = document.querySelector(
+        ".task-card[data-drag-card='true']"
+    );
 
     //  Check if dragenter element is not dragged element
     if (dragenterElement.getAttribute("data-drag-card") !== "true") {
@@ -32,12 +36,16 @@ function handleDragenter(ev) {
         const ortherPlaceholder = document.querySelector(
             ".task-card-placeholder"
         );
-        ortherPlaceholder && ortherPlaceholder.remove();
 
         // Handle add placeholder before the dragenterElement
         const parentElement = dragenterElement.closest(".card-body");
-        const placeholderElement = createCardPlaceholderElement();
+        const placeholderElement =
+            ortherPlaceholder ||
+            createCardPlaceholderElement(draggedElement.offsetHeight);
         parentElement.insertBefore(placeholderElement, dragenterElement);
+
+        // Hide drag element
+        draggedElement.style.display = "none";
     }
 }
 
@@ -85,6 +93,8 @@ function handleDragend(ev) {
     // Make dragged element visible
     const draggedElement = ev.target;
     draggedElement.style.opacity = "1";
+    draggedElement.style.display = "flex";
+    draggedElement.style.outline = "";
 
     // Remove placeholder
     const placeholderElement = document.querySelector(".task-card-placeholder");
@@ -123,6 +133,9 @@ function handleDragList(ev) {
 // Drag list step 2
 function handleDragenterList(ev) {
     const dragenterElement = ev.target;
+    const draggedElement = document.querySelector(
+        ".task-list[data-drag-list='true']"
+    );
 
     //  Check if dragenter element is not dragged element
     if (dragenterElement.getAttribute("data-drag-list") !== "true") {
@@ -130,14 +143,20 @@ function handleDragenterList(ev) {
         const ortherPlaceholder = document.querySelector(
             ".task-list-placeholder"
         );
-        ortherPlaceholder && ortherPlaceholder.remove();
 
         // Add placeholder to left
         const dragenterElement = ev.target;
         const taskListParent = dragenterElement.closest(".task-lists");
         const biggestHoverElement = dragenterElement.closest(".col");
-        const placeholderElement = renderTaskListPlaceholderElement();
+        const placeholderElement =
+            ortherPlaceholder ||
+            renderTaskListPlaceholderElement(
+                draggedElement.closest(".col").offsetHeight
+            );
         taskListParent.insertBefore(placeholderElement, biggestHoverElement);
+
+        // Hide drag element
+        draggedElement.closest(".col").style.display = "none";
     }
 }
 // Drag list step 3
@@ -182,6 +201,7 @@ function dropList(ev) {
 function handleDragendList(ev) {
     // Make dragged element visible
     const draggedElement = ev.target;
+    draggedElement.closest(".col").style.display = "block";
     draggedElement.style.opacity = "1";
 
     // Remove placeholder
@@ -198,14 +218,14 @@ function handleDragendList(ev) {
     );
 }
 
-function renderTaskListPlaceholderElement() {
+function renderTaskListPlaceholderElement(height) {
     // Some element need this function to allow drop
     function allowDrop(ev) {
         ev.preventDefault();
     }
 
     const taskListPlaceholderElement = htmlToElement(
-        getTaskListPlaceholderHtml()
+        getTaskListPlaceholderHtml(height)
     );
 
     // Make placeholder dropable
@@ -215,9 +235,11 @@ function renderTaskListPlaceholderElement() {
     return taskListPlaceholderElement;
 }
 
-function createCardPlaceholderElement() {
+function createCardPlaceholderElement(height) {
     // Make placeholder UI
-    const cardPlaceholderElement = htmlToElement(getCardPlaceholderHtml());
+    const cardPlaceholderElement = htmlToElement(
+        getCardPlaceholderHtml(height)
+    );
 
     // Make placeholder dropable
     cardPlaceholderElement.addEventListener("dragover", allowDrop);

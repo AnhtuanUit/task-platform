@@ -99,18 +99,18 @@ function getAttachmentHtml(attachment) {
     `;
 }
 
-function getTaskListPlaceholderHtml() {
+function getTaskListPlaceholderHtml(height) {
     return `
-        <div class="task-list-placeholder col px-1" style="flex: 0 0 20%;">
-            <div class="card" style="height: 100%; background-color: #ffffff3b; border: none; border-radius: 16px;">
+        <div class="task-list-placeholder col px-1" style="flex: 0 0 20%; height: ${height}px;">
+            <div class="card" style="height: ${height}px; background-color: #ffffff3b; border: none; border-radius: 16px;">
         </div>
     `;
 }
 
-function getCardPlaceholderHtml() {
+function getCardPlaceholderHtml(height) {
     return `
         <div class="task-card-placeholder">
-            <div class="card" style="background-color: #ddd; height: 100px; border: none; border-radius: 12px;"></div>  
+            <div class="card" style="background-color: #ddd; height: ${height}px; border: none; border-radius: 12px;"></div>  
         </div>
     `;
 }

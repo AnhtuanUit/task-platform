@@ -2,3 +2,19 @@
 .task-lists::-webkit-scrollbar {
     display: none;
 }
+.task-card {
+    outline: 2px solid transparent;
+}
+
+.task-card:hover {
+    outline: 2px solid #7bb5cf;
+}
+
+#edit-card-icon {
+    visibility: hidden;
+    height: fit-content;
+}
+
+.task-card:hover #edit-card-icon {
+    visibility: visible;
+}

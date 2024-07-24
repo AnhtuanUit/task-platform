@@ -40,6 +40,13 @@ document.addEventListener("DOMContentLoaded", function () {
     // 7) Add card member
     addCardMemberForm &&
         addCardMemberForm.addEventListener("submit", handleAddCardMember);
+
+    // 8) Redirect to card detail when click task card
+    taskCards.forEach((taskCard) => {
+        taskCard.addEventListener("click", function () {
+            window.location.href = `/cards/${taskCard?.dataset?.cardId}`;
+        });
+    });
 });
 
 function handleAddCardMember(e) {

@@ -106,7 +106,7 @@ Board detail
         <div class="task-lists g-3 mt-2" style="display:flex; overflow-x: auto; width: 100%; max-width: 100%;">
                 {% for list in lists %}
                 <div class="col px-1" style="flex: 0 0 20%;">
-                    <div class="card task-list" style="background: #f1f2f4; border-radius: 16px; border: none;" draggable="true" id="list-id-{{ list.id }}" data-list-id="{{ list.id }}" data-list-position="{{ list.position }}">
+                    <div class="card task-list" style="cursor: pointer; background: #f1f2f4; border-radius: 16px; border: none;" draggable="true" id="list-id-{{ list.id }}" data-list-id="{{ list.id }}" data-list-position="{{ list.position }}">
                         <div class="card-body" style="display:flex; flex-direction: column; max-height: 650px !important; overflow-y: auto;" data-list-id="{{ list.id }}">
                             <div class="mb-2" style="display: flex;justify-content: space-between;">
                                 <a style="text-decoration: none; color: #172b4d; font-weight: bold;" href="{% url 'edit_list' list.id %}">{{ list.name }}</a>
@@ -124,23 +124,21 @@ Board detail
                                   </div>
                             </div>
                             {% for card in list.ordered_cards %}
-                                <div class="task-card card bg-info my-1 bg-white" style="border: none; border-radius: 12px;" data-card-id="{{ card.id }}" data-list-id="{{ list.id }}" id="card-id-{{ card.id }}" draggable="true" data-card-position="{{ card.position }}">
-                                    <div class="card-body" style="display: flex; justify-content: space-between;">
-                                        <a class="text-decoration-none" style="color: #172B4D;" href="{% url 'card' card.id %}">
-                                            {{ card.title }}
-                                        </a>
-                                        <a href="{% url 'edit_card_title' card.id %}" style="color: #172B4D;"><i class="bi bi-pencil-fill"></i></a>
-                                    </div>
-                                </div>   
+                                    <div class="btn task-card card bg-info my-1 bg-white" style="text-align: left; border: none; border-radius: 12px;" data-card-id="{{ card.id }}" data-list-id="{{ list.id }}" id="card-id-{{ card.id }}" draggable="true" data-card-position="{{ card.position }}">
+                                        <div class="card-body" style="display: flex; justify-content: space-between;">
+                                            <span style="color: #172B4D;">{{ card.title }}</span>
+                                            <a id="edit-card-icon" class="btn btn-sm btn-light bg-transparent" href="{% url 'edit_card_title' card.id %}" style="color: #172B4D; border-radius: 1000px;"><i class="bi bi-pencil-fill"></i></a>
+                                        </div>
+                                    </div>  
                             {% endfor %}
-                            <a class="task-card-hidden text-decoration-none mt-2" style="color: #44546f" href="{% url 'list_add_card_view' list.id %}"><i class="bi bi-plus" fill="#44546f"></i>Add a card</a>
+                            <a class="btn btn-light bg-transparent task-card-hidden text-decoration-none mt-2" style="color: #44546f" href="{% url 'list_add_card_view' list.id %}"><i class="bi bi-plus" fill="#44546f"></i>Add a card</a>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
                 <div class="col px-1" style="flex: 0 0 20%;">
                     <div class="card" style="border: none; border-radius: 16px; background: #ffffff3b;" draggable="true" id="task-add-list-btn" data-list-id="{{ list.id }}">
-                        <a class="btn text-white" href="{% url 'board_add_list_view' board.id %}">Add another list</a>
+                        <a class="btn bg-transparent text-white" style="border-radius: 16px;" href="{% url 'board_add_list_view' board.id %}">Add another list</a>
                     </div>
                 </div>
         </div>
