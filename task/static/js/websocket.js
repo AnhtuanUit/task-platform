@@ -107,7 +107,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             // Handle add board member
-            if (data.action === "create" && data.resource === "board_member") {
+            if (
+                ["create", "delete"].includes(data.action) &&
+                data.resource === "board_member"
+            ) {
                 const members = JSON.parse(data?.data).members;
                 addBoardMember(members);
             }

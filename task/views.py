@@ -976,6 +976,22 @@ def card_delete_member(request, card_id):
         member = User.objects.filter(id=member_id).first()
         card.members.remove(member)
 
+        # Manual serialize the card data
+        card_dict = model_to_dict(card)
+        card_dict["members"] = [
+            {"id": mem.id, "username": mem.username} for mem in card.members.all()
+        ]
+        if card_dict["due_date"]:
+            card_dict["due_date"] = card_dict["due_date"].isoformat()
+
+        # Realtime update FE
+        send_realtime_data(
+            card.list.board.id,
+            "edit",
+            "card",
+            {"card": card_dict, "browser_id": request.headers.get("Browser-ID")},
+        )
+
         return redirect(reverse("card_members", args=[card_id]))
 
 
@@ -1044,6 +1060,23 @@ def board_delete_member(request, board_id):
         # Get member
         member = User.objects.filter(id=member_id).first()
         board.members.remove(member)
+
+        # Model to dict
+        members_dict = [
+            {"id": member.id, "username": member.username}
+            for member in board.members.all()
+        ]
+
+        # Realtime update FE
+        send_realtime_data(
+            board.id,
+            "delete",
+            "board_member",
+            {
+                "members": members_dict,
+                "browser_id": request.headers.get("Browser-ID"),
+            },
+        )
 
         return redirect(reverse("board_members", args=[board_id]))
 
