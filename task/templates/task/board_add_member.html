@@ -12,8 +12,8 @@ Board add member
         <input class="btn" style="background: #397D99; color: white;" type="submit" value="Add member">
     </form>
     <div class="mt-4">
-        <a class="btn btn-sm" style="background: #397D99; color: white;" href="{% url 'board_members' board.id %}">Back to board members</a>
-        <a class="btn btn-sm" style="background: #397D99; color: white;" href="{% url 'board' board.id %}">Back to board</a>
+        <p><a class="link-primary" href="{% url 'board_members' board.id %}">Back to board members</a></p>
+        <p><a class="link-primary" href="{% url 'board' board.id %}">Back to board</a></p>
     </div>
 </div>
 {% endblock %}

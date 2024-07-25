@@ -47,6 +47,17 @@ document.addEventListener("DOMContentLoaded", function () {
             window.location.href = `/cards/${taskCard?.dataset?.cardId}`;
         });
     });
+
+    // 9) Disable some textarea enter
+    const textarea = document.querySelector(".single-line-textarea");
+    textarea.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+
+            // Submit form
+            event.target.closest("form").submit();
+        }
+    });
 });
 
 function handleAddCardMember(e) {

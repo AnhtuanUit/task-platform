@@ -9,7 +9,7 @@ Board members
     <h1 class="mt-5">{{ board.name }}</h1>
     <div class="d-flex mt-4 mb-2" style="justify-content: space-between; align-items: center;">
         <h2>Members</h2>
-        <a class="btn btn-sm" style="background: #397D99; color: white;" href="{% url 'board_add_member' board.id %}">Add member</a>
+        <a class="btn btn-sm btn-task" href="{% url 'board_add_member' board.id %}">Add member</a>
     </div>
     <table class="table table-striped">
         <thead>
@@ -34,7 +34,7 @@ Board members
                             <form action="{% url 'board_delete_member' board.id %}" method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" value="{{ member.id }}" name="memberId">
-                                <input class="btn btn-sm" style="background: #397D99; color: white;" type="submit" value="Delete">
+                                <input class="btn btn-sm btn-danger" type="submit" value="Delete">
                             </form>
                         {% endif %}
                     </td>
@@ -43,7 +43,7 @@ Board members
         </tbody>
       </table>
       <div class="mt-4">
-        <a class="btn btn-sm" style="background: #397D99; color: white;" href="{% url 'board' board.id %}">Back to board</a>
+        <a class="link-primary" href="{% url 'board' board.id %}">Back to board</a>
     </div>
 </div>
 {% endblock %}

@@ -18,3 +18,47 @@
 .task-card:hover #edit-card-icon {
     visibility: visible;
 }
+
+.task-card-hidden {
+    background-color: transparent;
+}
+
+.task-card-hidden:hover {
+    background-color: gainsboro;
+}
+
+#task-add-list-btn {
+    background-color: #ffffff3b;
+}
+
+#task-add-list-btn:hover {
+    background-color: #ffffff15;
+}
+
+.btn-transparent {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: transparent;
+}
+
+.btn-transparent:hover {
+    background-color: gainsboro;
+}
+
+.btn-task,
+.btn-task:hover {
+    background: #397d99;
+    color: white;
+}
+
+.flex-center-space-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.textarea {
+    white-space: pre-line;
+    white-space: pre-wrap;
+}

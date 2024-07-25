@@ -14,5 +14,9 @@ Edit card
                 <input class="btn" style="background: #397D99; color: white;" type="submit" value="Save">
             </form>
         </div>
+        <div class="mt-3">
+            <p><a class="link-primary" href="{% url 'board' card.list.board.id %}">Back to board</a></p>
+            <p><a class="link-primary" href="{% url 'card' card.id %}">Back to card</a></p>
+        </div>
     </div>
 {% endblock %}

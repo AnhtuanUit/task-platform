@@ -16,9 +16,13 @@ Create new board
                 <input class="form-control w-auto" id="create-board-name" autofocus type="text" placeholder="Board name" name="name">
             </div>
             <div class="mb-3">
-                <input class="form-control w-auto" id="create-board-description" type="text" placeholder="Board description" name="description">
+                <textarea class="form-control w-auto" id="create-board-description" rows="4" cols="50" placeholder="Board description" name="description"></textarea>
             </div>
             <input class="form-control w-auto btn" style="background: #397D99; color: white;" id="create-board-submit" type="submit" value="Create board">
         </form>
+
+        <div class="mt-3">
+            <p><a class="link-primary" href="{% url 'index' %}">Back to home</a></p>
+        </div>
     </div>
 {% endblock %}

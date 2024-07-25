@@ -31,7 +31,11 @@ class EditProfileForm(forms.Form):
     bio = forms.CharField(
         max_length=256,
         widget=forms.TextInput(
-            attrs={"class": "form-control w-auto", "placeholder": "Bio"}
+            attrs={
+                "class": "form-control w-auto",
+                "placeholder": "Bio",
+                "autofocus": True,
+            }
         ),
     )
     first_name = forms.CharField(
@@ -53,13 +57,24 @@ class EditBoardForm(forms.Form):
     name = forms.CharField(
         max_length=256,
         widget=forms.TextInput(
-            attrs={"class": "form-control w-auto", "placeholder": "Name"}
+            attrs={
+                "class": "form-control w-auto",
+                "placeholder": "Name",
+                "autofocus": True,
+            }
         ),
     )
     description = forms.CharField(
+        required=False,
         max_length=256,
-        widget=forms.TextInput(
-            attrs={"class": "form-control w-auto", "placeholder": "Description"}
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control w-auto",
+                "placeholder": "Description",
+                "autofocus": True,
+                "rows": 4,
+                "cols": 50,
+            }
         ),
     )
 
@@ -68,8 +83,14 @@ class EditListForm(forms.Form):
     template_name = "form_snippet.html"
     name = forms.CharField(
         max_length=256,
-        widget=forms.TextInput(
-            attrs={"class": "form-control w-auto", "placeholder": "Name"}
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control w-auto single-line-textarea",
+                "placeholder": "Name",
+                "autofocus": True,
+                "rows": 4,
+                "cols": 50,
+            }
         ),
     )
 
@@ -78,8 +99,14 @@ class EditCardTitleForm(forms.Form):
     template_name = "form_snippet.html"
     title = forms.CharField(
         max_length=256,
-        widget=forms.TextInput(
-            attrs={"class": "form-control w-auto", "placeholder": "Title"}
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control w-auto single-line-textarea",
+                "placeholder": "Title",
+                "autofocus": True,
+                "rows": 4,
+                "cols": 50,
+            }
         ),
     )
 
@@ -88,15 +115,27 @@ class EditCardForm(forms.Form):
     template_name = "form_snippet.html"
     title = forms.CharField(
         max_length=256,
-        widget=forms.TextInput(
-            attrs={"class": "form-control w-auto", "placeholder": "Title"}
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control w-auto single-line-textarea",
+                "placeholder": "Title",
+                "autofocus": True,
+                "rows": 4,
+                "cols": 50,
+            }
         ),
     )
     description = forms.CharField(
         required=False,
         max_length=256,
-        widget=forms.TextInput(
-            attrs={"class": "form-control w-auto", "placeholder": "Description"}
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control w-auto",
+                "placeholder": "Description",
+                "autofocus": True,
+                "rows": 4,
+                "cols": 50,
+            }
         ),
     )
     due_date = forms.DateTimeField(
@@ -725,6 +764,9 @@ def edit_card_title(request, card_id):
             card_dict["members"] = [
                 {"id": mem.id, "username": mem.username} for mem in card.members.all()
             ]
+
+            if card_dict["due_date"]:
+                card_dict["due_date"] = card_dict["due_date"].isoformat()
 
             # Realtime update FE
             send_realtime_data(
