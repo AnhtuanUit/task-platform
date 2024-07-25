@@ -49,14 +49,16 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // 9) Disable some textarea enter
-    const textarea = document.querySelector(".single-line-textarea");
-    textarea.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-            event.preventDefault();
+    const textareaElements = document.querySelectorAll(".single-line-textarea");
+    textareaElements.forEach((textarea) => {
+        textarea.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
 
-            // Submit form
-            event.target.closest("form").submit();
-        }
+                // Submit form
+                event.target.closest("form").submit();
+            }
+        });
     });
 });
 
