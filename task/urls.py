@@ -72,7 +72,9 @@ urlpatterns = [
         name="board_add_member",
     ),
     path(
-        "boards/<int:board_id>/members", views.board_members_view, name="board_members"
+        "boards/<int:board_id>/get_members",
+        views.board_members_view,
+        name="board_members",
     ),
     path(
         "boards/<int:board_id>/delete_member",

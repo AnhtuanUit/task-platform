@@ -980,6 +980,7 @@ def card_delete_member(request, card_id):
 
 
 # - Board add member
+@login_required
 def board_add_member_view(request, board_id):
 
     # Chek if board exist
@@ -1168,7 +1169,7 @@ def move_list(request, list_id):
         if prev_list_id is None:
             next_list = contiguous_lists[0] if len(contiguous_lists) > 0 else None
         else:
-            next_list = contiguous_lists[1] if len(contiguous_lists) > 0 else None
+            next_list = contiguous_lists[1] if len(contiguous_lists) > 1 else None
 
         if next_list is None:
             max_position = prev_position
@@ -1266,8 +1267,8 @@ def add_card(request, list_id):
 
 
 # - API board add member
-@csrf_exempt
 @login_required
+@csrf_exempt
 def board_member(request, board_id):
 
     # Check if request method is POST
@@ -1359,11 +1360,6 @@ def boards(request):
 
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON"}, status=400)
-
-    # Pagination
-
-    # Get all boards items, with members, with list, with card
-    boards = Board.objects.prefetch_related("members", "lists__cards")
 
     # Return list of boards
     return JsonResponse({"boards": request.user.boards.all()})
@@ -1540,7 +1536,7 @@ def move_card(request, card_id):
         if prev_card_id is None:
             next_card = contiguous_cards[0] if len(contiguous_cards) > 0 else None
         else:
-            next_card = contiguous_cards[1] if len(contiguous_cards) > 0 else None
+            next_card = contiguous_cards[1] if len(contiguous_cards) > 1 else None
 
         if next_card is None:
             # Compute the next position

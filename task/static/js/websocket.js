@@ -174,15 +174,12 @@ function addNewListToBoard(list) {
 
 function editListToBoard(list) {
     // Find list element by list id
-    const oldElement = document
-        .querySelector(`#list-id-${list.id}`)
-        .closest(".col");
+    const taskListTitle = document.querySelector(
+        `#list-id-${list.id} .task-list-title`
+    );
 
-    // Render new list element
-    const updatedTaskListElement = renderTaskListElement(list);
-
-    // Replace new list element
-    oldElement.replaceWith(updatedTaskListElement);
+    // Replace list name
+    taskListTitle.textContent = list.name;
 }
 
 function deleteList(listId) {
@@ -228,21 +225,17 @@ function editCardDetail(card) {
 
     // Replace card description
     const cardDescriptionElement = document.querySelector(
-        "#card-group-description > a"
+        "#card-group-description p"
     );
-    cardDescriptionElement.textContent =
-        card.description || "Write some thing ...";
+    cardDescriptionElement.textContent = card.description;
 
     // Replace card due date
-    const cardDueDateElement = document.querySelector(
-        "#card-group-due-date > a"
-    );
-    cardDueDateElement.textContent =
-        (card.due_date && formatDate(card.due_date)) || "Chose due date ...";
+    const cardDueDateElement = document.querySelector("#card-group-due-date p");
+    cardDueDateElement.textContent = card.due_date && formatDate(card.due_date);
 
     // Replace card members
     const cardMembersElement = document.querySelector(
-        "#card-group-memebers > div"
+        "#card-group-memebers div"
     );
     const listMemberHtml = getListMemberHtml(card.members);
     cardMembersElement.innerHTML = listMemberHtml;
