@@ -35,7 +35,12 @@
                                     </a>
                                     <ul class="dropdown-menu">
                                         {% for board in boards %}
-                                            <li><a class="dropdown-item" href="{% url 'board' board.id %}">{{ board.name }}</a></li>
+                                            <li>
+                                                <a class="dropdown-item" href="{% url 'board' board.id %}">
+                                                    <i class="bi bi-check-all"></i>
+                                                    {{ board.name }}
+                                                </a>
+                                            </li>
                                         {% endfor %}
                                     </ul>
                                 </li>
@@ -84,8 +89,8 @@
                                     {% for board in boards %}
                                     <li>
                                         <a href="{% url 'board' board.id %}" class="nav-link text-white">
-                                        <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
-                                        {{ board.name }}
+                                            <i class="bi bi-check-all"></i>
+                                            {{ board.name }}
                                         </a>
                                     </li>
                                     {% endfor %}
