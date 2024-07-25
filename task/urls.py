@@ -48,6 +48,12 @@ urlpatterns = [
         views.delete_card,
         name="delete_card",
     ),
+    path("cards/<int:card_id>/members", views.card_members_view, name="card_members"),
+    path(
+        "cards/<int:card_id>/delete_member",
+        views.card_delete_member,
+        name="card_delete_member",
+    ),
     # Create attachment file
     path(
         "cards/<int:card_id>/create_attachment_file",
@@ -66,10 +72,10 @@ urlpatterns = [
         name="board_add_member",
     ),
     path(
-        "boars/<int:board_id>/members", views.board_members_view, name="board_members"
+        "boards/<int:board_id>/members", views.board_members_view, name="board_members"
     ),
     path(
-        "boars/<int:board_id>/delete_member",
+        "boards/<int:board_id>/delete_member",
         views.board_delete_member,
         name="board_delete_member",
     ),

@@ -927,6 +927,58 @@ def delete_card(request, card_id):
     return apology(request, "Delete not allowed via GET", 400)
 
 
+# - Card members view
+@login_required
+def card_members_view(request, card_id):
+
+    # Chek if card exist
+    card = Card.objects.filter(id=card_id).first()
+    if card is None:
+        return apology(request, "Card does not exist!", 400)
+
+    # Check if user is card member
+    if not request.user in card.members.all():
+        return apology(request, "Forbidden.", 403)
+
+    members = card.members.all()
+    for index, member in enumerate(members, start=1):
+        member.index = index
+
+    return render(
+        request,
+        "task/card_members.html",
+        {
+            "card": card,
+            "boards": request.user.boards.all(),
+            "members": members,
+        },
+    )
+
+
+@login_required
+def card_delete_member(request, card_id):
+
+    # Chek if card exist
+    card = Card.objects.filter(id=card_id).first()
+    if card is None:
+        return apology(request, "Card does not exist!", 400)
+
+    # Check if user is card member
+    if not request.user in card.members.all():
+        return apology(request, "Forbidden.", 403)
+
+    if request.method == "POST":
+
+        # Get delete data
+        member_id = request.POST["memberId"]
+
+        # Get member
+        member = User.objects.filter(id=member_id).first()
+        card.members.remove(member)
+
+        return redirect(reverse("card_members", args=[card_id]))
+
+
 # - Board add member
 def board_add_member_view(request, board_id):
 

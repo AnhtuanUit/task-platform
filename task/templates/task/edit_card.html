@@ -17,6 +17,7 @@ Edit card
         <div class="mt-3">
             <p><a class="link-primary" href="{% url 'board' card.list.board.id %}">Back to board</a></p>
             <p><a class="link-primary" href="{% url 'card' card.id %}">Back to card</a></p>
+            <p><a class="link-primary" href="{% url 'card_members' card.id %}">Back to manage card members</a></p>
         </div>
     </div>
 {% endblock %}
