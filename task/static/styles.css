@@ -19,14 +19,6 @@
     visibility: visible;
 }
 
-.task-card-hidden {
-    background-color: transparent;
-}
-
-.task-card-hidden:hover {
-    background-color: gainsboro;
-}
-
 #task-add-list-btn {
     background-color: #ffffff3b;
 }
