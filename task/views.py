@@ -201,6 +201,21 @@ def send_realtime_data(board_id, action, resource, data):
     )
 
 
+def send_realtime_data_to_user(user, action, resource, data):
+    data_json = json.dumps(data, cls=DecimalEncoder)
+    channel_layer = get_channel_layer()
+
+    async_to_sync(channel_layer.group_send)(
+        f"user_{user.id}",
+        {
+            "type": f"realtime.message",
+            "data": data_json,
+            "action": action,
+            "resource": resource,
+        },
+    )
+
+
 def layer_send_message(message):
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
@@ -234,9 +249,22 @@ def createNotification(user, type, object):
 
     # Depending on type detect object type
     if type.startswith("TASK_"):
-        notification = Notification.objects.create(
-            user=user, type=type, card=object, description=description
-        )
+        card_members = object.members.all()
+
+        # Send notification to each member
+        for member in card_members:
+            notification = Notification.objects.create(
+                user=user, type=type, card=object, description=description
+            )
+
+            # Notification dict
+            notification_dict = model_to_dict(notification)
+            notification_dict["title"] = getNotificationTitle(notification.type)
+            notification_dict["created_at"] = notification.created_at.isoformat()
+
+            send_realtime_data_to_user(
+                member, "create", "notification", {"notification": notification_dict}
+            )
 
     elif type.startswith("BOARD_"):
         notification = Notification.objects.create(
@@ -247,16 +275,6 @@ def createNotification(user, type, object):
         notification = Notification.objects.create(
             user=user, type=type, list=object, description=description
         )
-
-    # Notification dict
-    notification_dict = model_to_dict(notification)
-    notification_dict["title"] = getNotificationTitle(notification.type)
-    notification_dict["created_at"] = notification.created_at.isoformat()
-
-    # Real time send notification
-    send_realtime_data(
-        "notification", "create", "notification", {"notification": notification_dict}
-    )
 
     return notification
 
@@ -837,14 +855,6 @@ def edit_card_title(request, card_id):
 
             if card_dict["due_date"]:
                 card_dict["due_date"] = card_dict["due_date"].isoformat()
-
-            # Realtime update FE
-            send_realtime_data(
-                card.list.board.id,
-                "edit",
-                "card_title",
-                {"card": card_dict, "browser_id": request.headers.get("Browser-ID")},
-            )
 
             # Create notificaiton and send realtime
             createNotification(request.user, "TASK_UPDATED_TITLE", card)
