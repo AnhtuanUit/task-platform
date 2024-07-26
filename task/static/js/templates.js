@@ -15,11 +15,13 @@ function getNotificationHtml(notification) {
     return `
         <div class="card mb-3" id="notification-id-${
             notification.id
-        }" style="cursor: pointer; ${
-        notification.is_read && "background-color: red;"
+        }" style="cursor: pointer; color: #172B4D; ${
+        notification.is_read
+            ? "background-color: #ddd;"
+            : "background-color: white;"
     }">
             <div class="card-body">
-                <div class="row g-0">
+                <div class="row g-2">
                     <div class="col-auto">
                         <img src="https://i.pravatar.cc/48?u=${
                             notification.user
@@ -28,7 +30,7 @@ function getNotificationHtml(notification) {
                     <div class="col">
                         <h5 class="card-title">${notification.title}</h5>
                         <p class="card-text">${notification.description}</p>
-                        <p class="card-text"><small class="text-muted">${moment(
+                        <p class="card-text"><small style="color: #2d4265;">${moment(
                             notification.created_at
                         ).fromNow()}</small></p>
                     </div>
