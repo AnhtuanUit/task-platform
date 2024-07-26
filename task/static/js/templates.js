@@ -185,23 +185,23 @@ function renderNotificationElement(notification) {
         // Handle read notification
         apiReadNotification(notification.id).then(() => {
             // Update notification background
-            notificationElement.style.backgroundColor = "red";
+            notificationElement.style.backgroundColor = "#ddd";
 
             // Update total unread notification
-            const unreadNotificatinoElement = document.querySelector(
-                "#notification-total-unread"
-            );
-            const totalUnreadNotification =
-                Number(unreadNotificatinoElement.textContent) - 1;
+            // const unreadNotificatinoElement = document.querySelector(
+            //     "#notification-total-unread"
+            // );
+            // const totalUnreadNotification =
+            //     Number(unreadNotificatinoElement.textContent) - 1;
 
-            if (totalUnreadNotification >= 0) {
-                unreadNotificatinoElement.textContent = totalUnreadNotification;
-                if (totalUnreadNotification) {
-                    unreadNotificatinoElement.style.display = "block";
-                } else {
-                    unreadNotificatinoElement.style.display = "none";
-                }
-            }
+            // if (totalUnreadNotification >= 0) {
+            //     unreadNotificatinoElement.textContent = totalUnreadNotification;
+            //     if (totalUnreadNotification) {
+            //         unreadNotificatinoElement.style.display = "block";
+            //     } else {
+            //         unreadNotificatinoElement.style.display = "none";
+            //     }
+            // }
         });
     });
     return notificationElement;

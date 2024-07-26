@@ -214,10 +214,9 @@ def send_message(request, message):
     return redirect("index")
 
 
-def createNotification(user, type, object, thing_updated):
+def createNotification(user, type, object):
     types = [
         "TASK_ASSIGNMENT",
-        "TASK_DUE_DATE_REMINDER",
         "TASK_UPDATED_TITLE",
         "TASK_UPDATED_DESCRIPTION",
         "TASK_DONE",
@@ -375,8 +374,7 @@ def serve_file(request, file_path):
 def getNotificationTitle(type):
     types = {
         "TASK_ASSIGNMENT": "Task assignment",
-        "TASK_DUE_DATE_REMINDER": "Task due date reminder",
-        "TASK_UPDATED_TITLE": "Task title title",
+        "TASK_UPDATED_TITLE": "Task title updated",
         "TASK_UPDATED_DESCRIPTION": "Task description updated",
         "TASK_DONE": "Task done",
         "TASK_CREATED": "Task created",
@@ -615,6 +613,9 @@ def edit_board_view(request, board_id):
                 {"board": board_dict, "browser_id": request.headers.get("Browser-ID")},
             )
 
+            # Create notificaiton and send realtime
+            createNotification(request.user, "BOARD_UPDATED", board)
+
             return redirect(reverse("board", args=[board_id]))
 
         # If not valid form data
@@ -709,6 +710,9 @@ def edit_list_view(request, list_id):
             # Update list
             list.name = name
             list.save()
+
+            # Create notificaiton and send realtime
+            createNotification(request.user, "LIST_UPDATED_TITLE", list)
 
             # Realtime update FE
             send_realtime_data(
@@ -842,6 +846,9 @@ def edit_card_title(request, card_id):
                 {"card": card_dict, "browser_id": request.headers.get("Browser-ID")},
             )
 
+            # Create notificaiton and send realtime
+            createNotification(request.user, "TASK_UPDATED_TITLE", card)
+
             # Redirect to current board
             return redirect(reverse("board", args=[card.list.board.id]))
 
@@ -914,8 +921,19 @@ def edit_card(request, card_id):
                         request.user,
                         "TASK_ASSIGNMENT",
                         card,
-                        member,
                     )
+
+            # If change description send notification
+            if card.description != description:
+                print(card.description)
+                print(description)
+                # Create notificaiton and send realtime
+                createNotification(request.user, "TASK_UPDATED_DESCRIPTION", card)
+
+            # If change title send notification
+            if card.title != title:
+                # Create notificaiton and send realtime
+                createNotification(request.user, "TASK_UPDATED_TITLE", card)
 
             # Update card to DB
             card.title = title
@@ -1212,6 +1230,9 @@ def add_list(request, board_id):
                 },
             )
 
+            # Create notificaiton and send realtime
+            createNotification(request.user, "LIST_CREATED", list)
+
         except Exception as error:
             print(error)
             # Return error message
@@ -1363,6 +1384,9 @@ def add_card(request, list_id):
                 "card",
                 {"card": card_dict, "browser_id": request.headers.get("Browser-ID")},
             )
+
+            # Create notificaiton and send realtime
+            createNotification(request.user, "TASK_CREATED", card)
 
         except Exception as error:
             print(error)
@@ -1681,6 +1705,11 @@ def move_card(request, card_id):
             "card",
             {"card": card_dict, "browser_id": request.headers.get("Browser-ID")},
         )
+
+        # If task move to list "Done"
+        if list_id != None and list.name == "Done":
+            # Create notificaiton and send realtime
+            createNotification(request.user, "TASK_DONE", card)
 
         # Return success JSON response
         return JsonResponse({"message": "Move card succssfully."})
