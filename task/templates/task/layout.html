@@ -60,10 +60,10 @@
                         {% if user.is_authenticated %}
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0" style="display: flex; align-items: center;">
                             <li class="nav-item dropdown">
-                                <a class="nav-link text-white d-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="display: flex; align-items: center; gap: 4px;" id="dropdownMenuClickableInside" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                <a class="nav-link text-white d-relative" href="#" role="button" style="display: flex; align-items: center; gap: 4px;" id="dropdownMenuClickableInside" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                                     <i class="bi bi-bell-fill"></i>
                                 </a>
-                                <div id="notification-total-unread" class="rounded-circle bg-danger" style="display: none; position: absolute; width: 16px; height: 16px; text-align: center; color: white; line-height: 1.4; background: red; font-size: 12px; top: 6px; right: 0;">0</div>
+                                <div  data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" id="notification-total-unread" class="rounded-circle bg-danger" style="cursor: pointer; display: none; position: absolute; width: 16px; height: 16px; text-align: center; color: white; line-height: 1.4; background: red; font-size: 12px; top: 6px; right: 0;">0</div>
                                 <div class="dropdown-menu dropdown-menu-end" style="background: #f1f2f4;" aria-labelledby="dropdownMenuClickableInside">
                                     <div class="card text-dark border-primary" style="width: 400px; border: none; background: #f1f2f4;">
                                         <div class="card-header" style="border-bottom: 1px solid #ccc;">
