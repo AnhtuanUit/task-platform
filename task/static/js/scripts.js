@@ -60,7 +60,49 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+
+    // 10) Load recent notifications
+    const notificationsPlaceholder = document.querySelector(
+        "#notificationsPlacholder"
+    );
+    apiGetRecentNotifications().then((data) => {
+        data.notifications.forEach((notification) => {
+            notificationsPlaceholder.appendChild(
+                renderNotificationElement(notification)
+            );
+        });
+
+        // Render total unread notification
+        renderUnreadNotification(data.total_unread_notification);
+    });
+
+    // 11) Hanlde dropdown menu click outside
+    handleDropMenu();
 });
+
+function renderUnreadNotification(totalUnreadNotification) {
+    const unreadNotificatinoElement = document.querySelector(
+        "#notification-total-unread"
+    );
+    if (totalUnreadNotification >= 0) {
+        unreadNotificatinoElement.textContent = totalUnreadNotification;
+    }
+
+    if (totalUnreadNotification) {
+        unreadNotificatinoElement.style.display = "block";
+    } else {
+        unreadNotificatinoElement.style.display = "none";
+    }
+}
+
+function handleDropMenu() {
+    const dropdownMenu = document.querySelector(".dropdown-menu");
+
+    dropdownMenu.addEventListener("click", (event) => {
+        event.stopPropagation();
+        dropdownMenu.classList.add("show");
+    });
+}
 
 function handleAddCardMember(e) {
     e.preventDefault();

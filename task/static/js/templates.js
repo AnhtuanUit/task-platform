@@ -11,6 +11,42 @@ function htmlToElement(html) {
     return newElement;
 }
 
+function getNotificationHtml(notification) {
+    return `
+        <div class="card mb-3" id="notification-id-${
+            notification.id
+        }" style="cursor: pointer; ${
+        notification.is_read && "background-color: red;"
+    }">
+            <div class="card-body">
+                <div class="row g-0">
+                    <div class="col-auto">
+                        <img src="https://i.pravatar.cc/48?u=${
+                            notification.user
+                        }" alt="" width="32" height="32" class="rounded-circle me-2">
+                    </div>
+                    <div class="col">
+                        <h5 class="card-title">${notification.title}</h5>
+                        <p class="card-text">${notification.description}</p>
+                        <p class="card-text"><small class="text-muted">${moment(
+                            notification.created_at
+                        ).fromNow()}</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function getListNotificationHtml(notifications) {
+    const listNotificationHtml = notifications.map((notification) => {
+        const notificationHtml = getNotificationHtml(notification);
+        return notificationHtml;
+    });
+    const result = listNotificationHtml.join("");
+    return result;
+}
+
 function getTaskListHtml(list) {
     return `
         <div class="col px-1" style="flex: 0 0 20%;">
@@ -137,4 +173,34 @@ function renderCardElement(card) {
     cardElement.addEventListener("dragend", handleDragend);
 
     return cardElement;
+}
+
+function renderNotificationElement(notification) {
+    const notificationElement = htmlToElement(
+        getNotificationHtml(notification)
+    );
+    notificationElement.addEventListener("click", function () {
+        // Handle read notification
+        apiReadNotification(notification.id).then(() => {
+            // Update notification background
+            notificationElement.style.backgroundColor = "red";
+
+            // Update total unread notification
+            const unreadNotificatinoElement = document.querySelector(
+                "#notification-total-unread"
+            );
+            const totalUnreadNotification =
+                Number(unreadNotificatinoElement.textContent) - 1;
+
+            if (totalUnreadNotification >= 0) {
+                unreadNotificatinoElement.textContent = totalUnreadNotification;
+                if (totalUnreadNotification) {
+                    unreadNotificatinoElement.style.display = "block";
+                } else {
+                    unreadNotificatinoElement.style.display = "none";
+                }
+            }
+        });
+    });
+    return notificationElement;
 }

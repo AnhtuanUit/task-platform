@@ -14,7 +14,6 @@ from decimal import Decimal
 from .helpers import apology
 from django.forms.models import model_to_dict
 from django.db.models.fields.files import FieldFile
-import pytz
 
 from .models import (
     Board,
@@ -22,6 +21,7 @@ from .models import (
     List,
     Card,
     Attachment,
+    Notification,
 )
 from django import forms
 
@@ -209,27 +209,57 @@ def layer_send_message(message):
     )
 
 
-# Define all message
-# 1. type: create, delete, update(move)
-# 2. resouce: “board”, “list”, “card”
-# 3. data: board, list, card
-# 1. Board
-# TODO: {"type": "realtime.edit_board", "data": { board: updated_board }}
-# TODO: {"type": "realtime.delete_board", "data": { board_id: "1" }}
-# TODO: {"type": "realtime.create_list", "data": { board_id: "1", list: created_list }}
-# TODO: {"type": "realtime.edit_list", "data": { board_id: "1", list: updated_list }}
-# TODO: {"type": "realtime.delete_list", "data": { board_id: "1", list_id: "1" }}
-# TODO: {"type": "realtime.create_card", "data": { board_id: "1", card: created_card }}
-# TODO: {"type": "realtime.edit_card", "data": { board_id: "1", card: updated_card }}
-# TODO: {"type": "realtime.delete_card", "data": { board_id: "1", card_id: "1" }}
-# TODO: {"type": "realtime.move_list", "data": { board_id: "1", list: moved_list }}
-# TODO: {"type": "realtime.move_card", "data": { board_id: "1", card: moved_card }}
-# TODO: {"type": "realtime.create_attachment", "data": { board_id: "1", card: updated_card }}
-
-
 def send_message(request, message):
     layer_send_message(message)
     return redirect("index")
+
+
+def createNotification(user, type, object, thing_updated):
+    types = [
+        "TASK_ASSIGNMENT",
+        "TASK_DUE_DATE_REMINDER",
+        "TASK_UPDATED_TITLE",
+        "TASK_UPDATED_DESCRIPTION",
+        "TASK_DONE",
+        "TASK_CREATED",
+        "BOARD_UPDATED",
+        "LIST_CREATED",
+        "LIST_UPDATED_TITLE",
+    ]
+    # Check if type exist
+    if not type in types:
+        return None
+
+    # Generate description, title
+    description = getNotificationDescription(type, user.username)
+
+    # Depending on type detect object type
+    if type.startswith("TASK_"):
+        notification = Notification.objects.create(
+            user=user, type=type, card=object, description=description
+        )
+
+    elif type.startswith("BOARD_"):
+        notification = Notification.objects.create(
+            user=user, type=type, board=object, description=description
+        )
+
+    elif type.startswith("LIST_"):
+        notification = Notification.objects.create(
+            user=user, type=type, list=object, description=description
+        )
+
+    # Notification dict
+    notification_dict = model_to_dict(notification)
+    notification_dict["title"] = getNotificationTitle(notification.type)
+    notification_dict["created_at"] = notification.created_at.isoformat()
+
+    # Real time send notification
+    send_realtime_data(
+        "notification", "create", "notification", {"notification": notification_dict}
+    )
+
+    return notification
 
 
 @login_required
@@ -342,13 +372,49 @@ def serve_file(request, file_path):
         return apology(request, "Find not found.")
 
 
+def getNotificationTitle(type):
+    types = {
+        "TASK_ASSIGNMENT": "Task assignment",
+        "TASK_DUE_DATE_REMINDER": "Task due date reminder",
+        "TASK_UPDATED_TITLE": "Task title title",
+        "TASK_UPDATED_DESCRIPTION": "Task description updated",
+        "TASK_DONE": "Task done",
+        "TASK_CREATED": "Task created",
+        "BOARD_UPDATED": "Board title updated",
+        "LIST_CREATED": "List created",
+        "LIST_UPDATED_TITLE": "List title updated",
+    }
+
+    return types[type]
+
+
+def getNotificationDescription(type, user):
+    types = {
+        "TASK_ASSIGNMENT": f"{user} has been assigned to a task.",
+        "TASK_DUE_DATE_REMINDER": f"Reminder: A task assigned to {user} is due soon.",
+        "TASK_UPDATED_TITLE": f"{user} has updated the title of a task.",
+        "TASK_UPDATED_DESCRIPTION": f"{user} has updated the description of a task.",
+        "TASK_DONE": f"{user} has marked a task as done.",
+        "TASK_CREATED": f"{user} has created a new task.",
+        "BOARD_UPDATED": f"{user} has updated the board.",
+        "LIST_CREATED": f"{user} has created a new list.",
+        "LIST_UPDATED_TITLE": f"{user} has updated the title of a list.",
+    }
+
+    return types[type]
+
+
 # Login, logout profile
 # Create your views here.
 # show boards here
 @login_required
 def index(request):
-    # Show boards, lists, cards
-    return render(request, "task/index.html", {"boards": request.user.boards.all()})
+
+    return render(
+        request,
+        "task/index.html",
+        {"boards": request.user.boards.all()},
+    )
 
 
 @login_required
@@ -842,6 +908,14 @@ def edit_card(request, card_id):
                 else:
                     # Update card member to DB
                     card.members.add(member)
+
+                    # Create notificaiton and send realtime
+                    createNotification(
+                        request.user,
+                        "TASK_ASSIGNMENT",
+                        card,
+                        member,
+                    )
 
             # Update card to DB
             card.title = title
@@ -1639,3 +1713,67 @@ def card_member(request, card_id):
 
         # Return success message
         return JsonResponse({"message": "Add member to card successfully!"})
+
+
+# API get recent notification
+@csrf_exempt
+@login_required
+def get_notifications(request):
+
+    # Get the recent 10 notifications
+    notifications = request.user.notifications.all().order_by("-created_at")
+    notifications_list = []
+    total_unread_notification = request.user.notifications.filter(is_read=False).count()
+
+    for notification in notifications:
+        notification_dict = model_to_dict(notification)
+        notification_dict["title"] = getNotificationTitle(notification.type)
+        notification_dict["description"] = getNotificationDescription(
+            notification.type, notification.user.username
+        )
+
+        notification_dict["created_at"] = notification.created_at.isoformat()
+        notifications_list.append(notification_dict)
+
+    return JsonResponse(
+        {
+            "notifications": notifications_list,
+            "total_unread_notification": total_unread_notification,
+        }
+    )
+
+
+# API read notification
+@csrf_exempt
+@login_required
+def read_notification(request, notification_id):
+
+    # Check if notification exist
+    notification = request.user.notifications.filter(id=notification_id).first()
+
+    if notification is None:
+        return JsonResponse({"message": "Notification does not eixst!"}, 400)
+
+    # Only read by method POST
+    if request.method == "POST":
+
+        # Mark as read notification
+        notification.is_read = True
+        notification.save()
+
+        # Convert to JSON notification
+        notification_dict = model_to_dict(notification)
+        notification_dict["title"] = getNotificationTitle(notification.type)
+        notification_dict["created_at"] = notification.created_at.isoformat()
+
+        # Notification dict
+        notification_dict = model_to_dict(notification)
+        notification_dict["title"] = getNotificationTitle(notification.type)
+        notification_dict["created_at"] = notification.created_at.isoformat()
+
+        # Real time send notification
+        send_realtime_data(
+            "notification", "read", "notification", {"notification": notification_dict}
+        )
+
+        return JsonResponse({"message": "Read notification successfully."})

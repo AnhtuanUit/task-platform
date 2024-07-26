@@ -54,3 +54,11 @@
     white-space: pre-line;
     white-space: pre-wrap;
 }
+
+.dropdown-menu {
+    display: none;
+}
+
+.dropdown.show .dropdown-menu {
+    display: block;
+}

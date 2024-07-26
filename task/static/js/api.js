@@ -173,3 +173,34 @@ async function apiAddCardMember(cardId, memberId) {
             return result;
         });
 }
+
+async function apiGetRecentNotifications() {
+    return fetch("/notifications", {
+        headers: {
+            "Browser-ID": browserId, // Include Browser ID in headers
+        },
+        method: "GET",
+    })
+        .then((response) => response.json())
+        .then((result) => {
+            console.log("result", result);
+            return {
+                notifications: result.notifications,
+                total_unread_notification: result.total_unread_notification,
+            };
+        });
+}
+
+async function apiReadNotification(notificationId) {
+    return fetch(`/notifications/${notificationId}/read`, {
+        headers: {
+            "Browser-ID": browserId, // Include Browser ID in headers
+        },
+        method: "POST",
+    })
+        .then((response) => response.json())
+        .then((result) => {
+            console.log("result", result);
+            return;
+        });
+}

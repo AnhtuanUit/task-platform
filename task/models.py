@@ -94,17 +94,30 @@ class Assignment(models.Model):
 
 #  7. Notification: user_id, type(card_created, card_asssigned,. ..), card_id, board_id, description, created_at, id_read.
 class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="notifications"
+    )
     type = models.CharField(max_length=20)
     card = models.ForeignKey(
-        "Card", on_delete=models.CASCADE, related_name="notifications"
+        "Card", on_delete=models.CASCADE, related_name="notifications", null=True
     )
     board = models.ForeignKey(
-        "Board", on_delete=models.CASCADE, related_name="notificaitons"
+        "Board", on_delete=models.CASCADE, related_name="notificaitons", null=True
     )
     list = models.ForeignKey(
-        "List", on_delete=models.CASCADE, related_name="notificaitons"
+        "List", on_delete=models.CASCADE, related_name="notificaitons", null=True
     )
     description = models.CharField(max_length=256)
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+# Notification type:
+# 1. "TASK_ASSIGNMENT":
+# 2. "TASK_DUE_DATE_REMINDER"
+# 3. "TASK_UPDATED": description, title
+# 4. "TASK_DONE": Task move to Done list: event
+# 5. "TASK_CREATED": Task create
+# 6. "BOARD_UPDATED" Board update name
+# 7. "LIST_CREATED" List create and update name#
+# 8. "LIST_UPDATED" List create and update name

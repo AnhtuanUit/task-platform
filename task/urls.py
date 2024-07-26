@@ -97,4 +97,12 @@ urlpatterns = [
     path("boards/<int:board_id>/members", views.board_member, name="board_member"),
     # - API Member - card add member
     path("cards/<int:card_id>/members", views.card_member, name="card_member"),
+    # - API Get recent notifications
+    path("notifications", views.get_notifications, name="notifications"),
+    # - API Read notification
+    path(
+        "notifications/<int:notification_id>/read",
+        views.read_notification,
+        name="read_notification",
+    ),
 ]
