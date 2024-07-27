@@ -23,7 +23,9 @@ from ..forms import (
 # Create board view
 @login_required
 def create_board_view(request):
-    return render(request, "task/new_board.html", {"boards": request.user.boards.all()})
+    return render(
+        request, "task/create_board.html", {"boards": request.user.boards.all()}
+    )
 
 
 # Get board by id view
@@ -173,7 +175,7 @@ def create_board_member_view(request, board_id):
     # Render board add memeber page
     return render(
         request,
-        "task/board_add_member.html",
+        "task/create_board_member.html",
         {"board": board, "boards": request.user.boards.all()},
     )
 

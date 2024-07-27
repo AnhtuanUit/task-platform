@@ -1,10 +1,10 @@
 {% extends "task/layout.html" %}
 {% block title %}
-Board add member
+Add board member
 {% endblock %}
 {% block main %}
 <div class="container">
-    <h1 class="mt-5">Board add member</h1>
+    <h1 class="mt-5">Add board member</h1>
     <h3 class="mt-3">Add member to board: {{ board.name }}</h3>
     <form id="add-member-form">
         <input class="form-control w-auto mb-3" id="add-member-board-id" name="board-id" type="hidden" value="{{ board.id }}">

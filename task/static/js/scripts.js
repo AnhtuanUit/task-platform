@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
     loadRecentNotification();
 });
 
-function enterSubmitForm(textarea) {
+function handleEnterSubmitForm(textarea) {
     textarea.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
             event.preventDefault();

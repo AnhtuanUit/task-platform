@@ -86,7 +86,7 @@ def edit_list_view(request, list_id):
         else:
             return render(
                 request,
-                "task/edit_list_view.html",
+                "task/edit_list.html",
                 {
                     "list": list,
                     "boards": request.user.boards.all(),
@@ -96,7 +96,7 @@ def edit_list_view(request, list_id):
 
     return render(
         request,
-        "task/edit_list_view.html",
+        "task/edit_list.html",
         {
             "list": list,
             "boards": request.user.boards.all(),

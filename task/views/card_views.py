@@ -37,10 +37,10 @@ def create_card_view(request, list_id):
     if list is None:
         return HttpResponse("List does not exist")
 
-    # Render list_add_card.html file
+    # Render create_card.html file
     return render(
         request,
-        "task/list_add_card.html",
+        "task/create_card.html",
         {"list": list, "boards": request.user.boards.all()},
     )
 
@@ -121,13 +121,13 @@ def edit_card_title_view(request, card_id):
         else:
             return render(
                 request,
-                "task/edit_card_title_view.html",
+                "task/edit_card_title.html",
                 {"boards": request.user.boards.all(), "card": card, "form": form},
             )
 
     return render(
         request,
-        "task/edit_card_title_view.html",
+        "task/edit_card_title.html",
         {
             "boards": request.user.boards.all(),
             "card": card,
@@ -222,13 +222,13 @@ def edit_card_view(request, card_id):
         else:
             return render(
                 request,
-                "task/edit_card_view.html",
+                "task/edit_card.html",
                 {"boards": request.user.boards.all(), "card": card, "form": form},
             )
 
     return render(
         request,
-        "task/edit_card_view.html",
+        "task/edit_card.html",
         {
             "boards": request.user.boards.all(),
             "card": card,
@@ -318,7 +318,7 @@ def create_attachment_file_view(request, card_id):
         else:
             return render(
                 request,
-                "task/create_attachment_file_view.html",
+                "task/create_attachment_file.html",
                 {
                     "card": card,
                     "form": form,
@@ -328,7 +328,7 @@ def create_attachment_file_view(request, card_id):
 
     return render(
         request,
-        "task/create_attachment_file_view.html",
+        "task/create_attachment_file.html",
         {
             "card": card,
             "form": CreateAttachmentForm(),

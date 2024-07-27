@@ -1,12 +1,12 @@
 {% extends "task/layout.html" %}
 {% comment %} {% debug %} {% endcomment %}
 {% block title %}
-Board add list
+Create list
 {% endblock %}
 {% block main %}
     <div class="container">
-        <h1 class="mt-5">Board add list</h1>
-        <h2 class="mt-4 mb-3">Add list to {{ board.name }}</h2>
+        <h1 class="mt-5">Create list</h1>
+        <h2 class="mt-4 mb-3">Create list to {{ board.name }}</h2>
         
         <form id="add-list-form">
             <input class="form-control w-auto mb-3"  id ="add-list-board-id" type="hidden" name="id" value="{{ board.id }}">
