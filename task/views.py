@@ -11,8 +11,7 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal
-from .helpers import apology
-from django.forms.models import model_to_dict
+from .helpers import apology, model_to_dict_data, json_dumps
 from django.db.models.fields.files import FieldFile
 
 from .models import (
@@ -186,30 +185,28 @@ class DecimalEncoder(json.JSONEncoder):
         return super(DecimalEncoder, self).default(obj)
 
 
-def send_realtime_data(board_id, action, resource, data):
-    data_json = json.dumps(data, cls=DecimalEncoder)
+def send_realtime_data(board_id, action, resource, dict_data):
     channel_layer = get_channel_layer()
 
     async_to_sync(channel_layer.group_send)(
         f"realtime_{board_id}",
         {
             "type": f"realtime.message",
-            "data": data_json,
+            "data": json_dumps(dict_data),
             "action": action,
             "resource": resource,
         },
     )
 
 
-def send_realtime_data_to_user(user, action, resource, data):
-    data_json = json.dumps(data, cls=DecimalEncoder)
+def send_realtime_data_to_user(user, action, resource, dict_data):
     channel_layer = get_channel_layer()
 
     async_to_sync(channel_layer.group_send)(
         f"user_{user.id}",
         {
             "type": f"realtime.message",
-            "data": data_json,
+            "data": json_dumps(dict_data),
             "action": action,
             "resource": resource,
         },
@@ -242,11 +239,11 @@ def send_notifications(type, actor, recipients, description=None):
             description=description,
         )
 
-        notification_dict = model_to_dict(notification)
-        notification_dict["created_at"] = notification.created_at.isoformat()
-
         send_realtime_data_to_user(
-            recipient, "create", "notification", {"notification": notification_dict}
+            recipient,
+            "create",
+            "notification",
+            {"notification": model_to_dict_data(notification)},
         )
 
 
@@ -313,7 +310,7 @@ def create_attachment_file(request, card_id):
                 "create",
                 "attachment_file",
                 {
-                    "attachment": model_to_dict(attachment),
+                    "attachment": model_to_dict_data(attachment),
                     "browser_id": request.headers.get("Browser-ID"),
                 },
             )
@@ -622,18 +619,15 @@ def edit_board_view(request, board_id):
             board.description = description
             board.save()
 
-            # Manual serialize board data
-            board_dict = model_to_dict(board)
-            board_dict["members"] = [
-                {"id": mem.id, "username": mem.username} for mem in board.members.all()
-            ]
-
             # Realtime update FE
             send_realtime_data(
                 board.id,
                 "edit",
                 "board",
-                {"board": board_dict, "browser_id": request.headers.get("Browser-ID")},
+                {
+                    "board": model_to_dict_data(board),
+                    "browser_id": request.headers.get("Browser-ID"),
+                },
             )
 
             # Create notificaiton and send realtime
@@ -743,7 +737,7 @@ def edit_list_view(request, list_id):
                 "edit",
                 "list",
                 {
-                    "list": model_to_dict(list),
+                    "list": model_to_dict_data(list),
                     "browser_id": request.headers.get("Browser-ID"),
                 },
             )
@@ -852,21 +846,15 @@ def edit_card_title(request, card_id):
             card.title = title
             card.save()
 
-            # Manual serialize card data
-            card_dict = model_to_dict(card)
-            card_dict["members"] = [
-                {"id": mem.id, "username": mem.username} for mem in card.members.all()
-            ]
-
-            if card_dict["due_date"]:
-                card_dict["due_date"] = card_dict["due_date"].isoformat()
-
             # Realtime update FE
             send_realtime_data(
                 card.list.board.id,
                 "edit",
                 "card",
-                {"card": card_dict, "browser_id": request.headers.get("Browser-ID")},
+                {
+                    "card": model_to_dict_data(card),
+                    "browser_id": request.headers.get("Browser-ID"),
+                },
             )
 
             # Create notificaiton and send realtime
@@ -962,20 +950,15 @@ def edit_card(request, card_id):
             card.description = description
             card.save()
 
-            # Manual serialize the card data
-            card_dict = model_to_dict(card)
-            card_dict["members"] = [
-                {"id": mem.id, "username": mem.username} for mem in card.members.all()
-            ]
-            if card_dict["due_date"]:
-                card_dict["due_date"] = card_dict["due_date"].isoformat()
-
             # Realtime update FE
             send_realtime_data(
                 card.list.board.id,
                 "edit",
                 "card",
-                {"card": card_dict, "browser_id": request.headers.get("Browser-ID")},
+                {
+                    "card": model_to_dict_data(card),
+                    "browser_id": request.headers.get("Browser-ID"),
+                },
             )
 
             # Redirect to current board
@@ -1089,20 +1072,15 @@ def card_delete_member(request, card_id):
         member = User.objects.filter(id=member_id).first()
         card.members.remove(member)
 
-        # Manual serialize the card data
-        card_dict = model_to_dict(card)
-        card_dict["members"] = [
-            {"id": mem.id, "username": mem.username} for mem in card.members.all()
-        ]
-        if card_dict["due_date"]:
-            card_dict["due_date"] = card_dict["due_date"].isoformat()
-
         # Realtime update FE
         send_realtime_data(
             card.list.board.id,
             "edit",
             "card",
-            {"card": card_dict, "browser_id": request.headers.get("Browser-ID")},
+            {
+                "card": model_to_dict_data(card),
+                "browser_id": request.headers.get("Browser-ID"),
+            },
         )
 
         return redirect(reverse("card_members", args=[card_id]))
@@ -1246,7 +1224,7 @@ def add_list(request, board_id):
                 "create",
                 "list",
                 {
-                    "list": model_to_dict(list),
+                    "list": model_to_dict_data(list),
                     "browser_id": request.headers.get("Browser-ID"),
                 },
             )
@@ -1343,7 +1321,7 @@ def move_list(request, list_id):
             "move",
             "list",
             {
-                "list": model_to_dict(list),
+                "list": model_to_dict_data(list),
                 "browser_id": request.headers.get("Browser-ID"),
             },
         )
@@ -1391,19 +1369,15 @@ def add_card(request, list_id):
             card.members.add(request.user)
             card.save()
 
-            card_dict = model_to_dict(card)
-            # Manually convert related fields
-            card_dict["members"] = [
-                {"id": member.id, "username": member.username}
-                for member in card.members.all()
-            ]
-
             # Realtime update FE
             send_realtime_data(
                 card.list.board.id,
                 "create",
                 "card",
-                {"card": card_dict, "browser_id": request.headers.get("Browser-ID")},
+                {
+                    "card": model_to_dict_data(card),
+                    "browser_id": request.headers.get("Browser-ID"),
+                },
             )
 
             # Create notificaiton and send realtime
@@ -1716,20 +1690,15 @@ def move_card(request, card_id):
             # Find the card after reindex
             card = Card.objects.filter(id=card_id).first()
 
-        # Manual serialize card data
-        card_dict = model_to_dict(card)
-        card_dict["members"] = [
-            {"id": mem.id, "username": mem.username} for mem in card.members.all()
-        ]
-        if card_dict["due_date"]:
-            card_dict["due_date"] = card_dict["due_date"].isoformat()
-
         # Realtime update FE
         send_realtime_data(
             list.board.id,
             "move",
             "card",
-            {"card": card_dict, "browser_id": request.headers.get("Browser-ID")},
+            {
+                "card": model_to_dict_data(card),
+                "browser_id": request.headers.get("Browser-ID"),
+            },
         )
 
         # If task move to list "Done"
@@ -1781,9 +1750,7 @@ def get_notifications(request):
     total_unread_notification = request.user.notifications.filter(is_read=False).count()
 
     for notification in notifications:
-        notification_dict = model_to_dict(notification)
-        notification_dict["created_at"] = notification.created_at.isoformat()
-        notifications_list.append(notification_dict)
+        notifications_list.append(model_to_dict_data(notification))
 
     return JsonResponse(
         {
@@ -1811,19 +1778,12 @@ def read_notification(request, notification_id):
         notification.is_read = True
         notification.save()
 
-        # Convert to JSON notification
-        notification_dict = model_to_dict(notification)
-        notification_dict["title"] = get_notification_title(notification.type)
-        notification_dict["created_at"] = notification.created_at.isoformat()
-
-        # Notification dict
-        notification_dict = model_to_dict(notification)
-        notification_dict["title"] = get_notification_title(notification.type)
-        notification_dict["created_at"] = notification.created_at.isoformat()
-
         # Real time send notification
         send_realtime_data_to_user(
-            request.user, "read", "notification", {"notification": notification_dict}
+            request.user,
+            "read",
+            "notification",
+            {"notification": model_to_dict_data(notification)},
         )
 
         return JsonResponse({"message": "Read notification successfully."})
