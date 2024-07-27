@@ -229,7 +229,28 @@ def send_message(request, message):
     return redirect("index")
 
 
-def createNotification(actor, type, object):
+def send_notifications(type, actor, recipients, description=None):
+    title = get_notification_title(type)
+    description = description or get_notification_description(type, actor.username)
+
+    for recipient in recipients:
+        notification = Notification.objects.create(
+            recipient=recipient,
+            actor=actor,
+            type=type,
+            title=title,
+            description=description,
+        )
+
+        notification_dict = model_to_dict(notification)
+        notification_dict["created_at"] = notification.created_at.isoformat()
+
+        send_realtime_data_to_user(
+            recipient, "create", "notification", {"notification": notification_dict}
+        )
+
+
+def createNotification(actor, type, target_object):
     types = [
         "TASK_ASSIGNMENT",
         "TASK_UPDATED_TITLE",
@@ -244,86 +265,24 @@ def createNotification(actor, type, object):
     if not type in types:
         return None
 
-    # Generate description, title
-    if type == "TASK_ASSIGNMENT":
-        description = getNotificationDescription(type, object["assignee"].username)
-        object = object["card"]
-    else:
-        description = getNotificationDescription(type, actor.username)
-
-    title = getNotificationTitle(type)
-
-    # Depending on type detect object type
+    # Depending on type detect target_object type
     if type.startswith("TASK_"):
-        members = object.members.all()
+        description = None
+        if type == "TASK_ASSIGNMENT":
+            description = get_notification_description(
+                type, target_object["assignee"].username
+            )
+            target_object = target_object["card"]
 
         if type == "TASK_CREATED":
-            members = object.list.board.members.all()
+            members = target_object.list.board.members.all()
+        else:
+            members = target_object.members.all()
 
-        # Send notification to each member
-        for member in members:
-            notification = Notification.objects.create(
-                recipient=member,
-                actor=actor,
-                type=type,
-                card=object,
-                title=title,
-                description=description,
-            )
+        send_notifications(type, actor, members, description)
 
-            # Notification dict
-            notification_dict = model_to_dict(notification)
-            notification_dict["created_at"] = notification.created_at.isoformat()
-
-            send_realtime_data_to_user(
-                member, "create", "notification", {"notification": notification_dict}
-            )
-
-    elif type.startswith("BOARD_"):
-        board_members = object.members.all()
-
-        # Send notification to each member
-        for member in board_members:
-            notification = Notification.objects.create(
-                recipient=member,
-                actor=actor,
-                type=type,
-                board=object,
-                title=title,
-                description=description,
-            )
-
-            # Notification dict
-            notification_dict = model_to_dict(notification)
-            notification_dict["created_at"] = notification.created_at.isoformat()
-
-            send_realtime_data_to_user(
-                member, "create", "notification", {"notification": notification_dict}
-            )
-
-    elif type.startswith("LIST_"):
-        board_members = object.board.members.all()
-
-        # Send notification to each member
-        for member in board_members:
-            notification = Notification.objects.create(
-                recipient=member,
-                actor=actor,
-                type=type,
-                list=object,
-                title=title,
-                description=description,
-            )
-
-            # Notification dict
-            notification_dict = model_to_dict(notification)
-            notification_dict["created_at"] = notification.created_at.isoformat()
-
-            send_realtime_data_to_user(
-                member, "create", "notification", {"notification": notification_dict}
-            )
-
-    return notification
+    elif type.startswith("BOARD_") or type.startswith("LIST_"):
+        send_notifications(type, actor, target_object.members.all())
 
 
 @login_required
@@ -436,7 +395,7 @@ def serve_file(request, file_path):
         return apology(request, "Find not found.")
 
 
-def getNotificationTitle(type):
+def get_notification_title(type):
     types = {
         "TASK_ASSIGNMENT": "Task assignment",
         "TASK_UPDATED_TITLE": "Task title updated",
@@ -451,7 +410,7 @@ def getNotificationTitle(type):
     return types[type]
 
 
-def getNotificationDescription(type, user):
+def get_notification_description(type, user):
     types = {
         "TASK_ASSIGNMENT": f"{user} has been assigned to a task.",
         "TASK_UPDATED_TITLE": f"{user} has updated the title of a task.",
@@ -901,6 +860,14 @@ def edit_card_title(request, card_id):
 
             if card_dict["due_date"]:
                 card_dict["due_date"] = card_dict["due_date"].isoformat()
+
+            # Realtime update FE
+            send_realtime_data(
+                card.list.board.id,
+                "edit",
+                "card",
+                {"card": card_dict, "browser_id": request.headers.get("Browser-ID")},
+            )
 
             # Create notificaiton and send realtime
             createNotification(request.user, "TASK_UPDATED_TITLE", card)
@@ -1754,6 +1721,8 @@ def move_card(request, card_id):
         card_dict["members"] = [
             {"id": mem.id, "username": mem.username} for mem in card.members.all()
         ]
+        if card_dict["due_date"]:
+            card_dict["due_date"] = card_dict["due_date"].isoformat()
 
         # Realtime update FE
         send_realtime_data(
@@ -1844,12 +1813,12 @@ def read_notification(request, notification_id):
 
         # Convert to JSON notification
         notification_dict = model_to_dict(notification)
-        notification_dict["title"] = getNotificationTitle(notification.type)
+        notification_dict["title"] = get_notification_title(notification.type)
         notification_dict["created_at"] = notification.created_at.isoformat()
 
         # Notification dict
         notification_dict = model_to_dict(notification)
-        notification_dict["title"] = getNotificationTitle(notification.type)
+        notification_dict["title"] = get_notification_title(notification.type)
         notification_dict["created_at"] = notification.created_at.isoformat()
 
         # Real time send notification

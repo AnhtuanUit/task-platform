@@ -174,6 +174,11 @@ function renderCardElement(card) {
     // Dragend the card
     cardElement.addEventListener("dragend", handleDragend);
 
+    // Add event click card
+    cardElement.addEventListener("click", function () {
+        window.location.href = `/cards/${card.id}`;
+    });
+
     return cardElement;
 }
 
