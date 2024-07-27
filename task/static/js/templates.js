@@ -15,8 +15,8 @@ function getNotificationHtml(notification) {
     return `
         <div id="notification-id-${
             notification.id
-        } class="card mb-3 text-custom-6 cursor-pointer"  ${
-        notification.is_read ? "bg-light" : "bg-white"
+        }" class="card mb-3 text-custom-6 cursor-pointer ${
+        notification.is_read ? "bg-custom-7" : "bg-white"
     }">
             <div class="card-body">
                 <div class="row g-2">

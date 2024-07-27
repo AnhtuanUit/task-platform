@@ -75,6 +75,10 @@
     background-color: #ffffff3b;
 }
 
+.bg-custom-7 {
+    background-color: #ddd;
+}
+
 .text-custom-1 {
     color: #172b4d;
 }
@@ -219,4 +223,8 @@
     margin-left: -10px;
     position: relative;
     border: 3px solid white;
+}
+
+.cursor-pointer {
+    cursor: pointer;
 }
