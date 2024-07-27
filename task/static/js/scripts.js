@@ -156,7 +156,7 @@ function showAlert(message = "", type = "success") {
     const appendAlert = (message, type) => {
         const wrapper = document.createElement("div");
         wrapper.innerHTML = [
-            `<div class="alert alert-${type} alert-dismissible" role="alert" style="margin-bottom: 0;">`,
+            `<div class="alert alert-${type} alert-dismissible mb-0" role="alert">`,
             `   <div>${message}</div>`,
             '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
             "</div>",

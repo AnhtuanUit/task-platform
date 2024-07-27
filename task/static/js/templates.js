@@ -13,12 +13,10 @@ function htmlToElement(html) {
 
 function getNotificationHtml(notification) {
     return `
-        <div class="card mb-3" id="notification-id-${
+        <div id="notification-id-${
             notification.id
-        }" style="cursor: pointer; color: #172B4D; ${
-        notification.is_read
-            ? "background-color: #ddd;"
-            : "background-color: white;"
+        } class="card mb-3 text-custom-6 cursor-pointer"  ${
+        notification.is_read ? "bg-light" : "bg-white"
     }">
             <div class="card-body">
                 <div class="row g-2">
@@ -30,7 +28,7 @@ function getNotificationHtml(notification) {
                     <div class="col">
                         <h5 class="card-title">${notification.title}</h5>
                         <p class="card-text">${notification.description}</p>
-                        <p class="card-text"><small style="color: #2d4265;">${moment(
+                        <p class="card-text"><small class="text-custom-7">${moment(
                             notification.created_at
                         ).fromNow()}</small></p>
                     </div>
@@ -51,14 +49,14 @@ function getListNotificationHtml(notifications) {
 
 function getTaskListHtml(list) {
     return `
-        <div class="col px-1" style="flex: 0 0 20%;">
-            <div class="card task-list" style="cursor: pointer; background: #f1f2f4; border-radius: 16px; border: none;" draggable="true" id="list-id-${list.id}" data-list-id="${list.id}" data-list-position="${list.position}">
-                <div class="card-body" style="display:flex; flex-direction: column; max-height: 650px !important; overflow-y: auto;" data-list-id="${list.id}">
+        <div class="col px-1 flex-20">
+            <div class="card task-list task-list-button" draggable="true" id="list-id-${list.id}" data-list-id="${list.id}" data-list-position="${list.position}">
+                <div class="card-body scrollable-column" data-list-id="${list.id}">
                     <div class="mb-2 flex-center-space-between">
-                        <a class="task-list-title btn-transparent fw-bold text-decoration-none" style="color: #172b4d;" href="/edit_list/${list.id}">${list.name}</a>
+                        <a class="task-list-title btn-transparent fw-bold text-decoration-none text-custom-1" href="/edit_list/${list.id}">${list.name}</a>
                         <div class="dropdown">
                             <a class="btn-transparent" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-three-dots" style="color: #212529;"></i>
+                                <i class="bi bi-three-dots text-custom-2"></i>
                             </a>
                             <ul class="dropdown-menu">
                               <li>
@@ -70,7 +68,11 @@ function getTaskListHtml(list) {
                           </div>
                     </div>
                     <div class="task-card-hidden mt-2">
-                        <a class="btn btn-transparent" style="color: #44546f" href="/lists/${list.id}/add_card"><i class="bi bi-plus" fill="#44546f"></i>Add a card</a>
+                        <a
+                            class="btn btn-transparent text-custom-5"
+                            href="/lists/${list.id}/add_card"
+                            ><i class="bi bi-plus text-custom-5"></i>Add a card</a
+                        >
                     </div>
                 </div>
             </div>
@@ -80,10 +82,10 @@ function getTaskListHtml(list) {
 
 function getCardHtml(card) {
     return `
-       <div class="btn task-card card bg-info my-1 bg-white" style="text-align: left; border: none; border-radius: 12px;" data-card-id="${card.id}" data-list-id="${card.list}" id="card-id-${card.id}" draggable="true" data-card-position="${card.position}">
-            <div class="card-body" style="display: flex; justify-content: space-between;">
-                <span class="textarea" style="color: #172B4D;">${card.title}</span>
-                <a id="edit-card-icon" class="btn btn-sm btn-light bg-transparent" href="/edit_card_title_view/${card.id}" style="color: #172B4D; border-radius: 1000px;"><i class="bi bi-pencil-fill"></i></a>
+       <div class="btn task-card card bg-info my-1 bg-white text-start border-0 rounded-xl" data-card-id="${card.id}" data-list-id="${card.list}" id="card-id-${card.id}" draggable="true" data-card-position="${card.position}">
+            <div class="card-body d-flex justify-content-between">
+                <span class="textarea text-custom-3">${card.title}</span>
+                <a id="edit-card-icon" class="btn btn-sm btn-light bg-transparent rounded-circle text-custom-4" href="/edit_card_title_view/${card.id}"><i class="bi bi-pencil-fill"></i></a>
             </div>
         </div>
     `;
@@ -92,7 +94,7 @@ function getCardHtml(card) {
 function getMemberHtml(member) {
     return `
         <a href="/profile/${member.id}">
-            <img src="https://i.pravatar.cc/48?u=${member.id}" alt="" width="32" height="32" class="rounded-circle" style="margin-left: -10px; position: relative; border:3px solid white;  z-index: ${member.index}">
+            <img src="https://i.pravatar.cc/48?u=${member.id}" alt="" width="32" height="32" class="rounded-circle member-profile-icon" style="z-index: ${member.index}">
         </a>
     `;
 }
@@ -109,7 +111,7 @@ function getAttachmentHtml(attachment) {
     return `
         <div id="card-attachments">
             <div class="card mb-3" id="attachment-id-${attachment.id}">
-                <div class="card-body" style="display: flex; justify-content: space-between;">
+                <div class="card-body d-flex justify-content-between">
                     <div>
                         <h5>${
                             attachment.title ||
@@ -135,8 +137,8 @@ function getAttachmentHtml(attachment) {
 
 function getTaskListPlaceholderHtml(height) {
     return `
-        <div class="task-list-placeholder col px-1" style="flex: 0 0 20%; height: ${height}px;">
-            <div class="card" style="height: ${height}px; background-color: #ffffff3b; border: none; border-radius: 16px;">
+        <div class="task-list-placeholder col px-1 flex-20" style="height: ${height}px;">
+            <div class="card bg-custom-6" style="height: ${height}px; border: none; border-radius: 16px;">
         </div>
     `;
 }

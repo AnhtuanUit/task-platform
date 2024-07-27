@@ -18,20 +18,20 @@
         </title>
         <link href="{% static 'styles.css' %}" rel="stylesheet">
     </head>
-    <body style="height: 100vh;">
-        <div style="display: flex; flex-direction: column; height: 100%;">
+    <body class="h-100vh">
+        <div class="d-flex flex-column h-100">
             <header>
-                <nav class="navbar navbar-expand-lg"  data-bs-theme="dark" style="background: #085c80;">
+                <nav class="navbar navbar-expand-lg bg-custom-3"  data-bs-theme="dark">
                     <div class="container-fluid">
                       <a class="navbar-brand fw-bold" href="{% url 'index' %}">Tasks</a>
                       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                       </button>
                       <div class="collapse navbar-collapse" id="navbarHeader">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="display: flex; align-items: center;">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex align-items-center">
                             {% if user.is_authenticated %}
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="display: flex; align-items: center; gap: 4px;">
+                                    <a class="nav-link dropdown-toggle text-white d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <span>Your boards</span>
                                     </a>
                                     <ul class="dropdown-menu">
@@ -46,7 +46,7 @@
                                     </ul>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="btn fw-bold text-white" style="background: #397D99; color: white;" href="{% url 'create_board' %}">Create</a>
+                                    <a class="btn fw-bold text-white bg-custom-4" href="{% url 'create_board' %}">Create</a>
                                 </li>
                             {% else %}
                                 <li class="nav-item">
@@ -58,26 +58,26 @@
                           {% endif %}
                         </ul>
                         {% if user.is_authenticated %}
-                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0" style="display: flex; align-items: center;">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 f-flex align-items-center">
                             <li class="nav-item dropdown">
-                                <a class="nav-link text-white d-relative" href="#" role="button" style="display: flex; align-items: center; gap: 4px;" id="dropdownMenuClickableInside" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                <a class="nav-link text-white d-relative d-flex align-items-center gap-2" href="#" role="button" id="dropdownMenuClickableInside" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                                     <i class="bi bi-bell-fill"></i>
                                 </a>
-                                <div  data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" id="notification-total-unread" class="rounded-circle bg-danger" style="cursor: pointer; display: none; position: absolute; width: 16px; height: 16px; text-align: center; color: white; line-height: 1.4; background: red; font-size: 12px; top: 6px; right: 0;">0</div>
-                                <div class="dropdown-menu dropdown-menu-end" style="background: #f1f2f4;" aria-labelledby="dropdownMenuClickableInside">
-                                    <div class="card text-dark border-primary" style="width: 400px; border: none; background: #f1f2f4;">
-                                        <div class="card-header" style="border-bottom: 1px solid #ccc;">
-                                            <h4 class="task-list-title fw-bold text-decoration-none" style="color: #172b4d;">
+                                <div  data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" id="notification-total-unread" class="unread-count-button">0</div>
+                                <div class="dropdown-menu dropdown-menu-end bg-custom-5" aria-labelledby="dropdownMenuClickableInside">
+                                    <div class="card text-dark border-primary bg-custom-5 border-0 notification-width">
+                                        <div class="card-header border-bottom border-light">
+                                            <h4 class="task-list-title fw-bold text-decoration-none text-custom-1">
                                                 Notifications
                                             </h4>
                                         </div>
-                                        <div id="notificationsPlacholder" class="card-body" style="max-height: 550px; overflow-y: scroll; min-height: 200px;">
+                                        <div id="notificationsPlacholder" class="card-body notification-body">
                                         </div>
                                     </div>
                                 </div>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="display: flex; align-items: center; gap: 4px;">
+                                <a class="nav-link dropdown-toggle text-white d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <img src="https://i.pravatar.cc/48?u={{ user.id }}" alt="" width="32" height="32" class="rounded-circle me-2">
                                     <span>{{ user.username }}</span>
                                 </a>
@@ -92,11 +92,11 @@
                     </div>
                   </nav>
             </header>
-            <main style="flex: 1;">
+            <main class="flex-fill">
                 <div id="liveAlertPlaceholder"></div>
-                <div class="d-flex flex-nowrap" style="height: 100%;">
+                <div class="d-flex flex-nowrap h-100">
                     {% if user.is_authenticated %}
-                    <div class="d-none d-lg-flex flex-column flex-shrink-0 p-3 text-white" style="width: 230px; background: #0A6892;">
+                    <div class="d-none d-lg-flex flex-column flex-shrink-0 p-3 text-white side-menu-container">
                         <a href="{% url 'index' %}" class="text-decoration-none d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white">
                           <span class="fs-4">Your workspace</span>
                         </a>
@@ -107,7 +107,7 @@
                                 Your boars
                             </button>
                             <div class="collapse show " id="home-collapse">
-                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" style="max-height: 490px; overflow-y: auto;">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small max-height-490 overflow-auto">
                                     {% for board in boards %}
                                     <li>
                                         <a href="{% url 'board' board.id %}" class="nav-link text-white">
@@ -122,13 +122,13 @@
                         </ul>                
                     </div>
                     {% endif %}
-                    <div style="flex: 1; background: white; overflow-x: hidden; min-height: 700px;">
+                    <div class="flex-fill bg-white min-heigt-700 overflow-x-hidden">
                         {% block main %}
                         {% endblock %}
                     </div>
                 </div>
             </main>
-            <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 border-top" style="background: #085c80; border: none;">
+            <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 border-top bg-custom-3 border-0">
                 <div class="col-md-4 d-flex align-items-center">
                   <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary lh-1">
                     <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
