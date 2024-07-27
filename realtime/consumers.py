@@ -6,8 +6,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 class RealtimeConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
-        self.room_group_name = f"realtime_{self.room_name}"
+        self.group_name = self.scope["url_route"]["kwargs"]["group_name"]
+        self.room_group_name = f"realtime_{self.group_name}"
         self.user = self.scope["user"]
         self.user_group_name = f"user_{self.user.id}"
 
