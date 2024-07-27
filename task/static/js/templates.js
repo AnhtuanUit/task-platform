@@ -100,9 +100,7 @@ function getMemberHtml(member) {
 function getListMemberHtml(members) {
     let membersHtml = "";
     for (member of members) {
-        if (member.id != userId) {
-            membersHtml += getMemberHtml(member);
-        }
+        membersHtml += getMemberHtml(member);
     }
     return membersHtml;
 }
