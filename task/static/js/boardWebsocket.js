@@ -146,18 +146,10 @@ document.addEventListener("DOMContentLoaded", function () {
         };
     }
 
-    // Function to close the WebSocket connection
-    function closeBoardSocket() {
-        if (chatSocket.readyState === WebSocket.OPEN) {
-            chatSocket.close();
-            console.log("WebSocket connection closed.");
-        }
-    }
-
     const boardId = document.querySelector("#board-title")?.dataset.boardId;
     const cardBoardId = document.querySelector("#card-title")?.dataset.boardId;
 
-    // Open the WebSocket connection
+    // Realtime when user in the same board(or card of board)
     openBoardSocket(boardId || cardBoardId);
 });
 
@@ -167,10 +159,10 @@ function addNewListToBoard(list) {
         ".task-lists > div.col:last-of-type"
     );
 
-    // Render new list element
+    // New task list element
     const newTaskListElement = renderTaskListElement(list);
 
-    // Insert new element
+    // Insert new task list to board
     const newListContainer = referenceElement.closest(".task-lists");
     newListContainer.insertBefore(newTaskListElement, referenceElement);
 }
@@ -262,15 +254,7 @@ function moveList(list) {
     const listElements = document.querySelectorAll(".task-list");
 
     // Compute move element position
-
-    // Ex: [10, 20, 30, 40, 50, 60];
-    // Case 1: 10 20 -> refresh all page
-    // Case 2: 5 => left = null, right 10
-    // Case 3: 35 => left 30, right = 40
-    // Case 4: 65 => left = 60, right = null
-
-    // Find left and right
-    let beforeEl, afterEl;
+    let afterEl;
 
     // Find left is the last el lower than position
     listElements.forEach((el) => {
@@ -290,9 +274,7 @@ function moveList(list) {
         }
     });
 
-    // 1. Case first element
-    // 2. Case last element
-    // 3. Case middle element
+    // Compute the reference element
     let referenceElement;
     const lastTasklist = document
         .querySelector("#task-add-list-btn")
@@ -332,15 +314,7 @@ function moveCard(card) {
     // Get all card of board
     const cardElements = containerElement.querySelectorAll(".task-card");
 
-    // Compute move element position
-
-    // Ex: [10, 20, 30, 40, 50, 60];
-    // Case 1: 10 20 -> refresh all page
-    // Case 2: 5 => left = null, right 10
-    // Case 3: 35 => left 30, right = 40
-    // Case 4: 65 => left = 60, right = null
-
-    // Find left and right
+    // Find left and right element
     let beforeEl, afterEl;
 
     // Find left is the last el lower than position
@@ -361,11 +335,8 @@ function moveCard(card) {
         }
     });
 
-    // 1. Case first element
-    // 2. Case last element
-    // 3. Case middle element
+    // Compute the reference element
     let referenceElement;
-
     const hiddenCardElement =
         containerElement.querySelector(".task-card-hidden");
 

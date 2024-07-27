@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.action === "create" && data.resource === "notification") {
                 const notification = JSON.parse(data?.data).notification;
 
-                // Add list to board
+                // Add notification
                 addNewNotification(notification);
             }
 
