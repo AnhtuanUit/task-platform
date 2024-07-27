@@ -15,28 +15,14 @@ hex_color_validator = RegexValidator(
 # Create your models here.
 
 
-# 1. User: default Django, username, email, password, firstName, last_name, bio, avatar, created_at, updated_at
+# 1. User
 class User(AbstractUser):
     # Add custom fields
     # Add your custom fields here
     bio = models.CharField(max_length=256)
 
 
-# 1.2 Project    * name, description, created_by, created_at, updated_at
-
-
-class Project(models.Model):
-    name = models.CharField(max_length=256)
-    description = models.CharField(max_length=256)
-    created_by = models.ManyToManyField(User, related_name="projects")
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-
-# 2. Board: name, description, created_at
-#  3. BoardMembership: board_id, member_id, created_at
-
-
+# 2. Board
 class Board(models.Model):
     name = models.CharField(max_length=256)
     description = models.CharField(max_length=256)
@@ -44,7 +30,7 @@ class Board(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-#  4. List: board_id, name, created_at
+# 3. List
 class List(models.Model):
     board = models.ForeignKey("Board", on_delete=models.CASCADE, related_name="lists")
     name = models.CharField(max_length=256)
@@ -52,17 +38,7 @@ class List(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-#  4.1 Lable: name, color
-class Label(models.Model):
-    name = models.CharField(max_length=64)
-    color = models.CharField(
-        max_length=7,
-        validators=[hex_color_validator],
-        help_text="Enter a valid hex color code, e.g. #FFFFFF or #FFF.",
-    )
-
-
-#  4.2 Attachment:
+# 4 Attachment:
 class Attachment(models.Model):
     title = models.CharField(max_length=256, blank=True)
     card = models.ForeignKey(
@@ -72,7 +48,7 @@ class Attachment(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
 
-#  5. Card: list_id, descriptions, due_date, labels, and attachments, created_at
+# 5. Card
 class Card(models.Model):
     list = models.ForeignKey("List", on_delete=models.CASCADE, related_name="cards")
     title = models.CharField(max_length=256)
@@ -83,7 +59,7 @@ class Card(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-#  6. Assignment: card_id, assignee_id, created_at
+# 6. Assignment
 class Assignment(models.Model):
     card = models.ForeignKey(
         "Card", on_delete=models.CASCADE, related_name="assignments"
@@ -92,7 +68,7 @@ class Assignment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-#  7. Notification: user_id, type(card_created, card_asssigned,. ..), card_id, board_id, description, created_at, id_read.
+# 7. Notification
 class Notification(models.Model):
     recipient = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="notifications"
@@ -118,14 +94,3 @@ class Notification(models.Model):
     description = models.CharField(max_length=256)
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-
-
-# Notification type:
-# 1. "TASK_ASSIGNMENT":
-# 2. "TASK_DUE_DATE_REMINDER"
-# 3. "TASK_UPDATED": description, title
-# 4. "TASK_DONE": Task move to Done list: event
-# 5. "TASK_CREATED": Task create
-# 6. "BOARD_UPDATED" Board update name
-# 7. "LIST_CREATED" List create and update name#
-# 8. "LIST_UPDATED" List create and update name
