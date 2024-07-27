@@ -34,7 +34,7 @@ def create_list_view(request, board_id):
 
     return render(
         request,
-        "task/board_add_list.html",
+        "task/create_list.html",
         {"board": board, "boards": request.user.boards.all()},
     )
 

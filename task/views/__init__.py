@@ -21,7 +21,7 @@ from .list_views import create_list_view, edit_list_view, delete_list
 from .card_views import (
     create_card_view,
     card_view,
-    edit_card_view_title_view,
+    edit_card_title_view,
     edit_card_view,
     delete_card,
     create_attachment_file_view,

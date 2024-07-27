@@ -51,9 +51,9 @@ urlpatterns = [
     ),
     path("cards/<int:card_id>", views.card_view, name="card"),
     path(
-        "edit_card_view_title_view/<int:card_id>",
-        views.edit_card_view_title_view,
-        name="edit_card_view_title_view",
+        "edit_card_title_view/<int:card_id>",
+        views.edit_card_title_view,
+        name="edit_card_title_view",
     ),
     path(
         "edit_card_view/<int:card_id>",

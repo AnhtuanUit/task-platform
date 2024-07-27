@@ -76,7 +76,7 @@ def card_view(request, card_id):
 
 # Edit card title view
 @login_required
-def edit_card_view_title_view(request, card_id):
+def edit_card_title_view(request, card_id):
 
     # Check if card eixst
     card = Card.objects.filter(id=card_id).first()
@@ -121,13 +121,13 @@ def edit_card_view_title_view(request, card_id):
         else:
             return render(
                 request,
-                "task/edit_card_view_title_view.html",
+                "task/edit_card_title_view.html",
                 {"boards": request.user.boards.all(), "card": card, "form": form},
             )
 
     return render(
         request,
-        "task/edit_card_view_title_view.html",
+        "task/edit_card_title_view.html",
         {
             "boards": request.user.boards.all(),
             "card": card,

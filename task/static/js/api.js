@@ -152,28 +152,6 @@ async function apiAddMemberToBoard(email) {
         });
 }
 
-async function apiAddCardMember(cardId, memberId) {
-    return fetch(`/cards/${cardId}/members`, {
-        body: JSON.stringify({
-            memberId,
-        }),
-        headers: {
-            "Browser-ID": browserId, // Include Browser ID in headers
-        },
-        method: "POST",
-    })
-        .then((response) => response.json())
-        .then((result) => {
-            console.log("result", result);
-            if (result.error) {
-                showAlert(result.error, "danger");
-            } else {
-                showAlert(result.message);
-            }
-            return result;
-        });
-}
-
 async function apiGetRecentNotifications() {
     return fetch("/notifications", {
         headers: {

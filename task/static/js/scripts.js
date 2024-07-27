@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const addMemberForm = document.querySelector("#add-member-form");
     const taskCards = document.querySelectorAll(".task-card");
     const taskLists = document.querySelectorAll(".task-list");
-    const addCardMemberForm = document.querySelector("#add-card-member-form");
 
     // 1) Handle create board
     createBoardForm && createBoardForm.addEventListener("submit", createBoard);
@@ -37,31 +36,33 @@ document.addEventListener("DOMContentLoaded", function () {
         dragElement.addEventListener("dragend", handleDragendList)
     );
 
-    // 7) Add card member
-    addCardMemberForm &&
-        addCardMemberForm.addEventListener("submit", handleAddCardMember);
-
-    // 8) Redirect to card detail when click task card
+    // 7) Make task card can click
     taskCards.forEach((taskCard) => {
         taskCard.addEventListener("click", function () {
             window.location.href = `/cards/${taskCard?.dataset?.cardId}`;
         });
     });
 
-    // 9) Disable some textarea enter
+    // 8) Make textarea of title or name submit form when ENTER
     const textareaElements = document.querySelectorAll(".single-line-textarea");
-    textareaElements.forEach((textarea) => {
-        textarea.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-                event.preventDefault();
-
-                // Submit form
-                event.target.closest("form").submit();
-            }
-        });
-    });
+    textareaElements.forEach(handleEnterSubmitForm);
 
     // 10) Load recent notifications
+    loadRecentNotification();
+});
+
+function enterSubmitForm(textarea) {
+    textarea.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+
+            // Submit form
+            event.target.closest("form").submit();
+        }
+    });
+}
+
+function loadRecentNotification() {
     const notificationsPlaceholder = document.querySelector(
         "#notificationsPlacholder"
     );
@@ -73,14 +74,11 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         // Render total unread notification
-        renderUnreadNotification(data.total_unread_notification);
+        loadUnreadNotification(data.total_unread_notification);
     });
+}
 
-    // 11) Hanlde dropdown menu click outside
-    handleDropMenu();
-});
-
-function renderUnreadNotification(totalUnreadNotification) {
+function loadUnreadNotification(totalUnreadNotification) {
     const unreadNotificatinoElement = document.querySelector(
         "#notification-total-unread"
     );
@@ -88,32 +86,12 @@ function renderUnreadNotification(totalUnreadNotification) {
         unreadNotificatinoElement.textContent = totalUnreadNotification;
     }
 
+    // Show/unshow unread badge count
     if (totalUnreadNotification) {
         unreadNotificatinoElement.style.display = "block";
     } else {
         unreadNotificatinoElement.style.display = "none";
     }
-}
-
-function handleDropMenu() {
-    const dropdownMenu = document.querySelector(".dropdown-menu");
-
-    dropdownMenu.addEventListener("click", (event) => {
-        event.stopPropagation();
-        dropdownMenu.classList.add("show");
-    });
-}
-
-function handleAddCardMember(e) {
-    e.preventDefault();
-    const memberElement = document.querySelector("#add-card-member-user");
-    const cardId = document.querySelector("#add-card-member-form").dataset
-        .cardId;
-    // Call API add card member
-    apiAddCardMember(cardId, memberElement.value).then(() => {
-        // Reload the page for update new data
-        // location.reload();
-    });
 }
 
 function createBoard(e) {
@@ -137,7 +115,7 @@ function addListToBoard(e) {
     nameElement = document.querySelector("#add-list-name");
     boardIdElement = document.querySelector("#add-list-board-id");
 
-    // Call API add list to board
+    // Call API create task list
     apiCreateList(boardIdElement.value, nameElement.value).then(() => {
         // Clearn form
         nameElement.value = "";
@@ -146,11 +124,12 @@ function addListToBoard(e) {
 
 function addCardToList(e) {
     e.preventDefault();
-
     const titleElement = document.querySelector("#add-card-title");
     const listIdElement = document.querySelector("#add-card-list-id");
 
+    // Call api create card
     apiCreateCard(listIdElement.value, titleElement.value).then(() => {
+        // Clear form
         titleElement.value = "";
     });
 }
@@ -161,7 +140,7 @@ function addMemberToBoard(e) {
     emailElement = document.querySelector("#add-member-email");
     boardId = document.querySelector("#add-member-board-id").value;
 
-    // Call API add memeber
+    // Call API add board member
     apiAddMemberToBoard(emailElement.value).then(() => {
         // Clear form
         emailElement.value = "";
