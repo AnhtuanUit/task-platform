@@ -12,7 +12,7 @@
             <small>in list <a class="link-primary" href="{% url 'board' card.list.board.id %}"><span class="text-grey">{{ card.list.name }}</span></a></small>
         </div>
         <div class="col mt-3">
-            <a class="btn btn-sm btn-task" href="{% url 'edit_card' card.id %}">Edit</a>
+            <a class="btn btn-sm btn-task" href="{% url 'edit_card_view' card.id %}">Edit</a>
             <form action="{% url 'delete_card' card.id %}" method="POST" style="display:inline-block;">
                     {% csrf_token %}
                     <input class="btn btn-sm btn-danger" type="submit" value="Delete">
@@ -29,7 +29,7 @@
                     {% endfor %} 
                 </div>
                 <div class="mt-3">
-                    <a class="btn btn-sm btn-task" href="{% url 'edit_card' card.id %}">Add</a>
+                    <a class="btn btn-sm btn-task" href="{% url 'edit_card_view' card.id %}">Add</a>
                     <a class="btn btn-sm btn-task" href="{% url 'card_members' card.id %}">Manage</a>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                     <p style="height: 32px;">{{ card.due_date }}</p>
                 </div>
                 <div class="mt-3">
-                    <a class="btn btn-sm btn-task" href="{% url 'edit_card' card.id %}">Edit</a>
+                    <a class="btn btn-sm btn-task" href="{% url 'edit_card_view' card.id %}">Edit</a>
                 </div>
             </div>    
         </div>
@@ -48,7 +48,7 @@
             <h3>Description</h3>
             <p class="textarea">{{ card.description }}</p>
             <div class="mt-3">
-                <a class="btn btn-sm btn-task" href="{% url 'edit_card' card.id %}">Edit</a>
+                <a class="btn btn-sm btn-task" href="{% url 'edit_card_view' card.id %}">Edit</a>
             </div>
         </div>
 
@@ -79,7 +79,7 @@
                 {% endfor %}
             </div>
             <div class="mt-3">
-                <a class="btn btn-sm btn-task" href="{% url 'create_attachment_file' card.id %}">Add</a>
+                <a class="btn btn-sm btn-task" href="{% url 'create_attachment_file_view' card.id %}">Add</a>
             </div>
         </div>
         <div class="mt-3">

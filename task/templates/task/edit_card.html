@@ -8,7 +8,7 @@ Edit card
     <div class="container">
         <div class="mt-5">
             <h1 class="mb-3">Edit card</h1>
-            <form action="{% url 'edit_card' card.id %}" method="POST">
+            <form action="{% url 'edit_card_view' card.id %}" method="POST">
                 {% csrf_token %}
                 {{ form }}
                 <input class="btn" style="background: #397D99; color: white;" type="submit" value="Save">

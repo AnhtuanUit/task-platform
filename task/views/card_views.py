@@ -30,7 +30,7 @@ from ..forms import (
 
 
 # Create card view
-def list_add_card_view(request, list_id):
+def create_card_view(request, list_id):
 
     # Check if list exists
     list = List.objects.filter(id=list_id).first()
@@ -47,7 +47,7 @@ def list_add_card_view(request, list_id):
 
 # Get card by id view
 @login_required
-def card(request, card_id):
+def card_view(request, card_id):
 
     # Check if card exist
     card = Card.objects.filter(id=card_id).first()
@@ -76,7 +76,7 @@ def card(request, card_id):
 
 # Edit card title view
 @login_required
-def edit_card_title(request, card_id):
+def edit_card_view_title_view(request, card_id):
 
     # Check if card eixst
     card = Card.objects.filter(id=card_id).first()
@@ -121,13 +121,13 @@ def edit_card_title(request, card_id):
         else:
             return render(
                 request,
-                "task/edit_card_title.html",
+                "task/edit_card_view_title_view.html",
                 {"boards": request.user.boards.all(), "card": card, "form": form},
             )
 
     return render(
         request,
-        "task/edit_card_title.html",
+        "task/edit_card_view_title_view.html",
         {
             "boards": request.user.boards.all(),
             "card": card,
@@ -138,7 +138,7 @@ def edit_card_title(request, card_id):
 
 # Edit card view
 @login_required
-def edit_card(request, card_id):
+def edit_card_view(request, card_id):
 
     # Check if card eixst
     card = Card.objects.filter(id=card_id).first()
@@ -222,13 +222,13 @@ def edit_card(request, card_id):
         else:
             return render(
                 request,
-                "task/edit_card.html",
+                "task/edit_card_view.html",
                 {"boards": request.user.boards.all(), "card": card, "form": form},
             )
 
     return render(
         request,
-        "task/edit_card.html",
+        "task/edit_card_view.html",
         {
             "boards": request.user.boards.all(),
             "card": card,
@@ -280,7 +280,7 @@ def delete_card(request, card_id):
 
 # Create card attachment file view
 @login_required
-def create_attachment_file(request, card_id):
+def create_attachment_file_view(request, card_id):
     # Check if card exsits
     card = Card.objects.filter(id=card_id).first()
     if card is None:
@@ -318,7 +318,7 @@ def create_attachment_file(request, card_id):
         else:
             return render(
                 request,
-                "task/create_attachment_file.html",
+                "task/create_attachment_file_view.html",
                 {
                     "card": card,
                     "form": form,
@@ -328,7 +328,7 @@ def create_attachment_file(request, card_id):
 
     return render(
         request,
-        "task/create_attachment_file.html",
+        "task/create_attachment_file_view.html",
         {
             "card": card,
             "form": CreateAttachmentForm(),
@@ -421,7 +421,7 @@ def card_members_view(request, card_id):
 
 # Delete card member
 @login_required
-def card_delete_member(request, card_id):
+def delete_card_member(request, card_id):
 
     # Chek if card exist
     card = Card.objects.filter(id=card_id).first()

@@ -25,7 +25,7 @@ from ..forms import (
 
 # Create task list view
 @login_required
-def board_add_list_view(request, board_id):
+def create_list_view(request, board_id):
 
     # Check if board exist
     board = Board.objects.filter(id=board_id).first()

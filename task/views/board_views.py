@@ -26,9 +26,9 @@ def create_board_view(request):
     return render(request, "task/new_board.html", {"boards": request.user.boards.all()})
 
 
-# API get board by id
+# Get board by id view
 @login_required
-def board(request, board_id):
+def board_view(request, board_id):
 
     # Check if board exist
     board = (
@@ -163,7 +163,7 @@ def delete_board(request, board_id):
 
 # Create board member
 @login_required
-def board_add_member_view(request, board_id):
+def create_board_member_view(request, board_id):
 
     # Chek if board exist
     board = Board.objects.filter(id=board_id).first()
@@ -208,7 +208,7 @@ def board_members_view(request, board_id):
 
 # Delete board member
 @login_required
-def board_delete_member(request, board_id):
+def delete_board_member(request, board_id):
 
     # Chek if board exist
     board = Board.objects.filter(id=board_id).first()

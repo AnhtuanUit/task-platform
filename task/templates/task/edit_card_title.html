@@ -8,7 +8,7 @@ Edit card title
     <div class="container">
         <div class="mt-5">
             <h1>Edit card title</h1>
-            <form action="{% url 'edit_card_title' card.id %}" method="POST">
+            <form action="{% url 'edit_card_view_title_view' card.id %}" method="POST">
                 {% csrf_token %}
                 {{ form }}
                 <input class="btn" style="background: #397D99; color: white;" type="submit" value="Save">

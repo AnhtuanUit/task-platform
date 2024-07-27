@@ -31,7 +31,7 @@ Board members
                     <td>
                         
                         {% if user.id != member.id %}
-                            <form action="{% url 'board_delete_member' board.id %}" method="POST">
+                            <form action="{% url 'delete_board_member' board.id %}" method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" value="{{ member.id }}" name="memberId">
                                 <input class="btn btn-sm btn-danger" type="submit" value="Delete">

@@ -15,13 +15,13 @@ urlpatterns = [
     path("profile/<int:profile_id>/edit", views.edit_profile_view, name="edit_profile"),
     # Board
     path("create_board", views.create_board_view, name="create_board"),
-    path("boards/<int:board_id>", views.board, name="board"),
+    path("boards/<int:board_id>", views.board_view, name="board"),
     path("edit_board/<int:board_id>", views.edit_board_view, name="edit_board"),
     path("delete_board/<int:board_id>", views.delete_board, name="delete_board"),
     # Board members
     path(
         "boards/<int:board_id>/add_member",
-        views.board_add_member_view,
+        views.create_board_member_view,
         name="board_add_member",
     ),
     path(
@@ -31,34 +31,34 @@ urlpatterns = [
     ),
     path(
         "boards/<int:board_id>/delete_member",
-        views.board_delete_member,
-        name="board_delete_member",
+        views.delete_board_member,
+        name="delete_board_member",
     ),
     path("media/<path:file_path>/", views.serve_file, name="media"),
     # Task list
     path(
         "boards/<int:board_id>/add_list",
-        views.board_add_list_view,
-        name="board_add_list_view",
+        views.create_list_view,
+        name="create_list_view",
     ),
     path("edit_list/<int:list_id>", views.edit_list_view, name="edit_list"),
     path("delete_list/<int:list_id>", views.delete_list, name="delete_list"),
     # Card
     path(
         "lists/<int:list_id>/add_card",
-        views.list_add_card_view,
-        name="list_add_card_view",
+        views.create_card_view,
+        name="create_card_view",
     ),
-    path("cards/<int:card_id>", views.card, name="card"),
+    path("cards/<int:card_id>", views.card_view, name="card"),
     path(
-        "edit_card_title/<int:card_id>",
-        views.edit_card_title,
-        name="edit_card_title",
+        "edit_card_view_title_view/<int:card_id>",
+        views.edit_card_view_title_view,
+        name="edit_card_view_title_view",
     ),
     path(
-        "edit_card/<int:card_id>",
-        views.edit_card,
-        name="edit_card",
+        "edit_card_view/<int:card_id>",
+        views.edit_card_view,
+        name="edit_card_view",
     ),
     path(
         "delete_card/<int:card_id>",
@@ -69,14 +69,14 @@ urlpatterns = [
     path("cards/<int:card_id>/members", views.card_members_view, name="card_members"),
     path(
         "cards/<int:card_id>/delete_member",
-        views.card_delete_member,
-        name="card_delete_member",
+        views.delete_card_member,
+        name="delete_card_member",
     ),
     # Card attachments
     path(
-        "cards/<int:card_id>/create_attachment_file",
-        views.create_attachment_file,
-        name="create_attachment_file",
+        "cards/<int:card_id>/create_attachment_file_view",
+        views.create_attachment_file_view,
+        name="create_attachment_file_view",
     ),
     path(
         "delete_attachment_file/<int:attachment_id>",

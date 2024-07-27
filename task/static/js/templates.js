@@ -83,7 +83,7 @@ function getCardHtml(card) {
        <div class="btn task-card card bg-info my-1 bg-white" style="text-align: left; border: none; border-radius: 12px;" data-card-id="${card.id}" data-list-id="${card.list}" id="card-id-${card.id}" draggable="true" data-card-position="${card.position}">
             <div class="card-body" style="display: flex; justify-content: space-between;">
                 <span class="textarea" style="color: #172B4D;">${card.title}</span>
-                <a id="edit-card-icon" class="btn btn-sm btn-light bg-transparent" href="/edit_card_title/${card.id}" style="color: #172B4D; border-radius: 1000px;"><i class="bi bi-pencil-fill"></i></a>
+                <a id="edit-card-icon" class="btn btn-sm btn-light bg-transparent" href="/edit_card_view_title_view/${card.id}" style="color: #172B4D; border-radius: 1000px;"><i class="bi bi-pencil-fill"></i></a>
             </div>
         </div>
     `;
