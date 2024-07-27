@@ -1561,6 +1561,9 @@ def board(request, board_id):
         .first()
     )
 
+    if board is None:
+        return apology(request, "Board does not exist!", 400)
+
     lists = (
         board.lists.all()
         .order_by("position")

@@ -23,7 +23,11 @@ def apology(request, message, code=400):
             s = s.replace(old, new)
         return s
 
-    return render(request, "apology.html", {"top": code, "bottom": escape(message)})
+    return render(
+        request,
+        "task/apology.html",
+        {"top": code, "bottom": escape(message), "boards": request.user.boards.all()},
+    )
 
 
 def handle_uploaded_file(f):

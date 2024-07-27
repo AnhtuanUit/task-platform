@@ -23,11 +23,9 @@
                 <h5>Members</h5>
                 <div style="margin-left: 8px;">
                     {% for member in card_members %}
-                        {% if member.id != user.id %}
-                            <a href="{% url 'profile' member.id %}">
-                                <img src="https://i.pravatar.cc/48?u={{ member.id }}" alt="" width="32" height="32" class="rounded-circle" style="margin-left: -10px; position: relative; border:3px solid white;">
-                            </a>
-                        {% endif %}
+                        <a href="{% url 'profile' member.id %}">
+                            <img src="https://i.pravatar.cc/48?u={{ member.id }}" alt="" width="32" height="32" class="rounded-circle" style="margin-left: -10px; position: relative; border:3px solid white;">
+                        </a>
                     {% endfor %} 
                 </div>
                 <div class="mt-3">
