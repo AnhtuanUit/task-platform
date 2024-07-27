@@ -1,1 +1,58 @@
-/frontend/node_modules
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django specific files
+*.log
+*.pot
+*.pyc
+*.so
+*.pyo
+
+# Database files
+*.sqlite3
+
+# Environment variables file
+.env
+
+# Django migrations
+*/migrations/*
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv/
+
+# PyCharm
+.idea/
+
+# VSCode
+.vscode/
+
+# Static files
+media/
+
+# Local development settings
+local_settings.py
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Pipenv
+Pipfile.lock
+
+# Celery beat schedule file
+celerybeat-schedule
