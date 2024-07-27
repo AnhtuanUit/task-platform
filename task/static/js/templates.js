@@ -24,7 +24,7 @@ function getNotificationHtml(notification) {
                 <div class="row g-2">
                     <div class="col-auto">
                         <img src="https://i.pravatar.cc/48?u=${
-                            notification.user
+                            notification.actor
                         }" alt="" width="32" height="32" class="rounded-circle me-2">
                     </div>
                     <div class="col">

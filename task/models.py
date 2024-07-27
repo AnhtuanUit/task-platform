@@ -94,8 +94,15 @@ class Assignment(models.Model):
 
 #  7. Notification: user_id, type(card_created, card_asssigned,. ..), card_id, board_id, description, created_at, id_read.
 class Notification(models.Model):
-    user = models.ForeignKey(
+    recipient = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="notifications"
+    )
+    actor = models.ForeignKey(
+        User,
+        related_name="notifications_created",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
     type = models.CharField(max_length=20)
     card = models.ForeignKey(
@@ -107,6 +114,7 @@ class Notification(models.Model):
     list = models.ForeignKey(
         "List", on_delete=models.CASCADE, related_name="notificaitons", null=True
     )
+    title = models.CharField(max_length=256, null=True)
     description = models.CharField(max_length=256)
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

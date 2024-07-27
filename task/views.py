@@ -229,7 +229,7 @@ def send_message(request, message):
     return redirect("index")
 
 
-def createNotification(user, type, object):
+def createNotification(actor, type, object):
     types = [
         "TASK_ASSIGNMENT",
         "TASK_UPDATED_TITLE",
@@ -245,7 +245,13 @@ def createNotification(user, type, object):
         return None
 
     # Generate description, title
-    description = getNotificationDescription(type, user.username)
+    if type == "TASK_ASSIGNMENT":
+        description = getNotificationDescription(type, object["assignee"].username)
+        object = object["card"]
+    else:
+        description = getNotificationDescription(type, actor.username)
+
+    title = getNotificationTitle(type)
 
     # Depending on type detect object type
     if type.startswith("TASK_"):
@@ -254,12 +260,16 @@ def createNotification(user, type, object):
         # Send notification to each member
         for member in card_members:
             notification = Notification.objects.create(
-                user=user, type=type, card=object, description=description
+                recipient=member,
+                actor=actor,
+                type=type,
+                card=object,
+                title=title,
+                description=description,
             )
 
             # Notification dict
             notification_dict = model_to_dict(notification)
-            notification_dict["title"] = getNotificationTitle(notification.type)
             notification_dict["created_at"] = notification.created_at.isoformat()
 
             send_realtime_data_to_user(
@@ -268,12 +278,12 @@ def createNotification(user, type, object):
 
     elif type.startswith("BOARD_"):
         notification = Notification.objects.create(
-            user=user, type=type, board=object, description=description
+            actor=actor, type=type, board=object, description=description
         )
 
     elif type.startswith("LIST_"):
         notification = Notification.objects.create(
-            user=user, type=type, list=object, description=description
+            actor=actor, type=type, list=object, description=description
         )
 
     return notification
@@ -407,7 +417,6 @@ def getNotificationTitle(type):
 def getNotificationDescription(type, user):
     types = {
         "TASK_ASSIGNMENT": f"{user} has been assigned to a task.",
-        "TASK_DUE_DATE_REMINDER": f"Reminder: A task assigned to {user} is due soon.",
         "TASK_UPDATED_TITLE": f"{user} has updated the title of a task.",
         "TASK_UPDATED_DESCRIPTION": f"{user} has updated the description of a task.",
         "TASK_DONE": f"{user} has marked a task as done.",
@@ -930,7 +939,7 @@ def edit_card(request, card_id):
                     createNotification(
                         request.user,
                         "TASK_ASSIGNMENT",
-                        card,
+                        {"card": card, "assignee": member},
                     )
 
             # If change description send notification
@@ -1766,11 +1775,6 @@ def get_notifications(request):
 
     for notification in notifications:
         notification_dict = model_to_dict(notification)
-        notification_dict["title"] = getNotificationTitle(notification.type)
-        notification_dict["description"] = getNotificationDescription(
-            notification.type, notification.user.username
-        )
-
         notification_dict["created_at"] = notification.created_at.isoformat()
         notifications_list.append(notification_dict)
 
@@ -1811,8 +1815,8 @@ def read_notification(request, notification_id):
         notification_dict["created_at"] = notification.created_at.isoformat()
 
         # Real time send notification
-        send_realtime_data(
-            "notification", "read", "notification", {"notification": notification_dict}
+        send_realtime_data_to_user(
+            request.user, "read", "notification", {"notification": notification_dict}
         )
 
         return JsonResponse({"message": "Read notification successfully."})
