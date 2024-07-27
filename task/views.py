@@ -255,10 +255,13 @@ def createNotification(actor, type, object):
 
     # Depending on type detect object type
     if type.startswith("TASK_"):
-        card_members = object.members.all()
+        members = object.members.all()
+
+        if type == "TASK_CREATED":
+            members = object.list.board.members.all()
 
         # Send notification to each member
-        for member in card_members:
+        for member in members:
             notification = Notification.objects.create(
                 recipient=member,
                 actor=actor,
@@ -277,14 +280,48 @@ def createNotification(actor, type, object):
             )
 
     elif type.startswith("BOARD_"):
-        notification = Notification.objects.create(
-            actor=actor, type=type, board=object, description=description
-        )
+        board_members = object.members.all()
+
+        # Send notification to each member
+        for member in board_members:
+            notification = Notification.objects.create(
+                recipient=member,
+                actor=actor,
+                type=type,
+                board=object,
+                title=title,
+                description=description,
+            )
+
+            # Notification dict
+            notification_dict = model_to_dict(notification)
+            notification_dict["created_at"] = notification.created_at.isoformat()
+
+            send_realtime_data_to_user(
+                member, "create", "notification", {"notification": notification_dict}
+            )
 
     elif type.startswith("LIST_"):
-        notification = Notification.objects.create(
-            actor=actor, type=type, list=object, description=description
-        )
+        board_members = object.board.members.all()
+
+        # Send notification to each member
+        for member in board_members:
+            notification = Notification.objects.create(
+                recipient=member,
+                actor=actor,
+                type=type,
+                list=object,
+                title=title,
+                description=description,
+            )
+
+            # Notification dict
+            notification_dict = model_to_dict(notification)
+            notification_dict["created_at"] = notification.created_at.isoformat()
+
+            send_realtime_data_to_user(
+                member, "create", "notification", {"notification": notification_dict}
+            )
 
     return notification
 
@@ -944,8 +981,6 @@ def edit_card(request, card_id):
 
             # If change description send notification
             if card.description != description:
-                print(card.description)
-                print(description)
                 # Create notificaiton and send realtime
                 createNotification(request.user, "TASK_UPDATED_DESCRIPTION", card)
 
