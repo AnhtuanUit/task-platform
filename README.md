@@ -236,12 +236,8 @@ Sure, here's a simpler version:
 
 ### 13. Real-Time Updates:
 
--   ## Real-time updates for:
-
-Boards, lists, and cards: using WebSocket.
-
--   Notifications: using WebSocket.
--   Board members, card members, and attachments.
+-   Real-time updates for boards, lists, and cards.
+-   Real-time updates for board members, card members, and attachments.
 -   Ensure real-time updates work without page reloads.
 
 ### 14. Notification Features:
