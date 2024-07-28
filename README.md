@@ -1,4 +1,4 @@
-# Task Manager
+# Task Platform
 
 ## Overview
 
@@ -115,7 +115,7 @@ This project is a web-based project management tool built with Django. It enable
 1. **Clone the repository:**
 
     ```bash
-    cd task-manager
+    cd task-platform
     ```
 
 2. **Install dependencies:**
