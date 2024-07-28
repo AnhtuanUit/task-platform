@@ -48,7 +48,7 @@ class EditBoardForm(forms.Form):
                 "placeholder": "Description",
                 "autofocus": True,
                 "rows": 4,
-                "cols": 50,
+                "cols": 38,
             }
         ),
     )
@@ -64,7 +64,7 @@ class EditListForm(forms.Form):
                 "placeholder": "Name",
                 "autofocus": True,
                 "rows": 4,
-                "cols": 50,
+                "cols": 38,
             }
         ),
     )
@@ -80,7 +80,7 @@ class EditCardTitleForm(forms.Form):
                 "placeholder": "Title",
                 "autofocus": True,
                 "rows": 4,
-                "cols": 50,
+                "cols": 38,
             }
         ),
     )
@@ -96,7 +96,7 @@ class EditCardForm(forms.Form):
                 "placeholder": "Title",
                 "autofocus": True,
                 "rows": 4,
-                "cols": 50,
+                "cols": 38,
             }
         ),
     )
@@ -109,7 +109,7 @@ class EditCardForm(forms.Form):
                 "placeholder": "Description",
                 "autofocus": True,
                 "rows": 4,
-                "cols": 50,
+                "cols": 38,
             }
         ),
     )

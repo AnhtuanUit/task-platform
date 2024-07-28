@@ -138,7 +138,7 @@
 
 /* Layout notification */
 .notification-width {
-    width: 400px;
+    width: 345px;
 }
 
 .notification-body {
@@ -178,7 +178,7 @@
     background: red;
     font-size: 12px;
     top: 6px;
-    right: 0;
+    left: 8px;
 }
 
 /* Buttons */
