@@ -257,3 +257,5 @@ These details are specific to each feature of the task-platform project and will
 -   Card Admin: Manage cards; display, search, filter, manage members.
 -   Assignment Admin: Manage assignments; display, search, filter.
 -   Notification Admin: Manage notifications; display, search, filter.
+
+Thank you!
