@@ -235,3 +235,13 @@ Boards, lists, and cards: using WebSocket.
 -   Show real-time notifications at the top right.
 -   Show a list of notifications.
 -   Mark notifications as read by clicking "Mark as read."
+
+### 15. Django admin page:
+
+-   User Admin: Manage users with bio field.
+-   Board Admin: Manage boards; display, search, filter.
+-   List Admin: Manage lists; display, search, filter.
+-   Attachment Admin: Manage attachments; display, search, filter.
+-   Card Admin: Manage cards; display, search, filter, manage members.
+-   Assignment Admin: Manage assignments; display, search, filter.
+-   Notification Admin: Manage notifications; display, search, filter.
