@@ -149,22 +149,22 @@ This project is a web-based project management tool built with Django. It enable
 
 ## Additional Information
 
-### User Authentication:
+### 1. User Authentication:
 
 -   **Register:** Visit the website, click "Register," and sign up with a username and email.
 -   **Login:** Click "Login" and log in with your username and password.
 -   **Post-Login:** Verify that a random avatar with your username is displayed at the top left. Click the avatar to see the "Logout" option.
 -   **Logout:** Click the "Logout" option to log out.
 
-### Create a New Board:
+### 2. Create a New Board:
 
 -   **Create Board:** Once logged in, click the "Create" button in the top menu to add a new board. Enter the board's name and description.
 
-### View All Boards:
+### 3. View All Boards:
 
 -   **Side Menu:** The left side menu displays all boards you have created, as well as boards where you have been added as a member by others.
 
-### Board Page:
+### 4. Board Page:
 
 -   Show the board name at the top.
 -   Show board members at the top.
@@ -174,54 +174,54 @@ This project is a web-based project management tool built with Django. It enable
     -   Each task card has a name.
 -   Show buttons to edit, show board members, add members, and delete the board.
 
-### Create a New List:
+### 5. Create a New List:
 
 -   Click the "Add another list" button on the board page to redirect to the "Create List" page. The page should:
     -   Show a form to create a new list with a name field.
     -   Show success or error alerts with messages.
 
-### Create a Card:
+### 6. Create a Card:
 
 -   Click the "Add card" button inside the created task list to redirect to the "Create Card" page. The page should:
     -   Show a form to create a card with a title field.
     -   Show success or error alerts with messages.
 
-### Add Board Members:
+### 7. Add Board Members:
 
 -   Click the "Share" button on the board page to redirect to the "Add Board Member" page. The page should:
     -   Show a form to add a board member with the user's email.
     -   Show success or error alerts with messages.
     -   Ensure the user must register and not already be added to the board.
 
-### View Card Details:
+### 8. View Card Details:
 
 -   Click a task card to redirect to the card detail page.
 -   Show the card title, task list name, description, due date, members, and attached files.
 
-### Drag-and-Drop:
+### 9. Drag-and-Drop:
 
 -   Move lists and cards within the board.
 -   Save the new order even after reloading the page.
 
-### Edit Card:
+### 10. Edit Card:
 
 -   Provide a button to edit the card, redirecting to the edit card page.
 -   Show a form to edit card details (title, description, due date).
 -   Add card members: show options for board members to pick.
 -   Add card attachment files: click the "Add" button to redirect to a page to upload attachments with a title and file.
 
-### Edit Features:
+### 11. Edit Features:
 
 -   Edit the board title and description.
 -   Edit the list title and description.
 
-### Manage Members:
+### 12. Manage Members:
 
 -   Click the "Members" button on the board page to redirect to the "Board Members" page showing: username, email, random avatar.
 -   Click the "Manage" button on the card page to redirect to the "Card Members" page.
 -   Click the "Delete" button to remove a member from the board/card.
 
-### Real-Time Updates:
+### 13. Real-Time Updates:
 
 -   ## Real-time updates for:
 
@@ -231,7 +231,7 @@ Boards, lists, and cards: using WebSocket.
 -   Board members, card members, and attachments.
 -   Ensure real-time updates work without page reloads.
 
-### Notification Features:
+### 14. Notification Features:
 
 -   Show real-time notifications at the top right.
 -   Show a list of notifications.

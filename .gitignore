@@ -1,58 +1,16 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Django specific files
-*.log
-*.pot
+# Ignore compiled Python files
 *.pyc
-*.so
-*.pyo
+__pycache__/
 
-# Database files
-*.sqlite3
-
-# Environment variables file
+# Ignore environment files
 .env
 
-# Django migrations
-*/migrations/*
+# Ignore database files
+*.sqlite3
 
-# macOS
-.DS_Store
+# Ignore Django migrations
+*/migrations/
 
-# Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-
-# Virtual Environment
-venv/
-ENV/
-env/
-.venv/
-
-# PyCharm
-.idea/
-
-# VSCode
-.vscode/
-
-# Static files
+# Ignore static files
+staticfiles/
 media/
-
-# Local development settings
-local_settings.py
-
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints
-
-# pyenv
-.python-version
-
-# Pipenv
-Pipfile.lock
-
-# Celery beat schedule file
-celerybeat-schedule
