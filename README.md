@@ -125,9 +125,10 @@ This project is a web-based project management tool built with Django. It enable
     pip3 install -r requirements.txt
     ```
 
-3. **Apply migrations:**
+3. **Make and apply migrations:**
 
     ```bash
+    python3 manage.py makemigrations
     python3 manage.py migrate
     ```
 
