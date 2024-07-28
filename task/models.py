@@ -21,6 +21,9 @@ class User(AbstractUser):
     # Add your custom fields here
     bio = models.CharField(max_length=256)
 
+    def __str__(self):
+        return self.username
+
 
 # 2. Board
 class Board(models.Model):
@@ -29,6 +32,9 @@ class Board(models.Model):
     members = models.ManyToManyField(User, related_name="boards")
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.name
+
 
 # 3. List
 class List(models.Model):
@@ -36,6 +42,9 @@ class List(models.Model):
     name = models.CharField(max_length=256)
     position = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
 
 
 # 4 Attachment:
@@ -46,6 +55,9 @@ class Attachment(models.Model):
     )
     file = models.FileField(upload_to="uploads/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Attachment {self.id}"
 
 
 # 5. Card
@@ -58,6 +70,9 @@ class Card(models.Model):
     members = models.ManyToManyField(User, related_name="cards")
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.title
+
 
 # 6. Assignment
 class Assignment(models.Model):
@@ -66,6 +81,9 @@ class Assignment(models.Model):
     )
     assignee = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.assignee} - {self.card.title}"
 
 
 # 7. Notification
@@ -94,3 +112,6 @@ class Notification(models.Model):
     description = models.CharField(max_length=256)
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Notification for {self.recipient.username}"

@@ -115,33 +115,32 @@ This project is a web-based project management tool built with Django. It enable
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/yourusername/project-management-tool.git
-    cd project-management-tool
+    cd task-manager
     ```
 
 2. **Install dependencies:**
    Make sure you have Python and pip installed. Then, install the required packages:
 
     ```bash
-    pip install -r requirements.txt
+    pip3 install -r requirements.txt
     ```
 
 3. **Apply migrations:**
 
     ```bash
-    python manage.py migrate
+    python3 manage.py migrate
     ```
 
 4. **Create a superuser:**
 
     ```bash
-    python manage.py createsuperuser
+    python3 manage.py createsuperuser
     ```
 
 5. **Run the development server:**
 
     ```bash
-    python manage.py runserver
+    python3 manage.py runserver
     ```
 
 6. **Access the application:**
