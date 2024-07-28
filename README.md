@@ -112,11 +112,23 @@ This project is a web-based project management tool built with Django. It enable
 
 ## How to Run the Application
 
-1. **Clone the repository:**
+Sure, here's a simpler version:
 
-    ```bash
-    cd task-platform
-    ```
+1. **Clone or Download the Repository:**
+
+    - **Clone:**
+
+        ```bash
+        git clone <repository-url>
+        cd task-platform
+        ```
+
+    - **Download:**
+
+        ```bash
+        # After extracting
+        cd task-platform
+        ```
 
 2. **Install dependencies:**
    Make sure you have Python and pip installed. Then, install the required packages:
@@ -128,7 +140,7 @@ This project is a web-based project management tool built with Django. It enable
 3. **Make and apply migrations:**
 
     ```bash
-    python3 manage.py makemigrations
+    python3 manage.py makemigrations task
     python3 manage.py migrate
     ```
 
