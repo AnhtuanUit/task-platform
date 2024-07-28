@@ -375,8 +375,15 @@ def delete_attachment_file(request, attachment_id):
 @login_required
 def serve_file(request, file_path):
     # Check if the user has permission to access the file
-    # if not request.user.has_perm("app_name.view_file"):
-    #     raise Http404("You do not have permission to access this file.")
+    # Get the card associated with the file
+    try:
+        card = Card.objects.get(attachments__file=file_path)
+    except Card.DoesNotExist:
+        return apology(request, "Card not found.", 400)
+
+    # Check if the user is a member of the board associated with the card
+    if not request.user in card.list.board.members.all():
+        return apology(request, "You do not have permission to access this file.", 403)
 
     file_path = os.path.join(settings.MEDIA_ROOT, file_path)
     if os.path.exists(file_path):
