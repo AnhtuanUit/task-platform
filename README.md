@@ -161,6 +161,8 @@ Sure, here's a simpler version:
 
 ## Additional Information
 
+These details are specific to each feature of the task-platform project and will be demonstrated in a YouTube video.
+
 ### 1. User Authentication:
 
 -   **Register:** Visit the website, click "Register," and sign up with a username and email.
