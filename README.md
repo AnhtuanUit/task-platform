@@ -208,6 +208,7 @@ This project is a web-based project management tool built with Django. It enable
 -   Show a form to edit card details (title, description, due date).
 -   Add card members: show options for board members to pick.
 -   Add card attachment files: click the "Add" button to redirect to a page to upload attachments with a title and file.
+-   Attachments file: secure handling of file uploads and retrieval for task-related documents.
 
 ### 11. Edit Features:
 
