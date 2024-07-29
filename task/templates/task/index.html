@@ -1,0 +1,23 @@
+{% extends "task/layout.html" %}
+{% block title %}
+Home page
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <h1 class="mt-5">Your boards</h1>
+    <div class="row row-cols-lg-4 mt-2 g-4">
+        {% for board in boards %}
+            <div class="col">
+                    <div class="card" style="border: none;">
+                        <a class="btn" style="color: white; background: #0067A3; border-radius: 0;" href="{% url 'board' board.id %}">
+                            <div class="card-body" style="text-align: left;">
+                                    <p class="card-title">{{ board.name }}</p>
+                            </div>
+                        </a>
+                    </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

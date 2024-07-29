@@ -1,0 +1,148 @@
+{% extends "task/layout.html" %}
+{% load static %}
+{% block title %}
+Board detail
+{% endblock %}
+{% block main %}
+<div class="d-flex flex-column h-100 bg-custom-1">
+    <nav class="navbar navbar-expand-lg bg-custom-2" data-bs-theme="dark">
+        <div class="container-fluid">
+          <a id="board-title" class="navbar-brand fw-bold" href="{% url 'board' board.id %}" data-board-id="{{ board.id }}">{{ board.name }}</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarBoard" aria-controls="navbarBoard" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarBoard">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'edit_board' board.id %}">Edit</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'board_members' board.id %}">Members</a>
+                </li>
+                <li class="nav-item">
+                  <!-- Button trigger modal -->
+                    <button type="button" class="nav-link active" data-bs-toggle="modal" data-bs-target="#confirmBoardDeletionModal">
+                        Delete
+                    </button>
+                    
+                    <!-- Modal -->
+                    <div class="modal fade text-white" id="confirmBoardDeletionModal" tabindex="-1" aria-labelledby="confirmBoardDeletionModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="confirmBoardDeletionModalLabel">Confirm Deletion</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete this item?</p>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <form action="{% url 'delete_board' board.id %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center gap-3">
+                <div class="dropdown">
+                    <a href="#" class="text-decoration-none  d-flex align-items-center text-white dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                      <img src="https://i.pravatar.cc/48?u={{ user.id }}" alt="" width="32" height="32" class="rounded-circle me-2">
+                      <span>{{ user.username }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                      <li><a class="dropdown-item" href="{% url 'profile' user.id %}">Profile</a></li>
+                    </ul>
+                </div>
+                <a class="btn btn-sm btn-light" href="{% url 'board_add_member' board.id %}"><i class="bi bi-person-plus-fill"></i> Share</a>
+                <div id="board-members">
+                    {% for member in members %}
+                        {% if member.id != user.id %}
+                            <a href="{% url 'profile' member.id %}">
+                                <img src="https://i.pravatar.cc/48?u={{ member.id }}" alt="" width="32" height="32" class="rounded-circle member-profile-icon" style="z-index: {{member.index}};">
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+          </div>
+        </div>
+    </nav>
+    {% for list in lists %}
+        <!-- Modal -->
+        <div class="modal fade text-white" id="confirmListDeletionModal-{{list.id}}" tabindex="-1" aria-labelledby="confirmListDeletionModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content bg-black">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="confirmListDeletionModalLabel">Confirm Deletion</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this item?</p>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <form action="{% url 'delete_list' list.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                </div>
+            </div>
+            </div>
+        </div>
+        <!-- End Modal -->
+    {% endfor %}
+    <div class="d-flex m-3">
+        <div class="scrollable-flex task-lists g-3 mt-2">
+                {% for list in lists %}
+                <div class="col px-1 flex-20">
+                    <div class="card task-list task-list-button" draggable="true" id="list-id-{{ list.id }}" data-list-id="{{ list.id }}" data-list-position="{{ list.position }}">
+                        <div class="card-body scrollable-column" data-list-id="{{ list.id }}">
+                            <div class="mb-2 flex-center-space-between">
+                                <a class="task-list-title btn-transparent fw-bold text-decoration-none text-custom-1" href="{% url 'edit_list' list.id %}">{{ list.name }}</a>
+                                <div class="dropdown">
+                                    <a class="btn-transparent" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots text-custom-2"></i>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                      <li>
+                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmListDeletionModal-{{list.id}}">
+                                            Delete
+                                        </button>
+                                    </li>
+                                    </ul>
+                                  </div>
+                            </div>
+                            
+                            {% for card in list.ordered_cards %}
+                                <div class="btn task-card card bg-info my-1 bg-white text-start border-0 rounded-xl" data-card-id="{{ card.id }}" data-list-id="{{ list.id }}" id="card-id-{{ card.id }}" draggable="true" data-card-position="{{ card.position }}">
+                                    <div class="card-body d-flex justify-content-between">
+                                        <span class="textarea text-custom-3">{{ card.title }}</span>
+                                        <a id="edit-card-icon" class="btn btn-sm btn-light bg-transparent rounded-circle text-custom-4" href="{% url 'edit_card_title_view' card.id %}"><i class="bi bi-pencil-fill"></i></a>
+                                    </div>
+                                </div>  
+                            {% endfor %}
+                            <div class="task-card-hidden mt-2">
+                                <a class="btn btn-transparent text-custom-5" href="{% url 'create_card_view' list.id %}"><i class="bi bi-plus text-custom-5"></i>Add a card</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="col px-1 flex-20">
+                    <div class="card border-0 rounded-xl" draggable="true" id="task-add-list-btn">
+                        <a class="btn text-white rounded-xl" href="{% url 'create_list_view' board.id %}">Add another list</a>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script  src="{% static 'js/boardWebsocket.js' %}"></script>
+{% endblock %}

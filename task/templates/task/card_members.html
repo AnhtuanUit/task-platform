@@ -1,0 +1,51 @@
+{% extends "task/layout.html" %}
+
+{% block title %}
+Card members
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <h1 class="mt-5">Manage card members</h1>
+    <div class="d-flex mt-4 mb-2" style="justify-content: space-between; align-items: center;">
+        <h2>{{ card.title }}</h2>
+        <a class="btn btn-sm btn-task" href="{% url 'edit_card_view' card.id %}">Add member</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">Image</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for member in members %}
+                    <tr>
+                        <th scope="row">{{ member.index }}</th>
+                        <td>{{ member.username }}</td>
+                        <td>{{ member.email }}</td>
+                        <td><img src="https://i.pravatar.cc/48?u={{ member.id }}" alt="" width="32" height="32" class="rounded-circle me-2"></td>
+                        <td>
+                            
+                            {% if user.id != member.id %}
+                                <form action="{% url 'delete_card_member' card.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" value="{{ member.id }}" name="memberId">
+                                    <input class="btn btn-sm btn-danger" type="submit" value="Delete">
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="mt-4">
+        <a class="link-primary" href="{% url 'card' card.id %}">Back to card</a>
+    </div>
+</div>
+{% endblock %}

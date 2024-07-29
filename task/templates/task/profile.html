@@ -1,0 +1,40 @@
+{% extends "task/layout.html" %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <div class="mt-5">
+            <h1>Profile</h1>
+            <h5 class="mt-3">Username:</h5>
+            <ul>
+                <li>
+                    {{ profile.username }}
+                </li>
+            </ul>
+            <h5>Bio:</h5>
+            <ul>
+                <li>
+                    {{ profile.bio }}
+                </li>
+            </ul>
+            <h5>Info</h5>
+            <ul>
+                <li>
+                    Email: {{ profile.email }}
+                </li>
+                <li>
+                    Name: {{ profile.first_name }} {{ profile.last_name }}
+                </li>
+            </ul>
+            {% if request.user.id == profile.id %}
+                <a class="btn" style="background: #397D99; color: white;" href="{% url 'edit_profile' profile.id %}">Edit</a>
+            {% endif %}
+        </div>
+        <div class="mt-3">
+            <a class="link-primary" href="{% url 'index' %}">Back to home</a>
+        </div>
+    </div>
+{% endblock %}

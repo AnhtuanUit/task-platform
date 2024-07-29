@@ -1,0 +1,19 @@
+{% extends "task/layout.html" %}
+{% comment %} {% debug %} {% endcomment %}
+{% block title %}
+Create card
+{% endblock %}
+{% block main %}
+    <div class="container">
+        <h1 class="mt-5">Create card [List: {{ list.name }} | Board: {{ list.board.name }}]</h1>
+        <form id="add-card-form">
+            <input class="form-control w-auto mb-3" id ="add-card-list-id" type="hidden" name="id" value="{{ list.id }}">
+            <input class="form-control w-auto mb-3" id="add-card-title" autofocus name="title" placeholder="Title of the card" type="text">
+            <input class="btn" style="background: #397D99; color: white;" type="submit" value="Add card">
+        <form>
+        <div class="mt-4">
+            <a class="link-primary"  href="{% url 'board' list.board.id %}">Back to board</a>
+        </div>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,20 @@
+{% extends "task/layout.html" %}
+{% comment %} {% debug %} {% endcomment %}
+{% block title %}
+Create list
+{% endblock %}
+{% block main %}
+    <div class="container">
+        <h1 class="mt-5">Create list</h1>
+        <h2 class="mt-4 mb-3">Create list to {{ board.name }}</h2>
+        
+        <form id="add-list-form">
+            <input class="form-control w-auto mb-3"  id ="add-list-board-id" type="hidden" name="id" value="{{ board.id }}">
+            <input class="form-control w-auto mb-3"  id="add-list-name" autofocus name="name" placeholder="Name of the list" type="text">
+            <input class="btn" style="background: #397D99; color: white;" type="submit" value="Add list">
+        <form>
+        <div class="mt-3">
+            <a class="link-primary" href="{% url 'board' board.id %}">Back to board</a>
+        </div>
+    </div>
+{% endblock %}
