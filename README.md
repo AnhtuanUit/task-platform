@@ -148,6 +148,8 @@ This project is a web-based project management tool built with Django. It enable
 
 ## Additional Information
 
+This is a list of specific elements of our capstone project, and it will be timestamped in the recorded YouTube video
+
 ### 1. User Authentication:
 
 -   **Register:** Visit the website, click "Register," and sign up with a username and email.
