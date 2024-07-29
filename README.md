@@ -225,30 +225,25 @@ These details are specific to each feature of the task-platform project and will
 -   Add card attachment files: click the "Add" button to redirect to a page to upload attachments with a title and file.
 -   Attachments file: secure handling of file uploads and retrieval for task-related documents.
 
-### 11. Edit Features:
+### 11. Manage Members:
 
--   Edit the board title and description.
--   Edit the list title and description.
-
-### 12. Manage Members:
-
--   Click the "Members" button on the board page to redirect to the "Board Members" page showing: username, email, random avatar.
 -   Click the "Manage" button on the card page to redirect to the "Card Members" page.
+-   Click the "Members" button on the board page to redirect to the "Board Members" page showing: username, email, random avatar.
 -   Click the "Delete" button to remove a member from the board/card.
 
-### 13. Real-Time Updates:
+### 12. Real-Time Updates:
 
 -   Real-time updates for boards, lists, and cards.
 -   Real-time updates for board members, card members, and attachments.
 -   Ensure real-time updates work without page reloads.
 
-### 14. Notification Features:
+### 13. Notification Features:
 
 -   Show real-time notifications at the top right.
 -   Show a list of notifications.
 -   Mark notifications as read by clicking "Mark as read."
 
-### 15. Django admin page:
+### 14. Django admin page:
 
 -   User Admin: Manage users with bio field.
 -   Board Admin: Manage boards; display, search, filter.

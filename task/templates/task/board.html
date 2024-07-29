@@ -74,7 +74,7 @@ Board detail
     </nav>
     {% for list in lists %}
         <!-- Modal -->
-        <div class="modal fade text-white" id="confirmListDeletionModal" tabindex="-1" aria-labelledby="confirmListDeletionModalLabel" aria-hidden="true">
+        <div class="modal fade text-white" id="confirmListDeletionModal-{{list.id}}" tabindex="-1" aria-labelledby="confirmListDeletionModalLabel" aria-hidden="true">
             <div class="modal-dialog">
             <div class="modal-content bg-black">
                 <div class="modal-header">
@@ -110,7 +110,7 @@ Board detail
                                     </a>
                                     <ul class="dropdown-menu">
                                       <li>
-                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmListDeletionModal">
+                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmListDeletionModal-{{list.id}}">
                                             Delete
                                         </button>
                                     </li>
