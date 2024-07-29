@@ -210,13 +210,13 @@ This project is a web-based project management tool built with Django. It enable
 -   Add card attachment files: click the "Add" button to redirect to a page to upload attachments with a title and file.
 -   Attachments file: secure handling of file uploads and retrieval for task-related documents.
 
-### 12. Manage Members:
+### 11. Manage Members:
 
 -   Click the "Members" button on the board page to redirect to the "Board Members" page showing: username, email, random avatar.
 -   Click the "Manage" button on the card page to redirect to the "Card Members" page.
 -   Click the "Delete" button to remove a member from the board/card.
 
-### 13. Real-Time Updates:
+### 12. Real-Time Updates:
 
 -   ## Real-time updates for:
 
@@ -226,13 +226,13 @@ Boards, lists, and cards: using WebSocket.
 -   Board members, card members, and attachments.
 -   Ensure real-time updates work without page reloads.
 
-### 14. Notification Features:
+### 13. Notification Features:
 
 -   Show real-time notifications at the top right.
 -   Show a list of notifications.
 -   Mark notifications as read by clicking "Mark as read."
 
-### 13. Mobile-responsive
+### 14. Mobile-responsive
 
 -   Your web application must be mobile-responsive
 
