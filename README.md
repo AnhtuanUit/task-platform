@@ -192,15 +192,15 @@ This project is a web-based project management tool built with Django. It enable
     -   Show success or error alerts with messages.
     -   Ensure the user must register and not already be added to the board.
 
-### 8. View Card Details:
-
--   Click a task card to redirect to the card detail page.
--   Show the card title, task list name, description, due date, members, and attached files.
-
-### 9. Drag-and-Drop:
+### 8. Drag-and-Drop:
 
 -   Move lists and cards within the board.
 -   Save the new order even after reloading the page.
+
+### 9. View Card Details:
+
+-   Click a task card to redirect to the card detail page.
+-   Show the card title, task list name, description, due date, members, and attached files.
 
 ### 10. Edit Card:
 
@@ -209,11 +209,6 @@ This project is a web-based project management tool built with Django. It enable
 -   Add card members: show options for board members to pick.
 -   Add card attachment files: click the "Add" button to redirect to a page to upload attachments with a title and file.
 -   Attachments file: secure handling of file uploads and retrieval for task-related documents.
-
-### 11. Edit Features:
-
--   Edit the board title and description.
--   Edit the list title and description.
 
 ### 12. Manage Members:
 
@@ -236,6 +231,10 @@ Boards, lists, and cards: using WebSocket.
 -   Show real-time notifications at the top right.
 -   Show a list of notifications.
 -   Mark notifications as read by clicking "Mark as read."
+
+### 13. Mobile-responsive
+
+-   Your web application must be mobile-responsive
 
 ### 15. Django admin page:
 
