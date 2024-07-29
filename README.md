@@ -247,3 +247,5 @@ Boards, lists, and cards: using WebSocket.
 -   Card Admin: Manage cards; display, search, filter, manage members.
 -   Assignment Admin: Manage assignments; display, search, filter.
 -   Notification Admin: Manage notifications; display, search, filter.
+
+Thank you!
