@@ -112,43 +112,55 @@ This project is a web-based project management tool built with Django. It enable
 
 ## How to Run the Application
 
-1. **Clone the repository:**
+1.  **Clone the repository:**
 
     ```bash
     cd task-platform
     ```
 
-2. **Install dependencies:**
-   Make sure you have Python and pip installed. Then, install the required packages:
+2.  **Install dependencies:**
+    Make sure you have Python and pip installed. Then, install the required packages:
 
     ```bash
     pip3 install -r requirements.txt
     ```
 
-3. **Apply migrations:**
+3.  **Apply migrations:**
 
-    ```bash
-    python3 manage.py migrate
-    ```
+        ```bash
 
-4. **Create a superuser:**
+    # <<<<<<< HEAD
+
+        python3 manage.py makemigrations task
+
+    > > > > > > > aa5289a5f3ed518657c79cc46559cec7ba5fc1f9
+
+        python3 manage.py migrate
+        ```
+
+4.  **Create a superuser:**
 
     ```bash
     python3 manage.py createsuperuser
     ```
 
-5. **Run the development server:**
+5.  **Run the development server:**
 
     ```bash
     python3 manage.py runserver
     ```
 
-6. **Access the application:**
-   Open your web browser and navigate to `http://127.0.0.1:8000` to access the application.
+6.  **Access the application:**
+    Open your web browser and navigate to `http://127.0.0.1:8000` to access the application.
 
 ## Additional Information
 
+<<<<<<< HEAD
 This is a list of specific elements of our capstone project, and it will be timestamped in the recorded YouTube video
+=======
+This is a list of specific elements of our capstone project, and it will be timestamped in the recorded YouTube video:
+
+> > > > > > > aa5289a5f3ed518657c79cc46559cec7ba5fc1f9
 
 ### 1. User Authentication:
 
@@ -248,4 +260,4 @@ Boards, lists, and cards: using WebSocket.
 -   Assignment Admin: Manage assignments; display, search, filter.
 -   Notification Admin: Manage notifications; display, search, filter.
 
-Thank you!
+Thank you, CS50W team, especially Brian Yu and David J. Malan!
