@@ -128,6 +128,7 @@ This project is a web-based project management tool built with Django. It enable
 3. **Apply migrations:**
 
     ```bash
+    python3 manage.py makemigrations task
     python3 manage.py migrate
     ```
 
