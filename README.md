@@ -128,13 +128,7 @@ This project is a web-based project management tool built with Django. It enable
 3.  **Apply migrations:**
 
         ```bash
-
-    # <<<<<<< HEAD
-
         python3 manage.py makemigrations task
-
-    > > > > > > > aa5289a5f3ed518657c79cc46559cec7ba5fc1f9
-
         python3 manage.py migrate
         ```
 
@@ -155,12 +149,7 @@ This project is a web-based project management tool built with Django. It enable
 
 ## Additional Information
 
-<<<<<<< HEAD
 This is a list of specific elements of our capstone project, and it will be timestamped in the recorded YouTube video
-=======
-This is a list of specific elements of our capstone project, and it will be timestamped in the recorded YouTube video:
-
-> > > > > > > aa5289a5f3ed518657c79cc46559cec7ba5fc1f9
 
 ### 1. User Authentication:
 
