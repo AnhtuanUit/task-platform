@@ -125,26 +125,33 @@ This project is a web-based project management tool built with Django. It enable
     pip3 install -r requirements.txt
     ```
 
-3.  **Apply migrations:**
+3.  **Run Redis:**
+    Ensure you have Docker installed. Run the following command to start a Redis container:
+
+    ```bash
+    docker run --rm -p 6379:6379 redis:7
+    ```
+
+4.  **Apply migrations:**
 
     ```bash
     python3 manage.py makemigrations task
     python3 manage.py migrate
     ```
 
-4.  **Create a superuser:**
+5.  **Create a superuser:**
 
     ```bash
     python3 manage.py createsuperuser
     ```
 
-5.  **Run the development server:**
+6.  **Run the development server:**
 
     ```bash
     python3 manage.py runserver
     ```
 
-6.  **Access the application:**
+7.  **Access the application:**
     Open your web browser and navigate to `http://127.0.0.1:8000` to access the application.
 
 ## Additional Information
