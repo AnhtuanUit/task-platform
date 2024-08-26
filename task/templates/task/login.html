@@ -12,8 +12,8 @@ Login
         {% endif %}
         <form action="{% url 'login' %}" method="POST">
             {% csrf_token %}
-            <input class="form-control w-auto mb-3" autofocus type="text" placeholder="Username" name="username">
-            <input class="form-control w-auto mb-3" type="password" placeholder="Password" name="password">
+            <input class="form-control w-auto mb-3" autofocus type="text" placeholder="Username" name="username" value="user1">
+            <input class="form-control w-auto mb-3" type="password" placeholder="Password" name="password" value="1">
             <input class="btn" style="background: #397D99; color: white;" type="submit" value="Login">
         </form>
     </div>
