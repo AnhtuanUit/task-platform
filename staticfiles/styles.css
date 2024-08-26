@@ -1,0 +1,230 @@
+/* Optional: Hide scrollbar for a cleaner look */
+.task-lists::-webkit-scrollbar {
+    display: none;
+}
+
+/* Task card */
+
+.task-card {
+    outline: 2px solid transparent;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.task-card:hover {
+    outline: 2px solid #7bb5cf;
+}
+
+#edit-card-icon {
+    visibility: hidden;
+    height: fit-content;
+}
+
+.task-card:hover #edit-card-icon {
+    visibility: visible;
+}
+
+.btn-task,
+.btn-task:hover {
+    background: #397d99;
+    color: white;
+}
+
+.flex-center-space-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.textarea {
+    white-space: pre-line;
+    white-space: pre-wrap;
+}
+
+/* Menu top */
+.dropdown-menu {
+    display: none;
+}
+
+.dropdown.show .dropdown-menu {
+    display: block;
+}
+
+/* Background custom colors */
+.bg-custom-1 {
+    background-color: #7bb5cf;
+}
+
+.bg-custom-2 {
+    background-color: #2e6e87;
+}
+
+.bg-custom-3 {
+    background-color: #085c80;
+}
+
+.bg-custom-4 {
+    background-color: #397d99;
+}
+
+.bg-custom-5 {
+    background-color: #f1f2f4;
+}
+
+.bg-custom-6 {
+    background-color: #ffffff3b;
+}
+
+.bg-custom-7 {
+    background-color: #ddd;
+}
+
+.text-custom-1 {
+    color: #172b4d;
+}
+
+/* Text custom colors */
+.text-custom-2 {
+    color: #212529;
+}
+
+.text-custom-3 {
+    color: #172b4d;
+}
+
+.text-custom-4 {
+    color: #172b4d;
+}
+
+.text-custom-5 {
+    color: #44546f;
+}
+
+.text-custom-6 {
+    color: #172b4d;
+}
+
+.text-custom-7 {
+    color: #2d4265;
+}
+
+/* Scrollable views */
+.scrollable-flex {
+    display: flex;
+    overflow-x: auto;
+    width: 100%;
+    max-width: 100%;
+}
+
+.scrollable-column {
+    display: flex;
+    flex-direction: column;
+    max-height: 750px;
+    overflow-y: auto;
+}
+
+/* Layout */
+.flex-20 {
+    flex: 0 0 20%;
+}
+
+.h-100 {
+    height: 100%;
+}
+
+.h-100vh {
+    height: 100vh;
+}
+
+/* Layout notification */
+.notification-width {
+    width: 345px;
+}
+
+.notification-body {
+    max-height: 550px;
+    min-height: 200px;
+    overflow-y: scroll;
+}
+
+.side-menu-container {
+    width: 230px;
+    background: #0a6892;
+}
+
+.max-height-490 {
+    max-height: 490px;
+}
+
+.min-heigt-700 {
+    min-height: 700px;
+}
+
+.overflow-x-hidden {
+    overflow-x: hidden;
+}
+
+.unread-count-button {
+    background-color: red;
+    border-radius: 1000px;
+    cursor: pointer;
+    display: none;
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    color: white;
+    line-height: 1.4;
+    background: red;
+    font-size: 12px;
+    top: 6px;
+    left: 8px;
+}
+
+/* Buttons */
+
+#task-add-list-btn:hover {
+    background-color: #ffffff15;
+}
+
+.btn-transparent {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: transparent;
+}
+
+.btn-transparent:hover {
+    background-color: gainsboro;
+}
+
+/* Button add list */
+
+.task-list-button {
+    cursor: pointer;
+    background: #f1f2f4;
+    border-radius: 16px;
+    border: none;
+}
+
+#task-add-list-btn {
+    background-color: #ffffff3b;
+}
+
+.border-radius-sm {
+    border-radius: 12px;
+}
+
+.border-radius-md {
+    border-radius: 16px;
+}
+
+.member-profile-icon {
+    margin-left: -10px;
+    position: relative;
+    border: 3px solid white;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
