@@ -33,6 +33,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+CSRF_TRUSTED_ORIGINS = ["https://task-platform.onrender.com"]
 
 # Application definition
 
