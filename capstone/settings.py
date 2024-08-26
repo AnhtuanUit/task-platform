@@ -128,10 +128,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-# Ensure STATICFILES_DIRS is correctly set if you have additional static files
-STATICFILES_DIRS = [
-    BASE_DIR / "static",  # If you have a 'static' directory in your app
-]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
