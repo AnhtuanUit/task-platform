@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         chatSocket = new WebSocket(
-            "ws://" + window.location.host + "/ws/chat/" + board_id + "/"
+            "wss://" + window.location.host + "/ws/chat/" + board_id + "/"
         );
 
         chatSocket.onmessage = function (e) {
